@@ -28,7 +28,7 @@ public class Exercises {
     private Level level;
     private MuscleType1 muscleType1;
 
-    @OneToMany(mappedBy = "exercisesToolTypes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "exercises", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExercisesToolTypes> exercisesToolTypes;
 
     @CreationTimestamp
@@ -41,9 +41,4 @@ public class Exercises {
     @ManyToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Programs programs;
-
-    @ManyToOne
-    @JoinColumn(name = "center_id", nullable = false)
-    private Centers centers;
-
 }

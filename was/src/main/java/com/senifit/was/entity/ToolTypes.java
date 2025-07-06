@@ -20,6 +20,6 @@ public class ToolTypes {
 
     Tools tools;
 
-    @OneToMany(mappedBy = "exercisesToolTypes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "toolTypes", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExercisesToolTypes> exercisesToolTypes;
 }

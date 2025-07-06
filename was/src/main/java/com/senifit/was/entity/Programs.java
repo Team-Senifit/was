@@ -31,7 +31,7 @@ public class Programs {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "exercises", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "programs", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercises> exercises;
 
     @ManyToOne

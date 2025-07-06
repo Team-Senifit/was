@@ -38,4 +38,7 @@ public class Centers {
 
     @OneToMany(mappedBy = "centers", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Users> users;
+
+    @OneToMany(mappedBy = "centers", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Programs> programs;
 }
