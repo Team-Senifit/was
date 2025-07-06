@@ -26,9 +26,9 @@ public class Users {
     private Centers centers;
 
     private String name;
-    private String age;
-    private String gender;
-    private String level;
+    private Integer age;
+    private Gender gender;
+    private String rank;
 
     @CreationTimestamp
     @Column(updatable = false)
