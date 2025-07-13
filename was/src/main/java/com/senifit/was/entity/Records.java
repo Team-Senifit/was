@@ -9,33 +9,25 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Programs {
+public class Records {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long programId;
+    private Long recordId;
 
-    private String name;
+    private LocalDateTime startTime;
 
-    private String description;
+    private LocalDateTime endTime;
 
-    @Enumerated(EnumType.STRING)
-    private ExerciseTimes exerciseTimes;
+    private Integer participantCount;
 
-    @Enumerated(EnumType.STRING)
-    private Tools tools;
-
-    private boolean taekwondo;
-
-    @Enumerated(EnumType.STRING)
-    private MuscleType1 muscleType1;
-
+    @OneToOne(mappedBy = "records", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Surveys surveys;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -43,11 +35,4 @@ public class Programs {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "programs", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Exercises> exercises;
-
-    @ManyToOne
-    @JoinColumn(name = "center_id", nullable = false)
-    private Centers centers;
 }

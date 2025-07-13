@@ -12,6 +12,7 @@ spring:
     password: ${DB_PASS}
 
   jpa:
+    database: mysql
     hibernate:
       ddl-auto: create
       show-sql: true
