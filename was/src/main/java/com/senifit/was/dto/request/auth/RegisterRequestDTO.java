@@ -1,5 +1,6 @@
 package com.senifit.was.dto.request.auth;
 
+import com.senifit.was.entity.CenterRole;
 import com.senifit.was.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 public class RegisterRequestDTO {
     private String id;
     private String password;
-    private Gender name;
+    private String name;
     private String location;
+    private CenterRole role;
 }
