@@ -25,6 +25,7 @@ public class Centers {
     private String password;
     private String name;
     private String location;
+    private String role;
 
     @CreationTimestamp
     @Column(updatable = false)
