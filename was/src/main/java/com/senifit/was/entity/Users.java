@@ -28,7 +28,7 @@ public class Users {
     private String name;
     private Integer age;
     private Gender gender;
-    private String rank;
+    private UserRank rank;
 
     @CreationTimestamp
     @Column(updatable = false)
