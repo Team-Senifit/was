@@ -24,7 +24,7 @@ public enum UserRank {
     }
 
     @JsonCreator
-    public static UserRank fromValue(int value) {
+    public static UserRank from(int value) {
         for (UserRank rank : UserRank.values()) {
             if (rank.integerLevel == value) {
                 return rank;
