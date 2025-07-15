@@ -1,14 +1,12 @@
 package com.senifit.was.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,8 +24,8 @@ public class Records {
 
     private Integer participantCount;
 
-    @OneToOne(mappedBy = "records", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Surveys surveys;
+    @OneToMany(mappedBy = "records", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Surveys> surveys;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -35,4 +33,14 @@ public class Records {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Builder
+    public Records(Long recordId, LocalDateTime startTime, LocalDateTime endTime, Integer participantCount, List<Surveys> surveys, LocalDateTime updatedAt) {
+        this.recordId = recordId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.participantCount = participantCount;
+        this.surveys = surveys;
+        this.updatedAt = updatedAt;
+    }
 }

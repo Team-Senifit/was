@@ -20,7 +20,11 @@ public class Surveys {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long surveyId;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private Users users;
+
+    @ManyToOne
     @JoinColumn(name = "record_id", nullable = false, unique = true)
     private Records records;
 
