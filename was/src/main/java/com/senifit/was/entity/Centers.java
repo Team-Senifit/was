@@ -1,10 +1,7 @@
 package com.senifit.was.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,9 +19,12 @@ public class Centers {
     private Long centerId;
 
     private String id;
-    private String password;
+    private String password; // hash + salt값
     private String name;
     private String location;
+
+    @Enumerated(EnumType.STRING)
+    private CenterRole role;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -41,4 +41,13 @@ public class Centers {
 
     @OneToMany(mappedBy = "centers", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Programs> programs;
+
+    @Builder
+    public Centers(String id, String password, String name, String location, CenterRole role) {
+        this.id = id;
+        this.password = password;
+        this.name = name;
+        this.location = location;
+        this.role = role;
+    }
 }
