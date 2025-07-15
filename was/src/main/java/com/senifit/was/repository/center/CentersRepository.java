@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CentersRepository extends JpaRepository<Centers, Long> {
+    boolean existsByid(String id); // 아이디 중복확인에 사용
 }
