@@ -4,6 +4,7 @@ spring:
 
   application:
     name: was
+    maximum-sessions: 20
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
