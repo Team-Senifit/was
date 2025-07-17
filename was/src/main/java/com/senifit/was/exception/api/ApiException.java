@@ -9,12 +9,10 @@ public class ApiException extends RuntimeException {
     private final String errorCode;
     private final int httpStatusCode;
     private final String errorMessage;
-    private final boolean loggingEnabled;
 
     public ApiException(ApiExceptionDetails details) {
         this.errorCode = details.getErrorCode();
         this.httpStatusCode = details.getHttpStatusCode();
         this.errorMessage = details.getMessage();
-        this.loggingEnabled = details.isEnableLogging();
     }
 }
