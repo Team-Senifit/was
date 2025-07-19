@@ -16,11 +16,11 @@ public class ExercisesToolTypes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercises_id", nullable = false)
     private Exercises exercises;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tool_types_id", nullable = false)
     private ToolTypes toolTypes;
 }

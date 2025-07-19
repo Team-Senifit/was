@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum UserRank {
+public enum MemberRank {
     Rank1(1, "1등급"),
     Rank2(2, "2등급"),
     Rank3(3, "3등급"),
@@ -24,8 +24,8 @@ public enum UserRank {
     }
 
     @JsonCreator
-    public static UserRank from(int value) {
-        for (UserRank rank : UserRank.values()) {
+    public static MemberRank from(int value) {
+        for (MemberRank rank : MemberRank.values()) {
             if (rank.integerLevel == value) {
                 return rank;
             }

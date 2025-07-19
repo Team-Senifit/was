@@ -16,23 +16,25 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Users {
+public class Members {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long memberId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id", nullable = false)
     private Centers centers;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Records> records;
+    @OneToMany(mappedBy = "members", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecordsMembers> recordsMembers;
 
     private String name;
     private Integer age;
     private Gender gender;
-    private UserRank rank;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRank memberRank;
 
     @CreationTimestamp
     @Column(updatable = false)

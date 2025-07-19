@@ -21,7 +21,7 @@ public class Instructors {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long instructorId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id", nullable = false)
     private Centers centers;
 

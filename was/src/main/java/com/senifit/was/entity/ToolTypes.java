@@ -18,6 +18,7 @@ public class ToolTypes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long toolTypesId;
 
+    @Enumerated(EnumType.STRING)
     Tools tools;
 
     @OneToMany(mappedBy = "toolTypes", cascade = CascadeType.ALL, orphanRemoval = true)

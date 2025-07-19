@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.util.Collections;
+import java.util.Map;
+
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponse<T> {
@@ -28,6 +31,16 @@ public class ApiResponse<T> {
     public static <DataType> ApiResponse<DataType> success(DataType data) {
         return new ApiResponse<>(HttpStatus.OK.value(), "요청이 성공적으로 처리되었습니다.", data, null);
     }
+
+    public static ApiResponse<Map<String, Object>> success(Long id) {
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "요청이 성공적으로 처리되었습니다.",
+                Collections.singletonMap("id", id),
+                null
+        );
+    }
+
 
     public static ApiResponse<Void> failure(ApiException e) {
         return new ApiResponse<>(e.getHttpStatusCode(), e.getErrorMessage(), null, e.getErrorCode());

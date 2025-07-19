@@ -35,13 +35,10 @@ public class Centers {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "centers", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Instructors> instructors;
+    private List<Members> members;
 
     @OneToMany(mappedBy = "centers", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Users> users;
-
-    @OneToMany(mappedBy = "centers", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Programs> programs;
+    private List<Records> Records;
 
     @Builder
     public Centers(String id, String password, String name, String location, CenterRole role) {

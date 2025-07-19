@@ -36,7 +36,6 @@ public class Programs {
     @Enumerated(EnumType.STRING)
     private MuscleType1 muscleType1;
 
-
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -47,7 +46,6 @@ public class Programs {
     @OneToMany(mappedBy = "programs", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exercises> exercises;
 
-    @ManyToOne
-    @JoinColumn(name = "center_id", nullable = false)
-    private Centers centers;
+    @OneToMany(mappedBy = "programs", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Records> records;
 }

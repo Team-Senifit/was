@@ -1,9 +1,10 @@
 package com.senifit.was.controller;
 
-import com.senifit.was.common.response.ApiResponse;
 import com.senifit.was.dto.request.record.RecordRequest;
+import com.senifit.was.dto.request.record.RecordUpdateRequest;
+import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.record.RecordResponse;
-import com.senifit.was.exception.custom.UserNotFoundException;
+import com.senifit.was.exception.api.common.BadRequestApiException;
 import com.senifit.was.service.RecordService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController("records")
 @Slf4j
@@ -24,31 +26,45 @@ public class RecordController {
     public ApiResponse<List<RecordResponse>> listRecord(HttpSession session) {
         Long centerId = (Long) session.getAttribute("centerId");
         if (centerId == null) {
-            throw new UserNotFoundException();
+            throw new BadRequestApiException();
         }
-
-        List<RecordResponse> records = recordService.getRecordsByCenterId(centerId);
-        return new ApiResponse<>(records);
+        return ApiResponse.success(recordService.getRecordsByCenterId(centerId));
     }
 
     @GetMapping("{recordId}")
-    public ApiResponse<Record> getRecordById(@PathVariable Long recordId) {
-        return null;
+    public ApiResponse<RecordResponse> getRecordById(HttpSession session, @PathVariable Long recordId) {
+        Long centerId = (Long) session.getAttribute("centerId");
+        if (centerId == null) {
+            throw new BadRequestApiException();
+        }
+            return ApiResponse.success(recordService.getRecordById(recordId));
     }
 
     @PostMapping
-    public ApiResponse<Long> addRecordById() {
-        return null;
+    public ApiResponse<Map<String, Object>> addRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
+        Long centerId = (Long) session.getAttribute("centerId");
+        if (centerId == null) {
+            throw new BadRequestApiException();
+        }
+        return ApiResponse.success(recordService.addRecord(request, centerId));
     }
 
     @PutMapping("{recordId}")
-    public ApiResponse<Long> updateRecordById(@PathVariable Long recordId, @Valid @RequestBody RecordRequest request) {
-        return null;
+    public ApiResponse<Map<String, Object>> updateRecordById(HttpSession session, @PathVariable Long recordId, @Valid @RequestBody RecordUpdateRequest request) {
+        Long centerId = (Long) session.getAttribute("centerId");
+        if (centerId == null) {
+            throw new BadRequestApiException();
+        }
+        return ApiResponse.success(recordService.updateRecordById(recordId, request, centerId));
     }
 
-    @DeleteMapping("/{recordId}")
-    public ApiResponse<Long> deleteRecordById(@PathVariable Long recordId) {
-        return null;
+    @DeleteMapping("{recordId}")
+    public ApiResponse<Map<String, Object>> deleteRecordById(@PathVariable Long recordId, HttpSession session) {
+        Long centerId = (Long) session.getAttribute("centerId");
+        if (centerId == null) {
+            throw new BadRequestApiException();
+        }
+        return ApiResponse.success(recordService.deleteRecordById(recordId, centerId));
     }
 
 
