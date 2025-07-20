@@ -44,6 +44,7 @@ jobs:
 
       # 6. JAR + .env 파일 임시 생성 및 EC2로 전송
       - name: Upload JAR and .env to EC2
+        working-directory: was
         run: |
           echo "${{ secrets.ENV_FILE }}" > was/.env
           cp was/build/libs/*.jar was/app.jar
