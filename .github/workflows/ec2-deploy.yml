@@ -24,9 +24,11 @@ jobs:
       # 3. Gradle Wrapper 권한 부여 및 빌드
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
+        working-directory: was
 
       - name: Build with Gradle
         run: ./gradlew clean build
+        working-directory: was
 
       # 4. EC2에 SSH 접속하기 위한 키 파일 생성
       - name: Generate SSH key
