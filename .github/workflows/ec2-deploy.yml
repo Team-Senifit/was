@@ -45,10 +45,9 @@ jobs:
       # 6. JAR + .env 파일 임시 생성 및 EC2로 전송
       - name: Upload JAR and .env to EC2
         run: |
-          echo "${{ secrets.ENV_FILE }}" > was/.env
-          JAR_NAME=$(ls was/build/libs/*.jar | head -n 1)
-          cp "$JAR_NAME" was/build/libs/app.jar
-          scp -i ~/.ssh/id_rsa was/build/libs/app.jar was/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/senifit/
+          cd was
+          echo "${{ secrets.ENV_FILE }}" > .env
+          scp -i ~/.ssh/id_rsa build/libs/*.jar .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/senifit/
 
       # 7. EC2에서 Spring Boot 앱 실행 (기존 프로세스 종료 후 재시작)
       - name: Run Spring Boot App on EC2
