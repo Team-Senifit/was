@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@RestController("records")
+@RestController
+@RequestMapping("records")
 @Slf4j
 @RequiredArgsConstructor
 public class RecordController {
