@@ -1,0 +1,56 @@
+name: Spring Boot EC2 Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. GitHub에서 코드 체크아웃
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      # 2. JDK 17 설치
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Gradle Wrapper 권한 부여 및 빌드
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      # 4. EC2에 SSH 접속하기 위한 키 파일 생성
+      - name: Generate SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # 5. EC2 known_hosts 등록 (호스트 인증 생략)
+      - name: Add EC2 to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      # 6. JAR + .env 파일 임시 생성 및 EC2로 전송
+      - name: Upload JAR and .env to EC2
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+          scp -i ~/.ssh/id_rsa build/libs/*.jar .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/senifit/
+
+      # 7. EC2에서 Spring Boot 앱 실행 (기존 프로세스 종료 후 재시작)
+      - name: Run Spring Boot App on EC2
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            pgrep -f 'java -jar' | xargs -r kill -9
+            cd /home/${{ secrets.EC2_USER }}/senifit
+            nohup java -jar app.jar > nohup.out 2>&1 &
+          EOF
