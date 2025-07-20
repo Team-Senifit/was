@@ -27,7 +27,7 @@ jobs:
         working-directory: was
 
       - name: Build with Gradle
-        run: ./gradlew clean build --exclude-task test
+        run: ./gradlew clean bootJar --exclude-task test
         working-directory: was
 
       # 4. EC2에 SSH 접속하기 위한 키 파일 생성
@@ -42,19 +42,17 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      # 6. JAR + .env 파일 임시 생성 및 EC2로 전송
+      # 6. JAR + .env 파일 생성 및 EC2로 전송
       - name: Upload JAR and .env to EC2
-        working-directory: was
         run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
-          cp build/libs/*.jar app.jar
-          scp -i ~/.ssh/id_rsa app.jar .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/senifit/
+          echo "${{ secrets.ENV_FILE }}" > was/.env
+          scp -i ~/.ssh/id_rsa was/build/libs/app.jar was/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/senifit/
 
       # 7. EC2에서 Spring Boot 앱 실행
       - name: Run Spring Boot App on EC2
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            pgrep -f 'java -jar' | xargs -r kill -9
+            pkill -f 'java -jar' || true
             cd /home/${{ secrets.EC2_USER }}/senifit
             nohup java -jar app.jar > nohup.out 2>&1 &
           EOF
