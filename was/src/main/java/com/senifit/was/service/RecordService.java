@@ -35,14 +35,16 @@ public class RecordService {
      * 목록 조회
      */
     public List<RecordResponse> getRecordsByCenterId(Long centerId) {
-        return recordsRepository.findAllByCenters_CenterId(centerId);
+//        return recordsRepository.findAllByCenters_CenterId(centerId);
+        return null;
     }
 
     /**
      * 상세 조회
      */
     public RecordResponse getRecordById(Long recordId) {
-        return recordsRepository.findByRecordId(recordId);
+//        return recordsRepository.findByRecordId(recordId);
+        return null;
     }
 
     /**
@@ -67,7 +69,7 @@ public class RecordService {
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
                 .build();
 
-        // RecordsUsers 생성 및 연관관계 설정
+        // RecordsMembers 생성 및 연관관계 설정
         List<RecordsMembers> participants = request.getParticipants().stream()
                 .map(userId -> {
                     Members user = membersRepository.findById(userId)

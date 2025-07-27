@@ -42,7 +42,7 @@ public class RecordController {
     }
 
     @PostMapping
-    public ApiResponse<Map<String, Object>> addRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
+    public ApiResponse<Map<String, Object>> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
         Long centerId = (Long) session.getAttribute("centerId");
         if (centerId == null) {
             throw new BadRequestApiException();

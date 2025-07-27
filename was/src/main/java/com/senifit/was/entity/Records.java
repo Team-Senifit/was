@@ -27,9 +27,6 @@ public class Records {
     private Programs programs;
 
     @OneToMany(mappedBy = "records", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Surveys> surveys;
-
-    @OneToMany(mappedBy = "records", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordsMembers> recordsMembers;
 
     private LocalDateTime startTime;
@@ -46,14 +43,13 @@ public class Records {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Records(Long recordId, Centers centers, Programs programs, LocalDateTime startTime, LocalDateTime endTime, Integer participantCount, List<Surveys> surveys, LocalDateTime updatedAt) {
+    public Records(Long recordId, Centers centers, Programs programs, LocalDateTime startTime, LocalDateTime endTime, Integer participantCount, LocalDateTime updatedAt) {
         this.recordId = recordId;
         this.centers = centers;
         this.programs = programs;
         this.startTime = startTime;
         this.endTime = endTime;
         this.participantCount = participantCount;
-        this.surveys = surveys;
         this.updatedAt = updatedAt;
     }
 

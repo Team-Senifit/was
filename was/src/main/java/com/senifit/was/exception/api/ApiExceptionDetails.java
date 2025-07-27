@@ -22,6 +22,8 @@ public enum ApiExceptionDetails {
 
     // Records
 
+    // Surveys
+    SURVEY_NOT_FOUND(404, "SUR001", "설문이 존재하지 않습니다."),
     // Centers
     CENTER_NOT_FOUND(404, "CEN001", "센터가 존재하지 않습니다."),
 
