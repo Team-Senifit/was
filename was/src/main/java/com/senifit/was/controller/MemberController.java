@@ -3,7 +3,6 @@ package com.senifit.was.controller;
 import com.senifit.was.dto.request.member.MemberRequest;
 import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.member.MemberResponse;
-import com.senifit.was.exception.api.common.BadRequestApiException;
 import com.senifit.was.service.MemberService;
 import com.senifit.was.util.SessionUtils;
 import jakarta.servlet.http.HttpSession;

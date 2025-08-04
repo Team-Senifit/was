@@ -2,7 +2,6 @@ package com.senifit.was.dto.response.center;
 
 import com.senifit.was.dto.response.member.MemberResponse;
 import com.senifit.was.entity.CenterRole;
-import com.senifit.was.entity.Members;
 import lombok.*;
 
 import java.util.List;

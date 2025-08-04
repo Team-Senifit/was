@@ -3,14 +3,11 @@ package com.senifit.was.dto.request.record;
 import com.senifit.was.entity.ExerciseTimes;
 import com.senifit.was.entity.MuscleType1;
 import com.senifit.was.entity.Tools;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;

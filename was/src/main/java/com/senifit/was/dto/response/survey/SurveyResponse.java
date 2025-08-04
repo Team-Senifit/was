@@ -1,6 +1,5 @@
 package com.senifit.was.dto.response.survey;
 
-import com.senifit.was.entity.TroubleParts;
 import lombok.*;
 
 import java.time.LocalDateTime;

@@ -1,10 +1,8 @@
 package com.senifit.was.controller;
 
 import com.senifit.was.dto.request.record.RecordRequest;
-import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.record.RecordResponse;
-import com.senifit.was.exception.api.common.BadRequestApiException;
 import com.senifit.was.service.RecordService;
 import com.senifit.was.util.SessionUtils;
 import jakarta.servlet.http.HttpSession;

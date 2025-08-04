@@ -3,7 +3,6 @@ package com.senifit.was.controller;
 import com.senifit.was.dto.request.center.CenterUpdateRequest;
 import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.center.CenterResponse;
-import com.senifit.was.exception.api.common.BadRequestApiException;
 import com.senifit.was.service.CenterService;
 import com.senifit.was.util.SessionUtils;
 import jakarta.servlet.http.HttpSession;

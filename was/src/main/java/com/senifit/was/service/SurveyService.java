@@ -12,7 +12,6 @@ import com.senifit.was.exception.custom.MemberNotFoundException;
 import com.senifit.was.repository.record.RecordsMembersRepository;
 import com.senifit.was.repository.survey.SurveysRepository;
 import com.senifit.was.repository.survey.TroublePartsRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

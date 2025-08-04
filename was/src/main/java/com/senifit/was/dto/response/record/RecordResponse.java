@@ -2,15 +2,11 @@ package com.senifit.was.dto.response.record;
 
 import com.senifit.was.entity.ExerciseTimes;
 import com.senifit.was.entity.MuscleType1;
-import com.senifit.was.entity.Surveys;
 import com.senifit.was.entity.Tools;
-import jakarta.persistence.Column;
+
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
