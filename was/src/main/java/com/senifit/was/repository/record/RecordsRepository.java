@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RecordsRepository extends JpaRepository<Records, Long> {
-    List<RecordResponse> findAllByCenters_CenterId(Long centerId);
-
+public interface RecordsRepository extends JpaRepository<Records, Long>, RecordsRepositoryCustom {
     Long deleteByRecordIdAndCenters_CenterId(Long recordId, Long centerId);
 
-    RecordResponse findByRecordId(Long recordId);
 }

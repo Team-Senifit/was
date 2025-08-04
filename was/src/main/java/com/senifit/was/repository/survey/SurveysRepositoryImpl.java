@@ -15,7 +15,7 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<SurveyResponse> findSurveyResponsesByRecordIdAndCenterId(Long recordId, Long centerId) {
+    public List<SurveyResponse> findAllSurveyByRecordIdAndCenterId(Long recordId, Long centerId) {
         QSurveys survey = QSurveys.surveys;
         QRecordsMembers recordsMembers = QRecordsMembers.recordsMembers;
         QRecords records = QRecords.records;

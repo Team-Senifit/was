@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface SurveysRepositoryCustom {
-    List<SurveyResponse> findSurveyResponsesByRecordIdAndCenterId(Long recordId, Long centerId);
+    List<SurveyResponse> findAllSurveyByRecordIdAndCenterId(Long recordId, Long centerId);
 }

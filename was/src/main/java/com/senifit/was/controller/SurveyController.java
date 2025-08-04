@@ -34,14 +34,14 @@ public class SurveyController {
         return ApiResponse.success(surveyService.getSurveysByRecordId(recordId, centerId));
     }
 
-    @GetMapping("{surveyId}")
-    public ApiResponse<SurveyResponse> getSurveyById(HttpSession session, @PathVariable("surveyId") Long surveyId) {
-        Long centerId = (Long) session.getAttribute("centerId");
-        if (centerId == null) {
-            throw new BadRequestApiException();
-        }
-        return ApiResponse.success(surveyService.getSurveyById(surveyId));
-    }
+//    @GetMapping("{surveyId}")
+//    public ApiResponse<SurveyResponse> getSurveyById(HttpSession session, @PathVariable("surveyId") Long surveyId) {
+//        Long centerId = (Long) session.getAttribute("centerId");
+//        if (centerId == null) {
+//            throw new BadRequestApiException();
+//        }
+//        return ApiResponse.success(surveyService.getSurveyById(surveyId));
+//    }
 
     @PostMapping
     public ApiResponse<Map<String, Object>> createSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyRequest> request) {
@@ -52,7 +52,7 @@ public class SurveyController {
         return ApiResponse.success(surveyService.addSurvey(request, recordId, centerId));
     }
 
-    @PutMapping("{surveyId}")
+    @PutMapping()
     public ApiResponse<Map<String, Object>> updateSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyUpdateRequest> request) {
         Long centerId = (Long) session.getAttribute("centerId");
         if (centerId == null) {

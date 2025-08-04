@@ -32,14 +32,14 @@ public class RecordController {
         return ApiResponse.success(recordService.getRecordsByCenterId(centerId));
     }
 
-    @GetMapping("{recordId}")
-    public ApiResponse<RecordResponse> getRecordById(HttpSession session, @PathVariable Long recordId) {
-        Long centerId = (Long) session.getAttribute("centerId");
-        if (centerId == null) {
-            throw new BadRequestApiException();
-        }
-            return ApiResponse.success(recordService.getRecordById(recordId));
-    }
+//    @GetMapping("{recordId}")
+//    public ApiResponse<RecordResponse> getRecordById(HttpSession session, @PathVariable Long recordId) {
+//        Long centerId = (Long) session.getAttribute("centerId");
+//        if (centerId == null) {
+//            throw new BadRequestApiException();
+//        }
+//            return ApiResponse.success(recordService.getRecordById(recordId));
+//    }
 
     @PostMapping
     public ApiResponse<Map<String, Object>> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
@@ -50,14 +50,14 @@ public class RecordController {
         return ApiResponse.success(recordService.addRecord(request, centerId));
     }
 
-    @PutMapping("{recordId}")
-    public ApiResponse<Map<String, Object>> updateRecordById(HttpSession session, @PathVariable Long recordId, @Valid @RequestBody RecordUpdateRequest request) {
-        Long centerId = (Long) session.getAttribute("centerId");
-        if (centerId == null) {
-            throw new BadRequestApiException();
-        }
-        return ApiResponse.success(recordService.updateRecordById(recordId, request, centerId));
-    }
+//    @PutMapping("{recordId}")
+//    public ApiResponse<Map<String, Object>> updateRecordById(HttpSession session, @PathVariable Long recordId, @Valid @RequestBody RecordUpdateRequest request) {
+//        Long centerId = (Long) session.getAttribute("centerId");
+//        if (centerId == null) {
+//            throw new BadRequestApiException();
+//        }
+//        return ApiResponse.success(recordService.updateRecordById(recordId, request, centerId));
+//    }
 
     @DeleteMapping("{recordId}")
     public ApiResponse<Map<String, Object>> deleteRecordById(@PathVariable Long recordId, HttpSession session) {

@@ -34,7 +34,7 @@ public class SurveyService {
     private final TroublePartsRepository troublePartsRepository;
 
     public List<SurveyResponse> getSurveysByRecordId(Long recordId, Long centerId) {
-        return surveysRepository.findSurveyResponsesByRecordIdAndCenterId(recordId, centerId);
+        return surveysRepository.findAllSurveyByRecordIdAndCenterId(recordId, centerId);
     }
 
     public SurveyResponse getSurveyById(Long surveyId) {

@@ -4,7 +4,6 @@ import com.senifit.was.dto.request.record.RecordRequest;
 import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.entity.*;
-import com.senifit.was.exception.api.common.NotFoundApiException;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -35,16 +34,14 @@ public class RecordService {
      * 목록 조회
      */
     public List<RecordResponse> getRecordsByCenterId(Long centerId) {
-//        return recordsRepository.findAllByCenters_CenterId(centerId);
-        return null;
+        return recordsRepository.findAllRecordByCenterId(centerId);
     }
 
     /**
      * 상세 조회
      */
     public RecordResponse getRecordById(Long recordId) {
-//        return recordsRepository.findByRecordId(recordId);
-        return null;
+        return recordsRepository.findRecordById(recordId);
     }
 
     /**

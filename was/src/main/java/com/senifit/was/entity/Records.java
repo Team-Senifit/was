@@ -35,6 +35,12 @@ public class Records {
 
     private Integer participantCount;
 
+    @Enumerated(EnumType.STRING)
+    private ExerciseTimes exerciseTimes;
+
+    @Enumerated(EnumType.STRING)
+    private Tools tools;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -43,13 +49,15 @@ public class Records {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Records(Long recordId, Centers centers, Programs programs, LocalDateTime startTime, LocalDateTime endTime, Integer participantCount, LocalDateTime updatedAt) {
+    public Records(Long recordId, Centers centers, Programs programs, LocalDateTime startTime, LocalDateTime endTime, Integer participantCount, ExerciseTimes exerciseTimes, Tools tools, LocalDateTime updatedAt) {
         this.recordId = recordId;
         this.centers = centers;
         this.programs = programs;
         this.startTime = startTime;
         this.endTime = endTime;
         this.participantCount = participantCount;
+        this.exerciseTimes = exerciseTimes;
+        this.tools = tools;
         this.updatedAt = updatedAt;
     }
 

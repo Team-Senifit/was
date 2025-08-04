@@ -39,3 +39,6 @@ out/
 
 ### QEntity ###
 **/Q*.java
+
+# Logs
+logs/
