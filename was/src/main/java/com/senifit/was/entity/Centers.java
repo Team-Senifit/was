@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Centers {
@@ -47,5 +46,10 @@ public class Centers {
         this.name = name;
         this.location = location;
         this.role = role;
+    }
+
+    public void updateCenters(String name, String location) {
+        this.name = name;
+        this.location = location;
     }
 }

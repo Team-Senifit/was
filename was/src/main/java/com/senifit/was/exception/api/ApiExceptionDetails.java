@@ -11,6 +11,7 @@ public enum ApiExceptionDetails {
     BAD_REQUEST(400, "BADREQUEST000", "잘못된 요청입니다."),
     ACCESS_DENIED(403, "ACCESS000", "권한이 부족합니다."),
     NOT_FOUND(404, "NOTFOUND000", "잘못된 경로입니다."),
+    UN_AUTH_SESSION(401, "SESSION000", "유효하지 않은 세션 정보 입니다."),
 
     // Sign Up
     SIGNUP_VALIDATION_ID_EXISTS(409, "SIGNUP_VAL:001", "이미 존재하는 센터 ID 입니다."),

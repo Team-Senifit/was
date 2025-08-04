@@ -10,7 +10,7 @@ import com.senifit.was.exception.custom.MemberNotFoundException;
 import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.repository.program.ProgramsRepository;
 import com.senifit.was.repository.record.RecordsRepository;
-import com.senifit.was.repository.user.MembersRepository;
+import com.senifit.was.repository.member.MembersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -68,8 +68,8 @@ public class RecordService {
 
         // RecordsMembers 생성 및 연관관계 설정
         List<RecordsMembers> participants = request.getParticipants().stream()
-                .map(userId -> {
-                    Members user = membersRepository.findById(userId)
+                .map(memberId -> {
+                    Members user = membersRepository.findById(memberId)
                             .orElseThrow(MemberNotFoundException::new);
 
                     RecordsMembers recordsUsers = new RecordsMembers();

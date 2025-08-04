@@ -6,6 +6,7 @@ import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.exception.api.common.BadRequestApiException;
 import com.senifit.was.service.RecordService;
+import com.senifit.was.util.SessionUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,8 @@ public class RecordController {
 
     @GetMapping
     public ApiResponse<List<RecordResponse>> listRecord(HttpSession session) {
-        Long centerId = (Long) session.getAttribute("centerId");
-        if (centerId == null) {
-            throw new BadRequestApiException();
-        }
+        log.debug("LIST RECORD");
+        Long centerId = SessionUtils.getCenterId(session);
         return ApiResponse.success(recordService.getRecordsByCenterId(centerId));
     }
 
@@ -43,10 +42,8 @@ public class RecordController {
 
     @PostMapping
     public ApiResponse<Map<String, Object>> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
-        Long centerId = (Long) session.getAttribute("centerId");
-        if (centerId == null) {
-            throw new BadRequestApiException();
-        }
+        log.debug("CREATE RECORD");
+        Long centerId = SessionUtils.getCenterId(session);
         return ApiResponse.success(recordService.addRecord(request, centerId));
     }
 
@@ -61,10 +58,8 @@ public class RecordController {
 
     @DeleteMapping("{recordId}")
     public ApiResponse<Map<String, Object>> deleteRecordById(@PathVariable Long recordId, HttpSession session) {
-        Long centerId = (Long) session.getAttribute("centerId");
-        if (centerId == null) {
-            throw new BadRequestApiException();
-        }
+        log.debug("DELETE RECORD");
+        Long centerId = SessionUtils.getCenterId(session);
         return ApiResponse.success(recordService.deleteRecordById(recordId, centerId));
     }
 

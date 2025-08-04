@@ -1,8 +1,38 @@
 package com.senifit.was.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
+import com.senifit.was.dto.request.center.CenterUpdateRequest;
+import com.senifit.was.dto.response.ApiResponse;
+import com.senifit.was.dto.response.center.CenterResponse;
+import com.senifit.was.exception.api.common.BadRequestApiException;
+import com.senifit.was.service.CenterService;
+import com.senifit.was.util.SessionUtils;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("centers")
+import java.util.Map;
+
+@RestController
+@RequestMapping("centers")
+@Slf4j
+@RequiredArgsConstructor
 public class CenterController {
+    private final CenterService centerService;
+
+    @GetMapping()
+    public ApiResponse<CenterResponse> getCenter(HttpSession session) {
+        log.debug("GET CENTER");
+        Long centerId = SessionUtils.getCenterId(session);
+        return centerService.getCenterById(centerId);
+    }
+
+    @PutMapping()
+    public ApiResponse<Map<String, Object>> updateCenterById(HttpSession session, @Valid @RequestBody CenterUpdateRequest request) {
+        log.debug("UPDATE CENTER");
+        Long centerId = SessionUtils.getCenterId(session);
+        return ApiResponse.success(centerService.updateCenterById(request, centerId));
+    }
+
 }
