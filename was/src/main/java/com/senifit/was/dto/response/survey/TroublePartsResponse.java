@@ -1,6 +1,5 @@
 package com.senifit.was.dto.response.survey;
 
-import com.senifit.was.entity.MuscleType1;
 import lombok.*;
 
 @Getter
@@ -9,6 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class TroublePartsResponse {
-
-    MuscleType1 muscleType1;
+    Long target;
 }

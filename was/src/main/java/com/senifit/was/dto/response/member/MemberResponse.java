@@ -1,7 +1,6 @@
 package com.senifit.was.dto.response.member;
 
-import com.senifit.was.entity.Gender;
-import com.senifit.was.entity.MemberRank;
+import com.senifit.was.entity.LookupGender;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -21,8 +20,8 @@ public class MemberResponse {
 
     private Integer age;
 
-    private Gender gender;
+    private Long gender;
 
-    private MemberRank memberRank;
+    private Long memberRank;
 
 }

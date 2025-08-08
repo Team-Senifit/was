@@ -10,9 +10,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SurveyRequest {
+public class SurveyCreateRequest {
 
-    private List<TroublePartsRequest> troubleParts;
+    private List<Integer> troubleParts;
 
     private int attitude;
 

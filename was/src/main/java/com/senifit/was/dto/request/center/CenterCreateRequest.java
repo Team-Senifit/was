@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CenterUpdateRequest {
+public class CenterCreateRequest {
     private Long centerCode;
     private String name;
     private String location;
