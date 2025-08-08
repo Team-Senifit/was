@@ -1,9 +1,10 @@
 package com.senifit.was.controller;
 
+import com.senifit.was.dto.request.center.CenterCreateRequest;
 import com.senifit.was.dto.request.center.CenterUpdateRequest;
 import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.center.CenterResponse;
-import com.senifit.was.service.CenterService;
+import com.senifit.was.service.center.CenterService;
 import com.senifit.was.util.SessionUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -23,15 +24,22 @@ public class CenterController {
     @GetMapping()
     public ApiResponse<CenterResponse> getCenter(HttpSession session) {
         log.debug("GET CENTER");
-        Long centerId = SessionUtils.getCenterId(session);
+        Long centerId = SessionUtils.getUserId(session);
         return centerService.getCenterById(centerId);
     }
 
     @PutMapping()
     public ApiResponse<Map<String, Object>> updateCenterById(HttpSession session, @Valid @RequestBody CenterUpdateRequest request) {
         log.debug("UPDATE CENTER");
-        Long centerId = SessionUtils.getCenterId(session);
-        return ApiResponse.success(centerService.updateCenterById(request, centerId));
+        Long centerId = SessionUtils.getUserId(session);
+        return ApiResponse.success(centerService.updateCenterByCenterCode(request));
     }
 
+    @PostMapping()
+    public ApiResponse<Void> createCenter(HttpSession session, @Valid @RequestBody CenterCreateRequest request) {
+        log.debug("CREATE CENTER");
+        Long centerId = SessionUtils.getUserId(session);
+        centerService.createCenter(request);
+        return ApiResponse.success();
+    }
 }

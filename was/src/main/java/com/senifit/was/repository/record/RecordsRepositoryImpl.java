@@ -2,16 +2,16 @@ package com.senifit.was.repository.record;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.response.record.RecordResponse;
-import com.senifit.was.entity.QPrograms;
-import com.senifit.was.entity.QRecords;
-import com.senifit.was.entity.Records;
+import com.senifit.was.entity.QProgram;
+import com.senifit.was.entity.QRecord;
+import com.senifit.was.entity.Record;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.senifit.was.entity.QSurveys.surveys;
+import static com.senifit.was.entity.QSurvey.survey;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,14 +20,14 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
 
     @Override
     public List<RecordResponse> findAllRecordByCenterId(Long centerId) {
-        QRecords records = QRecords.records;
-        QPrograms programs = QPrograms.programs;
+        QRecord records = QRecord.record;
+        QProgram program = QProgram.program;
 
         // records + programs fetch
-        List<Records> result = queryFactory
+        List<Record> result = queryFactory
                 .selectFrom(records)
-                .leftJoin(records.programs, programs).fetchJoin()
-                .where(records.centers.centerId.eq(centerId))
+                .leftJoin(records.program, program).fetchJoin()
+                .where(records.center.id.eq(centerId))
                 .orderBy(records.createdAt.desc())
                 .fetch();
 
@@ -35,19 +35,17 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                 .map(r -> {
                     boolean surveysExist = queryFactory
                             .selectOne()
-                            .from(surveys)
-                            .where(surveys.recordsMembers.records.recordId.eq(r.getRecordId()))
+                            .from(survey)
+                            .where(survey.memberRecord.record.id.eq(r.getId()))
                             .fetchFirst() != null;
 
                     return RecordResponse.builder()
-                            .recordId(r.getRecordId())
-                            .programId(r.getPrograms().getProgramId())
-                            .centerId(r.getCenters().getCenterId())
-                            .startTime(r.getStartTime())
-                            .endTime(r.getEndTime())
+                            .recordId(r.getId())
+                            .programId(r.getProgram().getId())
+                            .centerId(r.getCenter().getId())
+                            .startTime(r.getStartedAt())
+                            .endTime(r.getFinishedAt())
                             .participantCount(r.getParticipantCount())
-                            .exerciseTimes(r.getExerciseTimes())
-                            .tools(r.getTools())
                             .surveysExist(surveysExist)
                             .build();
                 })
@@ -56,32 +54,30 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
 
     @Override
     public RecordResponse findRecordById(Long recordId) {
-        QRecords records = QRecords.records;
-        QPrograms programs = QPrograms.programs;
+        QRecord records = QRecord.record;
+        QProgram program = QProgram.program;
 
-        Records r = queryFactory
+        Record r = queryFactory
                 .selectFrom(records)
-                .leftJoin(records.programs, programs).fetchJoin()
-                .where(records.recordId.eq(recordId))
+                .leftJoin(records.program, program).fetchJoin()
+                .where(records.id.eq(recordId))
                 .fetchOne();
 
         if (r == null) return null;
 
         boolean surveysExist = queryFactory
                 .selectOne()
-                .from(surveys)
-                .where(surveys.recordsMembers.records.recordId.eq(r.getRecordId()))
+                .from(survey)
+                .where(survey.memberRecord.record.id.eq(r.getId()))
                 .fetchFirst() != null;
 
         return RecordResponse.builder()
-                .recordId(r.getRecordId())
-                .programId(r.getPrograms().getProgramId())
-                .centerId(r.getCenters().getCenterId())
-                .startTime(r.getStartTime())
-                .endTime(r.getEndTime())
+                .recordId(r.getId())
+                .programId(r.getProgram().getId())
+                .centerId(r.getCenter().getId())
+                .startTime(r.getStartedAt())
+                .endTime(r.getFinishedAt())
                 .participantCount(r.getParticipantCount())
-                .exerciseTimes(r.getExerciseTimes())
-                .tools(r.getTools())
                 .surveysExist(surveysExist)
                 .build();
     }

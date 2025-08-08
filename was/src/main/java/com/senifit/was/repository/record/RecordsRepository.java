@@ -1,14 +1,11 @@
 package com.senifit.was.repository.record;
 
-import com.senifit.was.dto.response.record.RecordResponse;
-import com.senifit.was.entity.Records;
+import com.senifit.was.entity.Record;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface RecordsRepository extends JpaRepository<Records, Long>, RecordsRepositoryCustom {
-    Long deleteByRecordIdAndCenters_CenterId(Long recordId, Long centerId);
+public interface RecordsRepository extends JpaRepository<Record, Long>, RecordsRepositoryCustom {
+    Long deleteByIdAndCenter_Id(Long id, Long centerId);
 
 }

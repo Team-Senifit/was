@@ -1,8 +1,5 @@
 package com.senifit.was.dto.request.record;
 
-import com.senifit.was.entity.ExerciseTimes;
-import com.senifit.was.entity.MuscleType1;
-import com.senifit.was.entity.Tools;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,11 +25,9 @@ public class RecordUpdateRequest {
 
     private LocalDateTime endTime;
 
-    private ExerciseTimes exerciseTimes;
+    private Integer exerciseTimes;
 
-    private Tools tools;
+    private String target;
 
-    private boolean taekwondo;
-
-    private MuscleType1 muscleType1;
+    private boolean isSingingIncluded;
 }

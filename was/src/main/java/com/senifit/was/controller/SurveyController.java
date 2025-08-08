@@ -1,6 +1,6 @@
 package com.senifit.was.controller;
 
-import com.senifit.was.dto.request.survey.SurveyRequest;
+import com.senifit.was.dto.request.survey.SurveyCreateRequest;
 import com.senifit.was.dto.request.survey.SurveyUpdateRequest;
 import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.survey.SurveyResponse;
@@ -26,7 +26,7 @@ public class SurveyController {
     @GetMapping()
     public ApiResponse<List<SurveyResponse>> listSurvey(@PathVariable("recordId") Long recordId, HttpSession session) {
         log.debug("LIST SURVEY");
-        Long centerId = SessionUtils.getCenterId(session);
+        Long centerId = SessionUtils.getUserId(session);
         return ApiResponse.success(surveyService.getSurveysByRecordId(recordId, centerId));
     }
 
@@ -40,16 +40,16 @@ public class SurveyController {
 //    }
 
     @PostMapping
-    public ApiResponse<Map<String, Object>> createSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyRequest> request) {
+    public ApiResponse<Map<String, Object>> createSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyCreateRequest> request) {
         log.debug("CREATE SURVEY");
-        Long centerId = SessionUtils.getCenterId(session);
+        Long centerId = SessionUtils.getUserId(session);
         return ApiResponse.success(surveyService.addSurvey(request, recordId, centerId));
     }
 
     @PutMapping()
     public ApiResponse<Map<String, Object>> updateSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyUpdateRequest> request) {
         log.debug("UPDATE SURVEY");
-        Long centerId = SessionUtils.getCenterId(session);
+        Long centerId = SessionUtils.getUserId(session);
         return ApiResponse.success(surveyService.updateSurveyById(request, recordId, centerId));
     }
 

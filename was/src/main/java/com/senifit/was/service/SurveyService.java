@@ -1,14 +1,16 @@
 package com.senifit.was.service;
 
-import com.senifit.was.dto.request.survey.SurveyRequest;
+import com.senifit.was.dto.request.survey.SurveyCreateRequest;
 import com.senifit.was.dto.request.survey.SurveyUpdateRequest;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
-import com.senifit.was.entity.RecordsMembers;
-import com.senifit.was.entity.Surveys;
-import com.senifit.was.entity.TroubleParts;
+import com.senifit.was.entity.MemberRecord;
+import com.senifit.was.entity.Survey;
+import com.senifit.was.entity.SurveyTroublePart;
+import com.senifit.was.exception.api.ApiException;
 import com.senifit.was.exception.custom.SurveyNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
+import com.senifit.was.repository.lookup.LookupTargetRepository;
 import com.senifit.was.repository.record.RecordsMembersRepository;
 import com.senifit.was.repository.survey.SurveysRepository;
 import com.senifit.was.repository.survey.TroublePartsRepository;
@@ -27,56 +29,62 @@ import java.util.List;
 public class SurveyService {
 
     private final SurveysRepository surveysRepository;
-    private final RecordsMembersRepository recordsMembersRepository;
+    private final RecordsMembersRepository memberRecordRepository;
     private final TroublePartsRepository troublePartsRepository;
+    private final LookupTargetRepository lookupTargetRepository;
 
     public List<SurveyResponse> getSurveysByRecordId(Long recordId, Long centerId) {
         return surveysRepository.findAllSurveyByRecordIdAndCenterId(recordId, centerId);
     }
 
     public SurveyResponse getSurveyById(Long surveyId) {
-        Surveys survey = surveysRepository.findById(surveyId)
+        Survey survey = surveysRepository.findById(surveyId)
                 .orElseThrow(SurveyNotFoundException::new);
 
-        List<TroublePartsResponse> troublePartsResponses = survey.getTroubleParts().stream()
+        List<TroublePartsResponse> troublePartsResponses = survey.getSurveyTroubleParts().stream()
                 .map(tp -> TroublePartsResponse.builder()
-                        .muscleType1(tp.getMuscleType1())
+                        .target(tp.getTarget().getId())
                         .build())
                 .toList();
 
         return SurveyResponse.builder()
-                .surveyId(survey.getSurveyId())
+                .surveyId(survey.getId())
                 .troubleParts(troublePartsResponses)
-                .attitude(survey.getAttitude())
-                .ability(survey.getAbility())
-                .trouble(survey.isTrouble())
+                .attitude(survey.getAttitudeScore())
+                .ability(survey.getAbilityScore())
+                .trouble(survey.getHadTrouble())
                 .centerId(survey.getCenterId())
                 .updatedAt(survey.getUpdatedAt())
                 .build();
     }
 
     @Transactional
-    public Long addSurvey(List<SurveyRequest> request, Long recordId, Long centerId) {
-        RecordsMembers recordsMember = recordsMembersRepository
-                .findByRecords_RecordIdAndMembers_Centers_CenterId(recordId, centerId)
+    public Long addSurvey(List<SurveyCreateRequest> request, Long recordId, Long centerId) {
+        MemberRecord memberRecord = memberRecordRepository
+                .findByRecord_IdAndMember_Center_Id(recordId, centerId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        List<Surveys> surveyList = new ArrayList<>();
+        List<Survey> surveyList = new ArrayList<>();
 
-        for (SurveyRequest req : request) {
-            Surveys survey = Surveys.builder()
-                    .recordsMembers(recordsMember)
-                    .attitude(req.getAttitude())
-                    .ability(req.getAbility())
-                    .trouble(req.isTrouble())
+        for (SurveyCreateRequest req : request) {
+            Survey survey = Survey.builder()
+                    .memberRecord(memberRecord)
+                    .attitudeScore(req.getAttitude())
+                    .abilityScore(req.getAbility())
+                    .hadTrouble(req.isTrouble())
                     .centerId(centerId)
                     .build();
 
-            List<TroubleParts> troubleParts = req.getTroubleParts().stream()
-                    .map(tp -> new TroubleParts(tp.getMuscleType1(), survey))
+            List<SurveyTroublePart> targets = req.getTroubleParts().stream()
+                    .map(tp ->
+                            new SurveyTroublePart(
+                                survey,
+                                lookupTargetRepository.getReferenceById(Long.valueOf(tp))
+                            )
+                        )
                     .toList();
 
-            survey.getTroubleParts().addAll(troubleParts);
+            survey.getSurveyTroubleParts().addAll(targets);
             surveyList.add(surveysRepository.save(survey));
         }
 
@@ -89,42 +97,39 @@ public class SurveyService {
     public Long updateSurveyById(List<SurveyUpdateRequest> request, Long recordId, Long centerId) {
 
         // 1. RecordsMembers 조회
-        RecordsMembers recordsMembers = recordsMembersRepository
-                .findByRecords_RecordIdAndMembers_Centers_CenterId(recordId, centerId)
+        MemberRecord memberRecord = memberRecordRepository
+                .findByRecord_IdAndMember_Center_Id(recordId, centerId)
                 .orElseThrow(MemberNotFoundException::new);
 
         // 2. Survey 목록 조회
-        List<Surveys> surveys = surveysRepository.findByRecordsMembers(recordsMembers);
+        List<Survey> surveys = surveysRepository.findByMemberRecord(memberRecord);
         if (surveys.size() != request.size()) {
-            throw new IllegalArgumentException("요청과 일치하는 설문 개수가 다릅니다.");
+            throw new ApiException("idk", 400, "사이즈가 다릅니다.");
         }
 
-        List<Surveys> updatedSurveys = new ArrayList<>();
+        List<Survey> updatedSurveys = new ArrayList<>();
 
         for (int i = 0; i < surveys.size(); i++) {
-            Surveys survey = surveys.get(i);
+            Survey survey = surveys.get(i);
             SurveyUpdateRequest req = request.get(i);
 
             // 기존 TroubleParts 삭제
-            troublePartsRepository.deleteAll(survey.getTroubleParts());
-            survey.getTroubleParts().clear();
+            troublePartsRepository.deleteAll(survey.getSurveyTroubleParts());
+            survey.getSurveyTroubleParts().clear();
 
             // TroubleParts 생성 (Builder 사용)
-            List<TroubleParts> troubleParts = req.getTroubleParts().stream()
-                    .map(tp -> TroubleParts.builder()
-                            .muscleType1(tp.getMuscleType1())
-                            .surveys(survey)
+            List<SurveyTroublePart> troubleParts = req.getTroubleParts().stream()
+                    .map(tp -> SurveyTroublePart.builder()
+                            .target(lookupTargetRepository.getReferenceById(Long.valueOf(tp)))
+                            .survey(survey)
                             .build())
                     .toList();
 
-            survey.updateSurvey(
-                    req.getAttitude(),
-                    req.getAbility(),
-                    req.isTrouble(),
-                    centerId,
-                    troubleParts
-            );
-
+            survey.setAttitudeScore(req.getAttitude());
+            survey.setAbilityScore(req.getAbility());
+            survey.setHadTrouble(req.isTrouble());
+            survey.setCenterId(centerId);
+            survey.setSurveyTroubleParts(troubleParts);
             updatedSurveys.add(survey);
         }
 

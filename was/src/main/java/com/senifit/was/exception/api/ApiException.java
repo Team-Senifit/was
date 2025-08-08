@@ -1,10 +1,12 @@
 package com.senifit.was.exception.api;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ApiException extends RuntimeException {
     private final String errorCode;
     private final int httpStatusCode;
