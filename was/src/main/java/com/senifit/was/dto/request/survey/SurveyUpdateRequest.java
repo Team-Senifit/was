@@ -15,7 +15,7 @@ public class SurveyUpdateRequest {
 
     private Long surveyId;
 
-    private List<TroublePartsRequest> troubleParts;
+    private List<Integer> troubleParts;
 
     private int attitude;
 

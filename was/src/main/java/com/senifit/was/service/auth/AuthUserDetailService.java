@@ -1,6 +1,7 @@
 package com.senifit.was.service.auth;
 
 import com.senifit.was.repository.center.CentersRepository;
+import com.senifit.was.repository.user.UserRepository;
 import com.senifit.was.security.AuthUserDetail;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -13,11 +14,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthUserDetailService implements UserDetailsService {
 
-    private final CentersRepository centersRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new AuthUserDetail(centersRepository.findByid(username)
+        return new AuthUserDetail(userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("AuthUserDetailService: id 없음"))
         );
     }

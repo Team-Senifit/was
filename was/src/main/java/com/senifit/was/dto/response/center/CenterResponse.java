@@ -1,7 +1,6 @@
 package com.senifit.was.dto.response.center;
 
 import com.senifit.was.dto.response.member.MemberResponse;
-import com.senifit.was.entity.CenterRole;
 import lombok.*;
 
 import java.util.List;
@@ -13,13 +12,10 @@ import java.util.List;
 @Builder
 public class CenterResponse {
 
+    private Long centerCode;
     private String name;
-
+    private String description;
     private String location;
-
-    private CenterRole role;
-
     private Integer memberCount;
-
     private List<MemberResponse> members;
 }

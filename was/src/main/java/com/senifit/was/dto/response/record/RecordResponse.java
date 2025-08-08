@@ -1,9 +1,5 @@
 package com.senifit.was.dto.response.record;
 
-import com.senifit.was.entity.ExerciseTimes;
-import com.senifit.was.entity.MuscleType1;
-import com.senifit.was.entity.Tools;
-
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,13 +23,11 @@ public class RecordResponse {
 
     private Integer participantCount;
 
-    private ExerciseTimes exerciseTimes;
+    private Integer exerciseTimes;
 
-    private Tools tools;
+    private String target;
 
-    private boolean taekwondo;
+    private boolean isSingingIncluded;
 
     private boolean surveysExist;
-
-    private MuscleType1 muscleType1;
 }

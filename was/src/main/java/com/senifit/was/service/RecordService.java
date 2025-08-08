@@ -4,11 +4,13 @@ import com.senifit.was.dto.request.record.RecordRequest;
 import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.entity.*;
+import com.senifit.was.entity.Record;
+import com.senifit.was.exception.api.common.NotFoundApiException;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
 import com.senifit.was.repository.center.CentersRepository;
-import com.senifit.was.repository.program.ProgramsRepository;
+import com.senifit.was.repository.program.ProgramRepository;
 import com.senifit.was.repository.record.RecordsRepository;
 import com.senifit.was.repository.member.MembersRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class RecordService {
 
     private final RecordsRepository recordsRepository;
     private final CentersRepository centersRepository;
-    private final ProgramsRepository programsRepository;
+    private final ProgramRepository programRepository;
     private final MembersRepository membersRepository;
 
     /**
@@ -50,38 +52,37 @@ public class RecordService {
     @Transactional
     public Long addRecord(RecordRequest request, Long centerId) {
         // 센터 조회
-        Centers center = centersRepository.findById(centerId)
+        Center center = centersRepository.findById(centerId)
                 .orElseThrow(CenterNotFoundException::new);
 
         // 프로그램 조회
-        Programs program = programsRepository.findById(request.getProgramId())
+        Program program = programRepository.findById(request.getProgramId())
                 .orElseThrow(ProgramNotFoundException::new);
 
         // Record 생성
-        Records record = Records.builder()
-                .centers(center)
-                .programs(program)
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
+        Record record = Record.builder()
+                .center(center)
+                .program(program)
+                .startedAt(request.getStartTime())
+                .finishedAt(request.getEndTime())
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
                 .build();
 
-        // RecordsMembers 생성 및 연관관계 설정
-        List<RecordsMembers> participants = request.getParticipants().stream()
+        // MemberRecord 생성 및 연관성 설정
+        List<MemberRecord> participants = request.getParticipants().stream()
                 .map(memberId -> {
-                    Members user = membersRepository.findById(memberId)
+                    Member member = membersRepository.findById(memberId)
                             .orElseThrow(MemberNotFoundException::new);
 
-                    RecordsMembers recordsUsers = new RecordsMembers();
-                    recordsUsers.setRecords(record);
-                    recordsUsers.setMembers(user);
-                    return recordsUsers;
+                    MemberRecord memberRecord = new MemberRecord(member, record);
+                    memberRecord.setRecord(record);
+                    memberRecord.setMember(member);
+                    return memberRecord;
                 })
                 .collect(Collectors.toList());
 
-        record.updateRecordsMembers(participants);
-
-        return recordsRepository.save(record).getRecordId();
+        record.updateMemberRecords(participants);
+        return recordsRepository.save(record).getId();
     }
 
     /**
@@ -97,8 +98,7 @@ public class RecordService {
      */
     @Transactional
     public Long deleteRecordById(Long recordId, Long centerId) {
-
-        return recordsRepository.deleteByRecordIdAndCenters_CenterId(recordId, centerId);
+        return recordsRepository.deleteByIdAndCenter_Id(recordId, centerId);
     }
 
 }
