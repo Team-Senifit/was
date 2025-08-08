@@ -25,7 +25,7 @@ public class RecordController {
     @GetMapping
     public ApiResponse<List<RecordResponse>> listRecord(HttpSession session) {
         log.debug("LIST RECORD");
-        Long centerId = SessionUtils.getCenterId(session);
+        Long centerId = SessionUtils.getUserId(session);
         return ApiResponse.success(recordService.getRecordsByCenterId(centerId));
     }
 
@@ -41,7 +41,7 @@ public class RecordController {
     @PostMapping
     public ApiResponse<Map<String, Object>> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
         log.debug("CREATE RECORD");
-        Long centerId = SessionUtils.getCenterId(session);
+        Long centerId = SessionUtils.getUserId(session);
         return ApiResponse.success(recordService.addRecord(request, centerId));
     }
 
@@ -57,7 +57,7 @@ public class RecordController {
     @DeleteMapping("{recordId}")
     public ApiResponse<Map<String, Object>> deleteRecordById(@PathVariable Long recordId, HttpSession session) {
         log.debug("DELETE RECORD");
-        Long centerId = SessionUtils.getCenterId(session);
+        Long centerId = SessionUtils.getUserId(session);
         return ApiResponse.success(recordService.deleteRecordById(recordId, centerId));
     }
 

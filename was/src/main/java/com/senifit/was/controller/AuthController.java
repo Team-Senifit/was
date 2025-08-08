@@ -1,14 +1,11 @@
 package com.senifit.was.controller;
 
 import com.senifit.was.dto.response.ApiResponse;
-import com.senifit.was.entity.Centers;
 import com.senifit.was.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.senifit.was.dto.request.auth.RegisterRequestDTO;
+import com.senifit.was.dto.request.auth.RegisterRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -18,7 +15,7 @@ public class AuthController {
     @Autowired private AuthService authService;
 
     @PostMapping("/auth/signup")
-    public ApiResponse<Void> signUp(@RequestBody RegisterRequestDTO dto) {
+    public ApiResponse<Void> signUp(@RequestBody RegisterRequest dto) {
         authService.signUp(dto);
         return ApiResponse.success();
     }
