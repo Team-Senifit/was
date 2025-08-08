@@ -34,6 +34,9 @@ public class Video extends BaseTimeEntity {
     @Column(name = "video_path", nullable = false, length = 512)
     private String videoPath;
 
+    @Column(name = "thumbnail_path", nullable = false, length = 512)
+    private String thumbnailPath;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kind_id", nullable = false)
     private LookupContentKind kind;
