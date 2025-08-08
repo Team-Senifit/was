@@ -1,7 +1,6 @@
 package com.senifit.was.security;
 
-import com.senifit.was.entity.Centers;
-import lombok.AllArgsConstructor;
+import com.senifit.was.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,20 +14,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthUserDetail implements UserDetails {
 
-    private final Centers center;
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(center.getRole().toString()));
+        return List.of(new SimpleGrantedAuthority(user.getRole().toString()));
     }
 
     @Override
     public String getPassword() {
-        return center.getPassword();
+        return user.getPasswordHash();
     }
 
     @Override
     public String getUsername() {
-        return center.getId();
+        return user.getUsername();
     }
 }
