@@ -3,12 +3,14 @@ package com.senifit.was.service;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.request.member.MemberRequest;
 import com.senifit.was.dto.response.member.MemberResponse;
-import com.senifit.was.entity.Centers;
-import com.senifit.was.entity.Members;
-import com.senifit.was.entity.QMembers;
+import com.senifit.was.entity.Center;
+import com.senifit.was.entity.Member;
+import com.senifit.was.entity.QMember;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
 import com.senifit.was.repository.center.CentersRepository;
+import com.senifit.was.repository.lookup.LookupGenderRepository;
+import com.senifit.was.repository.lookup.LookupRankRepository;
 import com.senifit.was.repository.member.MembersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,26 +29,28 @@ public class MemberService {
     private final CentersRepository centersRepository;
     private final MembersRepository membersRepository;
     private final JPAQueryFactory queryFactory;
+    private final LookupGenderRepository lookupGenderRepository;
+    private final LookupRankRepository lookupRankRepository;
 
     /**
      * 센터 회원 목록 조회
      */
     public List<MemberResponse> getMembersByCenterId(Long centerId) {
-        QMembers members = QMembers.members;
+        QMember members = QMember.member;
 
-        List<Members> memberList = queryFactory
+        List<Member> memberList = queryFactory
                 .selectFrom(members)
-                .where(members.centers.centerId.eq(centerId))
+                .where(members.center.id.eq(centerId))
                 .orderBy(members.createdAt.desc())
                 .fetch();
 
         return memberList.stream()
                 .map(m -> MemberResponse.builder()
-                        .memberId(m.getMemberId())
+                        .memberId(m.getId())
                         .name(m.getName())
                         .age(m.getAge())
-                        .gender(m.getGender())
-                        .memberRank(m.getMemberRank())
+                        .gender(m.getGender().getId())
+                        .memberRank(m.getRank().getId())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -55,13 +59,13 @@ public class MemberService {
      * 센터 회원 상세 조회
      */
     public MemberResponse getMemberById(Long centerId, Long memberId) {
-        QMembers members = QMembers.members;
+        QMember members = QMember.member;
 
-        Members member = queryFactory
+        Member member = queryFactory
                 .selectFrom(members)
                 .where(
-                        members.memberId.eq(memberId),
-                        members.centers.centerId.eq(centerId)
+                        members.id.eq(memberId),
+                        members.center.id.eq(centerId)
                 )
                 .fetchOne();
 
@@ -70,11 +74,11 @@ public class MemberService {
         }
 
         return MemberResponse.builder()
-                .memberId(member.getMemberId())
+                .memberId(member.getId())
                 .name(member.getName())
                 .age(member.getAge())
-                .gender(member.getGender())
-                .memberRank(member.getMemberRank())
+                .gender(member.getGender().getId())
+                .memberRank(member.getRank().getId())
                 .build();
     }
 
@@ -83,19 +87,19 @@ public class MemberService {
      */
     @Transactional
     public Long addMember(MemberRequest request, Long centerId) {
-        Centers center = centersRepository.findById(centerId)
+        Center center = centersRepository.findById(centerId)
                 .orElseThrow(CenterNotFoundException::new);
 
-        Members member = Members.builder()
+        Member member = Member.builder()
                 .name(request.getName())
                 .birthDate(request.getBirthDate())
-                .gender(request.getGender())
-                .memberRank(request.getMemberRank())
-                .centers(center)
+                .gender(lookupGenderRepository.getReferenceById(request.getGender()))
+                .rank(lookupRankRepository.getReferenceById(request.getMemberRank()))
+                .center(center)
                 .build();
 
         membersRepository.save(member);
-        return member.getMemberId();
+        return member.getId();
     }
 
     /**
@@ -103,23 +107,26 @@ public class MemberService {
      */
     @Transactional
     public Long updateMemberById(MemberRequest request, Long memberId, Long centerId) {
-        Members member = membersRepository.findById(memberId)
+        Member member = membersRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        member.updateMembers(request.getName(), request.getBirthDate(), request.getGender(), request.getMemberRank());
+        member.setName(request.getName());
+        member.setBirthDate(request.getBirthDate());
+        member.setGender(lookupGenderRepository.getReferenceById(request.getGender()));
+        member.setRank(lookupRankRepository.getReferenceById(request.getMemberRank()));
 
-        return member.getMemberId();
+        return member.getId();
     }
 
     @Transactional
     public Long deleteMemberById(Long memberId, Long centerId) {
-        QMembers members = QMembers.members;
+        QMember qmember = QMember.member;
 
-        Members member = queryFactory
-                .selectFrom(members)
+        Member member = queryFactory
+                .selectFrom(qmember)
                 .where(
-                        members.memberId.eq(memberId),
-                        members.centers.centerId.eq(centerId)
+                        qmember.id.eq(memberId),
+                        qmember.center.id.eq(centerId)
                 )
                 .fetchOne();
 
