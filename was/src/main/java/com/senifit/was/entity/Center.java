@@ -18,33 +18,37 @@ public class Center extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "center_id")
+    private String centerId;
+
     @Column(name = "name", nullable = false, length = 255)
     private String name;
-
-    @Column(name = "center_code", nullable = false, unique = true)
-    private Long centerCode;
-
-    @Column(name = "description", nullable = false, length = 255)
-    private String description = "";
 
     @Column(name = "location")
     private String location;
 
-    @ManyToMany(mappedBy = "centers")
-    private List<User> users = new ArrayList<>();
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private CenterRole role;
+
+    @Column(name = "password_hash")
+    private String passwordHash;
+
 
     @OneToMany(mappedBy = "center", orphanRemoval = true)
     private List<Member> members = new ArrayList<>();
-
 
     @Builder
     public Center(String passwordHash,
                   String name,
                   String location,
-                  String description) {
+                  CenterRole role,
+                  String centerId) {
         this.name = name;
         this.location = location;
-        this.description = description;
+        this.role = role;
+        this.centerId = centerId;
+        this.passwordHash = passwordHash;
     }
 }
 

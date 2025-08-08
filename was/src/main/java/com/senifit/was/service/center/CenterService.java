@@ -6,13 +6,15 @@ import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.center.CenterResponse;
 import com.senifit.was.dto.response.member.MemberResponse;
 import com.senifit.was.entity.Center;
+import com.senifit.was.entity.CenterRole;
 import com.senifit.was.entity.Member;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.repository.member.MembersRepository;
-import com.senifit.was.service.center.exception.DuplicateCenterCodeExcpetion;
+import com.senifit.was.service.auth.exception.SignupValidationIdExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class CenterService {
     private final CentersRepository centersRepository;
     private final MembersRepository membersRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Center 조회
@@ -48,7 +51,6 @@ public class CenterService {
 
         CenterResponse response = CenterResponse.builder()
                 .name(center.getName())
-                .centerCode(center.getCenterCode())
                 .location(center.getLocation())
                 .memberCount(center.getMembers().size())
                 .members(memberResponses)
@@ -62,23 +64,23 @@ public class CenterService {
      */
     @Transactional
     public Long updateCenterByCenterCode(CenterUpdateRequest request) {
-        Center center = centersRepository.findByCenterCode(request.getCenterCode())
+        Center center = centersRepository.findByCenterId(request.getId())
                         .orElseThrow(CenterNotFoundException::new);
-
         center.setName(center.getName());
         center.setLocation(center.getLocation());
-        center.setDescription(center.getDescription());
         return center.getId();
     }
 
     @Transactional
     public void createCenter(CenterCreateRequest request) {
-        if (centersRepository.existsByCenterCode(request.getCenterCode()))
-            throw new DuplicateCenterCodeExcpetion();
+        if (centersRepository.existsByCenterId(request.getId()))
+            throw new SignupValidationIdExistsException();
         Center center = Center.builder()
                 .name(request.getName())
+                .centerId(request.getId())
                 .location(request.getLocation())
-                .description(request.getDescription())
+                .role(CenterRole.valueOf(request.getRole()))
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .build();
         centersRepository.save(center);
     }

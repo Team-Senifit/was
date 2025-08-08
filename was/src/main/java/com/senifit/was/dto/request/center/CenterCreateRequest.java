@@ -1,5 +1,6 @@
 package com.senifit.was.dto.request.center;
 
+import com.senifit.was.entity.CenterRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CenterCreateRequest {
-    private Long centerCode;
+    private String id;
     private String name;
     private String location;
-    private String description;
+    private String role;
+    private String password;
 }
