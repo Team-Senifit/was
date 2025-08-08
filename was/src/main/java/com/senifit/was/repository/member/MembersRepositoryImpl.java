@@ -1,8 +1,8 @@
 package com.senifit.was.repository.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.senifit.was.entity.Members;
-import com.senifit.was.entity.QMembers;
+import com.senifit.was.entity.QMember;
+import com.senifit.was.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -15,12 +15,12 @@ public class MembersRepositoryImpl implements MembersRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Members> findTop5ByCenterIdOrderByCreatedAtDesc(Long centerId) {
-        QMembers members = QMembers.members;
+    public List<Member> findTop5ByCenterIdOrderByCreatedAtDesc(Long centerId) {
+        QMember members = QMember.member;
 
         return queryFactory
                 .selectFrom(members)
-                .where(members.centers.centerId.eq(centerId))
+                .where(members.center.id.eq(centerId))
                 .orderBy(members.createdAt.desc())
                 .limit(5)
                 .fetch();

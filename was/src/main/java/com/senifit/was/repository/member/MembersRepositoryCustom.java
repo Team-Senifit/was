@@ -1,6 +1,6 @@
 package com.senifit.was.repository.member;
 
-import com.senifit.was.entity.Members;
+import com.senifit.was.entity.Member;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface MembersRepositoryCustom {
 
-    List<Members> findTop5ByCenterIdOrderByCreatedAtDesc(Long centerId);
+    List<Member> findTop5ByCenterIdOrderByCreatedAtDesc(Long centerId);
 }

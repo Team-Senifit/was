@@ -3,7 +3,11 @@ package com.senifit.was.repository.survey;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
-import com.senifit.was.entity.*;
+import com.senifit.was.entity.QSurvey;
+import com.senifit.was.entity.QRecord;
+import com.senifit.was.entity.QMemberRecord;
+import com.senifit.was.entity.QSurveyTroublePart;
+import com.senifit.was.entity.Survey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -16,33 +20,33 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
 
     @Override
     public List<SurveyResponse> findAllSurveyByRecordIdAndCenterId(Long recordId, Long centerId) {
-        QSurveys survey = QSurveys.surveys;
-        QRecordsMembers recordsMembers = QRecordsMembers.recordsMembers;
-        QRecords records = QRecords.records;
-        QTroubleParts troubleParts = QTroubleParts.troubleParts;
+        QSurvey survey = QSurvey.survey;
+        QMemberRecord memberRecord = QMemberRecord.memberRecord;
+        QRecord record = QRecord.record;
+        QSurveyTroublePart troublePart = QSurveyTroublePart.surveyTroublePart;
 
-        List<Surveys> surveys = queryFactory
+        List<Survey> surveys = queryFactory
                 .selectFrom(survey)
-                .join(survey.recordsMembers, recordsMembers)
-                .join(recordsMembers.records, records)
-                .leftJoin(survey.troubleParts, troubleParts).fetchJoin()
-                .where(records.recordId.eq(recordId),
+                .join(survey.memberRecord, memberRecord)
+                .join(memberRecord.record, record)
+                .leftJoin(survey.surveyTroubleParts, troublePart).fetchJoin()
+                .where(record.id.eq(recordId),
                         survey.centerId.eq(centerId))
                 .fetch();
 
         return surveys.stream()
                 .map(s -> SurveyResponse.builder()
-                        .surveyId(s.getSurveyId())
+                        .surveyId(s.getId())
                         .troubleParts(
-                                s.getTroubleParts().stream()
+                                s.getSurveyTroubleParts().stream()
                                         .map(tp -> TroublePartsResponse.builder()
-                                                .muscleType1(tp.getMuscleType1())
+                                                .target(tp.getTarget().getId())
                                                 .build())
                                         .collect(Collectors.toList())
                         )
-                        .attitude(s.getAttitude())
-                        .ability(s.getAbility())
-                        .trouble(s.isTrouble())
+                        .attitude(s.getAttitudeScore())
+                        .ability(s.getAbilityScore())
+                        .trouble(Boolean.TRUE.equals(s.getHadTrouble()))
                         .centerId(s.getCenterId())
                         .updatedAt(s.getUpdatedAt())
                         .build())

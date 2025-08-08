@@ -2,25 +2,29 @@ package com.senifit.was.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class ExercisesToolTypes {
+@Table(name = "programs_bundles")
+public class ProgramBundle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercises_id", nullable = false)
-    private Exercises exercises;
+    @JoinColumn(name = "program_id", nullable = false)
+    private Program program;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tool_types_id", nullable = false)
-    private ToolTypes toolTypes;
+    @JoinColumn(name = "bundle_id", nullable = false)
+    private Bundle bundle;
+
+    @Column(name = "sequence")
+    private Integer sequence;
 }
+
