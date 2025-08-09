@@ -5,6 +5,8 @@ import com.senifit.was.entity.Center;
 import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.security.CenterDetail;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,11 +23,20 @@ public class AuthUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Center center = centerRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("AuthUserDetailService: centerId 없음"));
-        return CenterDetail.builder()
+        CenterDetail cd = CenterDetail.builder()
                 .loginId(center.getLoginId())
                 .centerId(center.getCenterId())
                 .password(center.getPassword())
                 .role(center.getRole())
                 .build();
+        return cd;
+    }
+
+    public CenterDetail getCurrentCenterDetail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CenterDetail)) {
+            return null;
+        }
+        return (CenterDetail) authentication.getPrincipal();
     }
 }
