@@ -37,6 +37,9 @@ public class Program extends BaseTimeEntity {
     @Column(name = "duration", nullable = false)
     private Integer duration;
 
+    @Column(name = "thumbnail_path", length = 255)
+    private String thumbnailPath;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warmup_workout_kind_id")
     private LookupContentKind warmupWorkoutKind;

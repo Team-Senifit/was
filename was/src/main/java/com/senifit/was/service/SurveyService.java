@@ -2,14 +2,17 @@ package com.senifit.was.service;
 
 import com.senifit.was.dto.request.survey.SurveyCreateRequest;
 import com.senifit.was.dto.request.survey.SurveyUpdateRequest;
+import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
 import com.senifit.was.entity.MemberRecord;
 import com.senifit.was.entity.Survey;
 import com.senifit.was.entity.SurveyTroublePart;
 import com.senifit.was.exception.api.ApiException;
+import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.exception.custom.SurveyNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
+import com.senifit.was.exception.custom.SurveySizeMismatchException;
 import com.senifit.was.repository.lookup.LookupTargetRepository;
 import com.senifit.was.repository.record.RecordsMembersRepository;
 import com.senifit.was.repository.survey.SurveysRepository;
@@ -28,12 +31,21 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class SurveyService {
 
+    private final RecordService recordService;
     private final SurveysRepository surveysRepository;
     private final RecordsMembersRepository memberRecordRepository;
     private final TroublePartsRepository troublePartsRepository;
     private final LookupTargetRepository lookupTargetRepository;
 
     public List<SurveyResponse> getSurveysByRecordId(Long recordId, Long centerId) {
+
+        RecordResponse record = recordService.getRecordById(recordId);
+
+        // record가 없거나 centerId가 다를 시, 예외 처리
+        if (record == null || (record.getCenterId() != null && !record.getCenterId().equals(centerId))) {
+            throw new RecordNotFoundException();
+        }
+
         return surveysRepository.findAllSurveyByRecordIdAndCenterId(recordId, centerId);
     }
 
@@ -48,12 +60,11 @@ public class SurveyService {
                 .toList();
 
         return SurveyResponse.builder()
-                .surveyId(survey.getId())
+                .surveyId(survey.getSurveyId())
                 .troubleParts(troublePartsResponses)
-                .attitude(survey.getAttitudeScore())
-                .ability(survey.getAbilityScore())
-                .trouble(survey.getHadTrouble())
-                .centerId(survey.getCenterId())
+                .attitudeScore(survey.getAttitudeScore())
+                .abilityScore(survey.getAbilityScore())
+                .hadTrouble(survey.getHadTrouble())
                 .updatedAt(survey.getUpdatedAt())
                 .build();
     }
@@ -61,7 +72,7 @@ public class SurveyService {
     @Transactional
     public Long addSurvey(List<SurveyCreateRequest> request, Long recordId, Long centerId) {
         MemberRecord memberRecord = memberRecordRepository
-                .findByRecord_IdAndMember_Center_Id(recordId, centerId)
+                .findByRecord_RecordIdAndMember_Center_CenterId(recordId, centerId)
                 .orElseThrow(MemberNotFoundException::new);
 
         List<Survey> surveyList = new ArrayList<>();
@@ -69,9 +80,9 @@ public class SurveyService {
         for (SurveyCreateRequest req : request) {
             Survey survey = Survey.builder()
                     .memberRecord(memberRecord)
-                    .attitudeScore(req.getAttitude())
-                    .abilityScore(req.getAbility())
-                    .hadTrouble(req.isTrouble())
+                    .attitudeScore(req.getAttitudeScore())
+                    .abilityScore(req.getAbilityScore())
+                    .hadTrouble(req.isHadTrouble())
                     .centerId(centerId)
                     .build();
 
@@ -79,7 +90,7 @@ public class SurveyService {
                     .map(tp ->
                             new SurveyTroublePart(
                                 survey,
-                                lookupTargetRepository.getReferenceById(Long.valueOf(tp))
+                                lookupTargetRepository.getReferenceById(tp.getId())
                             )
                         )
                     .toList();
@@ -98,13 +109,13 @@ public class SurveyService {
 
         // 1. RecordsMembers 조회
         MemberRecord memberRecord = memberRecordRepository
-                .findByRecord_IdAndMember_Center_Id(recordId, centerId)
+                .findByRecord_RecordIdAndMember_Center_CenterId(recordId, centerId)
                 .orElseThrow(MemberNotFoundException::new);
 
         // 2. Survey 목록 조회
         List<Survey> surveys = surveysRepository.findByMemberRecord(memberRecord);
         if (surveys.size() != request.size()) {
-            throw new ApiException("idk", 400, "사이즈가 다릅니다.");
+            throw new SurveySizeMismatchException();
         }
 
         List<Survey> updatedSurveys = new ArrayList<>();
@@ -125,11 +136,15 @@ public class SurveyService {
                             .build())
                     .toList();
 
-            survey.setAttitudeScore(req.getAttitude());
-            survey.setAbilityScore(req.getAbility());
-            survey.setHadTrouble(req.isTrouble());
-            survey.setCenterId(centerId);
-            survey.setSurveyTroubleParts(troubleParts);
+
+            survey.updateSurvey(
+                    req.getAttitude(),
+                    req.getAbility(),
+                    req.isTrouble(),
+                    centerId,
+                    troubleParts
+            );
+
             updatedSurveys.add(survey);
         }
 

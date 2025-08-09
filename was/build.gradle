@@ -7,6 +7,8 @@ plugins {
 group = 'com.senifit'
 version = '0.0.1-SNAPSHOT'
 
+apply from: "$rootDir/global-enum.gradle"
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)

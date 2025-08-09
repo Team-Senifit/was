@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface CentersRepository extends JpaRepository<Center, Long> {
-    Optional<Center> findByCenterCode(Long centerCode);
-    boolean existsByCenterCode(Long centerCode);
+    Optional<Center> findByLoginId(String loginId);
+    boolean existsByLoginId(String loginId);
 }

@@ -6,13 +6,15 @@ import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.center.CenterResponse;
 import com.senifit.was.dto.response.member.MemberResponse;
 import com.senifit.was.entity.Center;
+import com.senifit.was.entity.CenterRole;
 import com.senifit.was.entity.Member;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.repository.member.MembersRepository;
-import com.senifit.was.service.center.exception.DuplicateCenterCodeExcpetion;
+import com.senifit.was.service.auth.exception.SignupValidationIdExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class CenterService {
     private final CentersRepository centersRepository;
     private final MembersRepository membersRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Center 조회
@@ -38,9 +41,9 @@ public class CenterService {
 
         List<MemberResponse> memberResponses = top5Members.stream()
                 .map(m -> MemberResponse.builder()
-                        .memberId(m.getId())
+                        .memberId(m.getMemberId())
                         .name(m.getName())
-                        .age(m.getAge())
+                        .birthDate(m.getBirthDate())
                         .gender(m.getGender().getId())
                         .memberRank(m.getRank().getId())
                         .build())
@@ -48,7 +51,6 @@ public class CenterService {
 
         CenterResponse response = CenterResponse.builder()
                 .name(center.getName())
-                .centerCode(center.getCenterCode())
                 .location(center.getLocation())
                 .memberCount(center.getMembers().size())
                 .members(memberResponses)
@@ -61,24 +63,23 @@ public class CenterService {
      * Center 정보 수정
      */
     @Transactional
-    public Long updateCenterByCenterCode(CenterUpdateRequest request) {
-        Center center = centersRepository.findByCenterCode(request.getCenterCode())
+    public Long updateCenterByCenterId(CenterUpdateRequest request, Long centerId) {
+        Center center = centersRepository.findById(centerId)
                         .orElseThrow(CenterNotFoundException::new);
-
-        center.setName(center.getName());
-        center.setLocation(center.getLocation());
-        center.setDescription(center.getDescription());
-        return center.getId();
+        center.updateCenter(request.getName(), request.getLocation());
+        return center.getCenterId();
     }
 
     @Transactional
     public void createCenter(CenterCreateRequest request) {
-        if (centersRepository.existsByCenterCode(request.getCenterCode()))
-            throw new DuplicateCenterCodeExcpetion();
+        if (centersRepository.existsByLoginId(request.getLoginId()))
+            throw new SignupValidationIdExistsException();
         Center center = Center.builder()
                 .name(request.getName())
+                .loginId(request.getLoginId())
                 .location(request.getLocation())
-                .description(request.getDescription())
+                .role(CenterRole.valueOf(request.getRole()))
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
         centersRepository.save(center);
     }

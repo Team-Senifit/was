@@ -22,9 +22,12 @@ public enum ApiExceptionDetails {
     SIGNIN_MAXIMUM_SESSION_COUNT(403, "SIGNIN:002", "동시에 접속할 수 있는 최대 한도를 초과했습니다."),
 
     // Records
+    RECORD_NOT_FOUND(404, "REC001", "레코드가 존재하지 않습니다."),
 
     // Surveys
     SURVEY_NOT_FOUND(404, "SUR001", "설문이 존재하지 않습니다."),
+    SURVEY_SIZE_MISMATCH(400, "SUR002", "요청한 설문 개수와 실제 설문 개수가 일치하지 않습니다."),
+
     // Centers
     CENTER_NOT_FOUND(404, "CEN001", "센터가 존재하지 않습니다."),
     CENTER_DUPLICATE_CODE(409, "CEN002", "이미 존재하는 센터 ID 입니다."),

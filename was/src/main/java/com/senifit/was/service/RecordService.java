@@ -5,7 +5,6 @@ import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.entity.*;
 import com.senifit.was.entity.Record;
-import com.senifit.was.exception.api.common.NotFoundApiException;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -68,6 +67,20 @@ public class RecordService {
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
                 .build();
 
+        // 선택값 설정 (DB에는 converter로 BIGINT id 저장)
+        if (request.getRoutineKind() != null) {
+            record.setRoutineKind(request.getRoutineKind());
+        }
+        if (request.getCognitiveKind() != null) {
+            record.setCognitiveKind(request.getCognitiveKind());
+        }
+        if (request.getSingingKind() != null) {
+            record.setIncludesSinging(request.getSingingKind());
+        }
+        if (request.getDurationKind() != null) {
+            record.setDurationKind(request.getDurationKind());
+        }
+
         // MemberRecord 생성 및 연관성 설정
         List<MemberRecord> participants = request.getParticipants().stream()
                 .map(memberId -> {
@@ -82,7 +95,7 @@ public class RecordService {
                 .collect(Collectors.toList());
 
         record.updateMemberRecords(participants);
-        return recordsRepository.save(record).getId();
+        return recordsRepository.save(record).getRecordId();
     }
 
     /**
@@ -98,7 +111,7 @@ public class RecordService {
      */
     @Transactional
     public Long deleteRecordById(Long recordId, Long centerId) {
-        return recordsRepository.deleteByIdAndCenter_Id(recordId, centerId);
+        return recordsRepository.deleteByRecordIdAndCenter_CenterId(recordId, centerId);
     }
 
 }

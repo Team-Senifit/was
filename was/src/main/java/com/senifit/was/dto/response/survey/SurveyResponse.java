@@ -16,13 +16,11 @@ public class SurveyResponse {
 
     private List<TroublePartsResponse> troubleParts;
 
-    private int attitude;
+    private int attitudeScore;
 
-    private int ability;
+    private int abilityScore;
 
-    private boolean trouble;
-
-    private Long centerId;
+    private boolean hadTrouble;
 
     private LocalDateTime updatedAt;
 }

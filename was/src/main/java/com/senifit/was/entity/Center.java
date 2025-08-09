@@ -8,43 +8,49 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "centers")
 public class Center extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "center_id")
+    private Long centerId;
+
+    @Column(name = "login_id")
+    private String loginId;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "center_code", nullable = false, unique = true)
-    private Long centerCode;
-
-    @Column(name = "description", nullable = false, length = 255)
-    private String description = "";
-
     @Column(name = "location")
     private String location;
 
-    @ManyToMany(mappedBy = "centers")
-    private List<User> users = new ArrayList<>();
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private CenterRole role;
 
-    @OneToMany(mappedBy = "center", orphanRemoval = true)
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> members = new ArrayList<>();
 
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Record> Records = new ArrayList<>();
 
     @Builder
-    public Center(String passwordHash,
-                  String name,
-                  String location,
-                  String description) {
+    public Center(String loginId, String password, String name, String location, CenterRole role) {
+        this.loginId = loginId;
+        this.password = password;
         this.name = name;
         this.location = location;
-        this.description = description;
+        this.role = role;
+    }
+
+    public void updateCenter(String name, String location) {
+        this.name = name;
+        this.location = location;
     }
 }
 

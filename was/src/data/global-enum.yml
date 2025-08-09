@@ -1,0 +1,45 @@
+### 서비스에서 쓰이는 여러가지 enum 타입들을 계층형으로 통합한 enum 입니다.
+### 앞의 16진수는 백엔드 DB에 쓰이는 id이며, 뒤의 코드는 프론트엔드에서 request/response에 사용하는 문자열 코드입니다.
+
+0x10000000: workout
+0x11000000: workout.not_selected
+
+0x12100000: workout.duration.30minutes
+0x12200000: workout.duration.60minutes
+
+0x13100000: workout.kinds.warmup
+0x13200000: workout.kinds.cooldown
+
+0x13300000: workout.kinds.cognitive
+0x13311000: workout.kinds.cognitive.kinds.taekwondo
+0x13312000: workout.kinds.cognitive.kinds.dualtasking
+0x13313000: workout.kinds.cognitive.kinds.continuous
+
+0x13400000: workout.kinds.calisthenic
+0x13411000: workout.kinds.calisthenic.kinds.unilateral
+0x13412000: workout.kinds.calisthenic.kinds.ipsilateral
+0x13421000: workout.kinds.calisthenic.targets.arms
+0x13422000: workout.kinds.calisthenic.targets.shoulders
+0x13423000: workout.kinds.calisthenic.targets.abs
+0x13424000: workout.kinds.calisthenic.targets.legs
+0x13425000: workout.kinds.calisthenic.targets.back
+0x13426000: workout.kinds.calisthenic.targets.arm
+0x13427000: workout.kinds.calisthenic.targets.arms_and_shoulders
+
+0x13500000: workout.kinds.singing
+
+0x14100000: workout.purposes.strength_improvement
+0x14200000: workout.purposes.coordination_improvement
+0x14300000: workout.purposes.muscular_endurance_improvement
+0x14400000: workout.purposes.flexibility_improvement
+0x14500000: workout.purposes.cardiovascular_endurance_improvement
+0x14600000: workout.purposes.cognitive_and_dual_task_ability
+0x14700000: workout.purposes.posture_correction
+0x14800000: workout.purposes.balance_improvement
+0x14900000: workout.purposes.functional_movement_improvement
+0x14A00000: workout.purposes.agility_improvement
+0x14B00000: workout.purposes.blood_sugar_pressure_control
+
+0x15110000: workout.programs.selections.popular
+0x15120000: workout.programs.selections.personal
+0x15130000: workout.programs.selections.target

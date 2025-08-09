@@ -11,10 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CenterResponse {
-
-    private Long centerCode;
     private String name;
-    private String description;
     private String location;
     private Integer memberCount;
     private List<MemberResponse> members;

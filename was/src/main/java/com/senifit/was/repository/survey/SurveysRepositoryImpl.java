@@ -30,13 +30,13 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                 .join(survey.memberRecord, memberRecord)
                 .join(memberRecord.record, record)
                 .leftJoin(survey.surveyTroubleParts, troublePart).fetchJoin()
-                .where(record.id.eq(recordId),
+                .where(record.recordId.eq(recordId),
                         survey.centerId.eq(centerId))
                 .fetch();
 
         return surveys.stream()
                 .map(s -> SurveyResponse.builder()
-                        .surveyId(s.getId())
+                        .surveyId(s.getSurveyId())
                         .troubleParts(
                                 s.getSurveyTroubleParts().stream()
                                         .map(tp -> TroublePartsResponse.builder()
@@ -44,10 +44,9 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                                                 .build())
                                         .collect(Collectors.toList())
                         )
-                        .attitude(s.getAttitudeScore())
-                        .ability(s.getAbilityScore())
-                        .trouble(Boolean.TRUE.equals(s.getHadTrouble()))
-                        .centerId(s.getCenterId())
+                        .attitudeScore(s.getAttitudeScore())
+                        .abilityScore(s.getAbilityScore())
+                        .hadTrouble(Boolean.TRUE.equals(s.getHadTrouble()))
                         .updatedAt(s.getUpdatedAt())
                         .build())
                 .collect(Collectors.toList());

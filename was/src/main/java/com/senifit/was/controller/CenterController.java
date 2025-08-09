@@ -32,14 +32,7 @@ public class CenterController {
     public ApiResponse<Map<String, Object>> updateCenterById(HttpSession session, @Valid @RequestBody CenterUpdateRequest request) {
         log.debug("UPDATE CENTER");
         Long centerId = SessionUtils.getUserId(session);
-        return ApiResponse.success(centerService.updateCenterByCenterCode(request));
+        return ApiResponse.success(centerService.updateCenterByCenterId(request, centerId));
     }
 
-    @PostMapping()
-    public ApiResponse<Void> createCenter(HttpSession session, @Valid @RequestBody CenterCreateRequest request) {
-        log.debug("CREATE CENTER");
-        Long centerId = SessionUtils.getUserId(session);
-        centerService.createCenter(request);
-        return ApiResponse.success();
-    }
 }

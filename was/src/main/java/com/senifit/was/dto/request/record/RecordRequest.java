@@ -1,6 +1,12 @@
 package com.senifit.was.dto.request.record;
 
-import jakarta.validation.constraints.NotBlank;
+import com.senifit.was.entity.selections.RoutineKind;
+import com.senifit.was.entity.selections.CognitiveKind;
+import com.senifit.was.entity.selections.DurationKind;
+import com.senifit.was.entity.selections.IncludesSinging;
+import com.senifit.was.entity.selections.TargetKind;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,21 +21,17 @@ import java.util.List;
 @AllArgsConstructor
 public class RecordRequest {
 
-    @NotBlank
+    @NotNull
     private Long programId;
-
-    @NotBlank
-    private Long centerId;
-
     private List<Long> participants;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-    private Integer exerciseTimes;
-
-    private String target;
-
-    private boolean taekwondo;
+    private RoutineKind routineKind;
+    private CognitiveKind cognitiveKind;
+    private IncludesSinging singingKind;
+    private DurationKind durationKind;
+    private TargetKind targetKind;
 }
