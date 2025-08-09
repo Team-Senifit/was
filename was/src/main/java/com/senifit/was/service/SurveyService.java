@@ -62,10 +62,9 @@ public class SurveyService {
         return SurveyResponse.builder()
                 .surveyId(survey.getSurveyId())
                 .troubleParts(troublePartsResponses)
-                .attitude(survey.getAttitudeScore())
-                .ability(survey.getAbilityScore())
-                .trouble(survey.getHadTrouble())
-                .centerId(survey.getCenterId())
+                .attitudeScore(survey.getAttitudeScore())
+                .abilityScore(survey.getAbilityScore())
+                .hadTrouble(survey.getHadTrouble())
                 .updatedAt(survey.getUpdatedAt())
                 .build();
     }
@@ -81,9 +80,9 @@ public class SurveyService {
         for (SurveyCreateRequest req : request) {
             Survey survey = Survey.builder()
                     .memberRecord(memberRecord)
-                    .attitudeScore(req.getAttitude())
-                    .abilityScore(req.getAbility())
-                    .hadTrouble(req.isTrouble())
+                    .attitudeScore(req.getAttitudeScore())
+                    .abilityScore(req.getAbilityScore())
+                    .hadTrouble(req.isHadTrouble())
                     .centerId(centerId)
                     .build();
 
@@ -91,7 +90,7 @@ public class SurveyService {
                     .map(tp ->
                             new SurveyTroublePart(
                                 survey,
-                                lookupTargetRepository.getReferenceById(Long.valueOf(tp))
+                                lookupTargetRepository.getReferenceById(tp.getId())
                             )
                         )
                     .toList();

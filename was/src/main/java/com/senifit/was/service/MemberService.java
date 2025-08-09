@@ -48,7 +48,7 @@ public class MemberService {
                 .map(m -> MemberResponse.builder()
                         .memberId(m.getMemberId())
                         .name(m.getName())
-                        .age(m.getAge())
+                        .birthDate(m.getBirthDate())
                         .gender(m.getGender().getId())
                         .memberRank(m.getRank().getId())
                         .build())
@@ -76,7 +76,7 @@ public class MemberService {
         return MemberResponse.builder()
                 .memberId(member.getMemberId())
                 .name(member.getName())
-                .age(member.getAge())
+                .birthDate(member.getBirthDate())
                 .gender(member.getGender().getId())
                 .memberRank(member.getRank().getId())
                 .build();

@@ -1,13 +1,9 @@
 package com.senifit.was.service.auth;
 
-import com.senifit.was.dto.request.center.CenterCreateRequest;
 import com.senifit.was.entity.Center;
 import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.security.CenterDetail;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

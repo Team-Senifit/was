@@ -1,5 +1,6 @@
 package com.senifit.was.util;
 
+import com.senifit.was.exception.api.common.NoAccessApiException;
 import com.senifit.was.exception.api.common.UnauthenticatedSessionException;
 import com.senifit.was.security.CenterDetail;
 import com.senifit.was.service.auth.AuthUserDetailService;
@@ -14,7 +15,7 @@ public class SessionUtils {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof CenterDetail)) {
-            throw new UnauthenticatedSessionException();
+            throw new NoAccessApiException();
         }
         CenterDetail cd = (CenterDetail) authentication.getPrincipal();
         return cd.getCenterId();

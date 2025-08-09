@@ -67,6 +67,20 @@ public class RecordService {
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
                 .build();
 
+        // 선택값 설정 (DB에는 converter로 BIGINT id 저장)
+        if (request.getRoutineKind() != null) {
+            record.setRoutineKind(request.getRoutineKind());
+        }
+        if (request.getCognitiveKind() != null) {
+            record.setCognitiveKind(request.getCognitiveKind());
+        }
+        if (request.getSingingKind() != null) {
+            record.setIncludesSinging(request.getSingingKind());
+        }
+        if (request.getDurationKind() != null) {
+            record.setDurationKind(request.getDurationKind());
+        }
+
         // MemberRecord 생성 및 연관성 설정
         List<MemberRecord> participants = request.getParticipants().stream()
                 .map(memberId -> {

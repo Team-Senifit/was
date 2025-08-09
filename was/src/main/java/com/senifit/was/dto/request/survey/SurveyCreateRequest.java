@@ -1,5 +1,6 @@
 package com.senifit.was.dto.request.survey;
 
+import com.senifit.was.entity.selections.TargetKind;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,11 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 public class SurveyCreateRequest {
 
-    private List<Integer> troubleParts;
+    private List<TargetKind> troubleParts;
 
-    private int attitude;
+    private int attitudeScore;
 
-    private int ability;
+    private int abilityScore;
 
-    private boolean trouble;
+    private boolean hadTrouble;
 }

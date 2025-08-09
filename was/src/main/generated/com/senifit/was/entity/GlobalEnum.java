@@ -40,7 +40,10 @@ public enum GlobalEnum {
     WORKOUT_PURPOSES_BALANCE_IMPROVEMENT(0x14800000L, "workout.purposes.balance_improvement"),
     WORKOUT_PURPOSES_FUNCTIONAL_MOVEMENT_IMPROVEMENT(0x14900000L, "workout.purposes.functional_movement_improvement"),
     WORKOUT_PURPOSES_AGILITY_IMPROVEMENT(0x14A00000L, "workout.purposes.agility_improvement"),
-    WORKOUT_PURPOSES_BLOOD_SUGAR_PRESSURE_CONTROL(0x14B00000L, "workout.purposes.blood_sugar_pressure_control");
+    WORKOUT_PURPOSES_BLOOD_SUGAR_PRESSURE_CONTROL(0x14B00000L, "workout.purposes.blood_sugar_pressure_control"),
+    WORKOUT_PROGRAMS_SELECTIONS_POPULAR(0x15110000L, "workout.programs.selections.popular"),
+    WORKOUT_PROGRAMS_SELECTIONS_PERSONAL(0x15120000L, "workout.programs.selections.personal"),
+    WORKOUT_PROGRAMS_SELECTIONS_TARGET(0x15130000L, "workout.programs.selections.target");
 
     public final long id;
     public final String code;

@@ -43,7 +43,7 @@ public class CenterService {
                 .map(m -> MemberResponse.builder()
                         .memberId(m.getMemberId())
                         .name(m.getName())
-                        .age(m.getAge())
+                        .birthDate(m.getBirthDate())
                         .gender(m.getGender().getId())
                         .memberRank(m.getRank().getId())
                         .build())
@@ -63,10 +63,10 @@ public class CenterService {
      * Center 정보 수정
      */
     @Transactional
-    public Long updateCenterByCenterCode(CenterUpdateRequest request) {
-        Center center = centersRepository.findById(request.getCenterId())
+    public Long updateCenterByCenterId(CenterUpdateRequest request, Long centerId) {
+        Center center = centersRepository.findById(centerId)
                         .orElseThrow(CenterNotFoundException::new);
-        center.updateCenter(center.getName(), center.getLocation());
+        center.updateCenter(request.getName(), request.getLocation());
         return center.getCenterId();
     }
 

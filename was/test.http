@@ -1,0 +1,24 @@
+### signup
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "id": "ssh9930",
+  "password": "12345",
+  "name" : "송승환",
+  "location": "asdlkfjsadjkl",
+  "role": "USER"
+}
+
+
+### signin
+POST http://localhost:8080/auth/signin
+Content-Type: application/x-www-form-urlencoded
+
+id=ssh9930&password=12345
+
+### /centers/
+GET localhost:8080/centers
+
+### /centers/members/
+GET localhost:8080/centers/members

@@ -44,10 +44,9 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                                                 .build())
                                         .collect(Collectors.toList())
                         )
-                        .attitude(s.getAttitudeScore())
-                        .ability(s.getAbilityScore())
-                        .trouble(Boolean.TRUE.equals(s.getHadTrouble()))
-                        .centerId(s.getCenterId())
+                        .attitudeScore(s.getAttitudeScore())
+                        .abilityScore(s.getAbilityScore())
+                        .hadTrouble(Boolean.TRUE.equals(s.getHadTrouble()))
                         .updatedAt(s.getUpdatedAt())
                         .build())
                 .collect(Collectors.toList());
