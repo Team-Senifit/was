@@ -5,7 +5,6 @@ import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.entity.*;
 import com.senifit.was.entity.Record;
-import com.senifit.was.exception.api.common.NotFoundApiException;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -82,7 +81,7 @@ public class RecordService {
                 .collect(Collectors.toList());
 
         record.updateMemberRecords(participants);
-        return recordsRepository.save(record).getId();
+        return recordsRepository.save(record).getRecordId();
     }
 
     /**
@@ -98,7 +97,7 @@ public class RecordService {
      */
     @Transactional
     public Long deleteRecordById(Long recordId, Long centerId) {
-        return recordsRepository.deleteByIdAndCenter_Id(recordId, centerId);
+        return recordsRepository.deleteByRecordIdAndCenter_CenterId(recordId, centerId);
     }
 
 }

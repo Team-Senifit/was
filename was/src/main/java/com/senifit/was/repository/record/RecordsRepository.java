@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RecordsRepository extends JpaRepository<Record, Long>, RecordsRepositoryCustom {
-    Long deleteByIdAndCenter_Id(Long id, Long centerId);
+    Long deleteByRecordIdAndCenter_CenterId(Long recordId, Long centerId);
 
 }

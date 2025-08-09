@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CenterUpdateRequest {
-    private String id;
+    private Long centerId;
     private String name;
     private String location;
 }

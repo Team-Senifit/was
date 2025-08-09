@@ -41,7 +41,7 @@ public class CenterService {
 
         List<MemberResponse> memberResponses = top5Members.stream()
                 .map(m -> MemberResponse.builder()
-                        .memberId(m.getId())
+                        .memberId(m.getMemberId())
                         .name(m.getName())
                         .age(m.getAge())
                         .gender(m.getGender().getId())
@@ -64,23 +64,22 @@ public class CenterService {
      */
     @Transactional
     public Long updateCenterByCenterCode(CenterUpdateRequest request) {
-        Center center = centersRepository.findByCenterId(request.getId())
+        Center center = centersRepository.findById(request.getCenterId())
                         .orElseThrow(CenterNotFoundException::new);
-        center.setName(center.getName());
-        center.setLocation(center.getLocation());
-        return center.getId();
+        center.updateCenter(center.getName(), center.getLocation());
+        return center.getCenterId();
     }
 
     @Transactional
     public void createCenter(CenterCreateRequest request) {
-        if (centersRepository.existsByCenterId(request.getId()))
+        if (centersRepository.existsByLoginId(request.getLoginId()))
             throw new SignupValidationIdExistsException();
         Center center = Center.builder()
                 .name(request.getName())
-                .centerId(request.getId())
+                .loginId(request.getLoginId())
                 .location(request.getLocation())
                 .role(CenterRole.valueOf(request.getRole()))
-                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
         centersRepository.save(center);
     }

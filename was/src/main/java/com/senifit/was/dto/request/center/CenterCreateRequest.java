@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CenterCreateRequest {
-    private String id;
+    private String loginId;
     private String name;
     private String location;
     private String role;

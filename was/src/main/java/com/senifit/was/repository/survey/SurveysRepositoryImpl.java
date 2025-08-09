@@ -30,13 +30,13 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                 .join(survey.memberRecord, memberRecord)
                 .join(memberRecord.record, record)
                 .leftJoin(survey.surveyTroubleParts, troublePart).fetchJoin()
-                .where(record.id.eq(recordId),
+                .where(record.recordId.eq(recordId),
                         survey.centerId.eq(centerId))
                 .fetch();
 
         return surveys.stream()
                 .map(s -> SurveyResponse.builder()
-                        .surveyId(s.getId())
+                        .surveyId(s.getSurveyId())
                         .troubleParts(
                                 s.getSurveyTroubleParts().stream()
                                         .map(tp -> TroublePartsResponse.builder()

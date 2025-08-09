@@ -8,15 +8,14 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "surveys")
 public class Survey extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "survey_id")
+    private Long surveyId;
 
     @Column(name = "center_id")
     private Long centerId;
@@ -53,6 +52,15 @@ public class Survey extends BaseTimeEntity {
         if (surveyTroubleParts != null) {
             this.surveyTroubleParts = surveyTroubleParts;
         }
+    }
+
+    public void updateSurvey(int attitude, int ability, boolean trouble, Long centerId, List<SurveyTroublePart> newTroubleParts) {
+        this.attitudeScore = attitude;
+        this.abilityScore = ability;
+        this.hadTrouble = trouble;
+        this.centerId = centerId;
+        this.surveyTroubleParts.clear();
+        this.surveyTroubleParts.addAll(newTroubleParts);
     }
 }
 

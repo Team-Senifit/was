@@ -27,28 +27,20 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
         List<Record> result = queryFactory
                 .selectFrom(records)
                 .leftJoin(records.program, program).fetchJoin()
-                .where(records.center.id.eq(centerId))
+                .where(records.center.centerId.eq(centerId))
                 .orderBy(records.createdAt.desc())
                 .fetch();
 
         return result.stream()
-                .map(r -> {
-                    boolean surveysExist = queryFactory
-                            .selectOne()
-                            .from(survey)
-                            .where(survey.memberRecord.record.id.eq(r.getId()))
-                            .fetchFirst() != null;
-
-                    return RecordResponse.builder()
-                            .recordId(r.getId())
-                            .programId(r.getProgram().getId())
-                            .centerId(r.getCenter().getId())
-                            .startTime(r.getStartedAt())
-                            .endTime(r.getFinishedAt())
-                            .participantCount(r.getParticipantCount())
-                            .surveysExist(surveysExist)
-                            .build();
-                })
+                .map(r -> RecordResponse.builder()
+                        .recordId(r.getRecordId())
+                        .programId(r.getProgram().getId())
+                        .centerId(r.getCenter().getCenterId())
+                        .startTime(r.getStartedAt())
+                        .endTime(r.getFinishedAt())
+                        .participantCount(r.getParticipantCount())
+                        .surveysExist(getSurveysExist(r.getRecordId()))
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -60,25 +52,28 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
         Record r = queryFactory
                 .selectFrom(records)
                 .leftJoin(records.program, program).fetchJoin()
-                .where(records.id.eq(recordId))
+                .where(records.recordId.eq(recordId))
                 .fetchOne();
 
         if (r == null) return null;
 
-        boolean surveysExist = queryFactory
-                .selectOne()
-                .from(survey)
-                .where(survey.memberRecord.record.id.eq(r.getId()))
-                .fetchFirst() != null;
-
         return RecordResponse.builder()
-                .recordId(r.getId())
+                .recordId(r.getRecordId())
                 .programId(r.getProgram().getId())
-                .centerId(r.getCenter().getId())
+                .centerId(r.getCenter().getCenterId())
                 .startTime(r.getStartedAt())
                 .endTime(r.getFinishedAt())
                 .participantCount(r.getParticipantCount())
-                .surveysExist(surveysExist)
+                .surveysExist(getSurveysExist(r.getRecordId()))
                 .build();
+    }
+
+    private boolean getSurveysExist(Long recordId) {
+
+        return queryFactory
+                .selectOne()
+                .from(survey)
+                .where(survey.memberRecord.record.recordId.eq(recordId))
+                .fetchFirst() != null;
     }
 }

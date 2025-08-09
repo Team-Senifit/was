@@ -20,9 +20,9 @@ import java.util.List;
 @Builder
 public class CenterDetail implements UserDetails, CredentialsContainer {
 
-    private Long id;
-    private String centerId;
-    private String passwordHash;
+    private String loginId;
+    private Long centerId;
+    private String password;
     private CenterRole role;
 
     @Override
@@ -31,14 +31,14 @@ public class CenterDetail implements UserDetails, CredentialsContainer {
     }
     @Override
     public String getPassword() {
-        return passwordHash;
+        return password;
     }
     @Override
     public String getUsername() {
-        return centerId;
+        return loginId;
     }
     @Override
     public void eraseCredentials() {
-        this.passwordHash = null;
+        this.password = null;
     }
 }

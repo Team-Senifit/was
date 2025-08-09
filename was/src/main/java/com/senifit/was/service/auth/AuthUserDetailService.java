@@ -19,12 +19,12 @@ public class AuthUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Center center = centerRepository.findByCenterId(username)
+        Center center = centerRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("AuthUserDetailService: centerId 없음"));
         return CenterDetail.builder()
-                .id(center.getId())
+                .loginId(center.getLoginId())
                 .centerId(center.getCenterId())
-                .passwordHash(center.getPasswordHash())
+                .password(center.getPassword())
                 .role(center.getRole())
                 .build();
     }

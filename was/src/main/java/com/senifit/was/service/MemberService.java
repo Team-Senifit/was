@@ -40,13 +40,13 @@ public class MemberService {
 
         List<Member> memberList = queryFactory
                 .selectFrom(members)
-                .where(members.center.id.eq(centerId))
+                .where(members.center.centerId.eq(centerId))
                 .orderBy(members.createdAt.desc())
                 .fetch();
 
         return memberList.stream()
                 .map(m -> MemberResponse.builder()
-                        .memberId(m.getId())
+                        .memberId(m.getMemberId())
                         .name(m.getName())
                         .age(m.getAge())
                         .gender(m.getGender().getId())
@@ -64,8 +64,8 @@ public class MemberService {
         Member member = queryFactory
                 .selectFrom(members)
                 .where(
-                        members.id.eq(memberId),
-                        members.center.id.eq(centerId)
+                        members.memberId.eq(memberId),
+                        members.center.centerId.eq(centerId)
                 )
                 .fetchOne();
 
@@ -74,7 +74,7 @@ public class MemberService {
         }
 
         return MemberResponse.builder()
-                .memberId(member.getId())
+                .memberId(member.getMemberId())
                 .name(member.getName())
                 .age(member.getAge())
                 .gender(member.getGender().getId())
@@ -99,7 +99,7 @@ public class MemberService {
                 .build();
 
         membersRepository.save(member);
-        return member.getId();
+        return member.getMemberId();
     }
 
     /**
@@ -110,12 +110,9 @@ public class MemberService {
         Member member = membersRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        member.setName(request.getName());
-        member.setBirthDate(request.getBirthDate());
-        member.setGender(lookupGenderRepository.getReferenceById(request.getGender()));
-        member.setRank(lookupRankRepository.getReferenceById(request.getMemberRank()));
+        member.updateMember(request.getName(), request.getBirthDate(), lookupGenderRepository.getReferenceById(request.getGender()), lookupRankRepository.getReferenceById(request.getMemberRank()));
 
-        return member.getId();
+        return member.getMemberId();
     }
 
     @Transactional
@@ -125,8 +122,8 @@ public class MemberService {
         Member member = queryFactory
                 .selectFrom(qmember)
                 .where(
-                        qmember.id.eq(memberId),
-                        qmember.center.id.eq(centerId)
+                        qmember.memberId.eq(memberId),
+                        qmember.center.centerId.eq(centerId)
                 )
                 .fetchOne();
 
