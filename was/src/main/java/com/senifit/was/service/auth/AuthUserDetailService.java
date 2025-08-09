@@ -22,7 +22,7 @@ public class AuthUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Center center = centerRepository.findByLoginId(username)
-                .orElseThrow(() -> new UsernameNotFoundException("AuthUserDetailService: centerId 없음"));
+                .orElseThrow(() -> new UsernameNotFoundException("ID가 존재하지 않습니다."));
         CenterDetail cd = CenterDetail.builder()
                 .loginId(center.getLoginId())
                 .centerId(center.getCenterId())
@@ -30,13 +30,5 @@ public class AuthUserDetailService implements UserDetailsService {
                 .role(center.getRole())
                 .build();
         return cd;
-    }
-
-    public CenterDetail getCurrentCenterDetail() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof CenterDetail)) {
-            return null;
-        }
-        return (CenterDetail) authentication.getPrincipal();
     }
 }
