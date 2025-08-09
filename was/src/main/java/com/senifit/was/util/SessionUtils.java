@@ -14,7 +14,7 @@ public class SessionUtils {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof CenterDetail)) {
-            return null;
+            throw new UnauthenticatedSessionException();
         }
         CenterDetail cd = (CenterDetail) authentication.getPrincipal();
         return cd.getCenterId();
