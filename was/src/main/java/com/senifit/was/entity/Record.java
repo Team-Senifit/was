@@ -59,7 +59,7 @@ public class Record extends BaseTimeEntity {
     @Column(name = "duration_kind", nullable = false)
     private DurationKind durationKind;
 
-    @OneToMany(mappedBy = "record", orphanRemoval = true)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRecord> memberRecords = new ArrayList<>();
 
     @Column(name = "survey_exist", nullable = false)
