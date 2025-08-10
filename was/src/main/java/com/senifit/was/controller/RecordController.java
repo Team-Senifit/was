@@ -39,10 +39,11 @@ public class RecordController {
 //    }
 
     @PostMapping
-    public ApiResponse<Map<String, Object>> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
-        log.debug("CREATE RECORD");
-        Long centerId = SessionUtils.getUserId(session);
-        return ApiResponse.success(recordService.addRecord(request, centerId));
+    public ApiResponse<Void> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
+        log.debug("CREATE RECORD START");
+        recordService.addRecord(request, SessionUtils.getUserId(session));
+        log.debug("CREATE RECORD FINISH");
+        return ApiResponse.success();
     }
 
 //    @PutMapping("{recordId}")
@@ -55,10 +56,11 @@ public class RecordController {
 //    }
 
     @DeleteMapping("{recordId}")
-    public ApiResponse<Map<String, Object>> deleteRecordById(@PathVariable Long recordId, HttpSession session) {
-        log.debug("DELETE RECORD");
-        Long centerId = SessionUtils.getUserId(session);
-        return ApiResponse.success(recordService.deleteRecordById(recordId, centerId));
+    public ApiResponse<Void> deleteRecordById(@PathVariable Long recordId, HttpSession session) {
+        log.debug("DELETE RECORD START");
+        recordService.deleteRecordById(recordId, SessionUtils.getUserId(session));
+        log.debug("DELETE RECORD FINISH");
+        return ApiResponse.success();
     }
 
 

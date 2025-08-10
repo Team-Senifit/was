@@ -62,6 +62,9 @@ public class Record extends BaseTimeEntity {
     @OneToMany(mappedBy = "record", orphanRemoval = true)
     private List<MemberRecord> memberRecords = new ArrayList<>();
 
+    @Column(name = "survey_exist", nullable = false)
+    private boolean surveyExist;
+
     @Builder
     public Record(
         Center center,
@@ -75,10 +78,15 @@ public class Record extends BaseTimeEntity {
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.participantCount = participantCount;
+        this.surveyExist = false;
     }
 
     public void updateMemberRecords(List<MemberRecord> memberRecords) {
         this.memberRecords = memberRecords;
+    }
+
+    public void updateSurveyExist() {
+        this.surveyExist = true;
     }
 }
 

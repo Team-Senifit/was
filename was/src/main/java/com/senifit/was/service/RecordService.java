@@ -12,6 +12,7 @@ import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.repository.program.ProgramRepository;
 import com.senifit.was.repository.record.RecordsRepository;
 import com.senifit.was.repository.member.MembersRepository;
+import com.senifit.was.repository.survey.SurveysRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class RecordService {
     private final CentersRepository centersRepository;
     private final ProgramRepository programRepository;
     private final MembersRepository membersRepository;
+    private final SurveysRepository surveysRepository;
 
     /**
      * 목록 조회
@@ -95,7 +97,31 @@ public class RecordService {
                 .collect(Collectors.toList());
 
         record.updateMemberRecords(participants);
-        return recordsRepository.save(record).getRecordId();
+
+        Record saved = recordsRepository.save(record);
+
+        // Survey 생성 및 연관성 설정
+        List<Survey> surveysToCreate = saved.getMemberRecords().stream()
+                .filter(mr -> mr.getSurvey() == null)
+                .map(mr -> {
+                    Survey s = Survey.builder()
+                            .centerId(centerId)
+                            .memberRecord(mr)
+                            .abilityScore(0)
+                            .attitudeScore(0)
+                            .hadTrouble(false)
+                            .surveyTroubleParts(List.of())
+                            .build();
+                    mr.setSurvey(s);
+                    return s;
+                })
+                .toList();
+
+        if (!surveysToCreate.isEmpty()) {
+            surveysRepository.saveAll(surveysToCreate);
+        }
+
+        return saved.getRecordId();
     }
 
     /**

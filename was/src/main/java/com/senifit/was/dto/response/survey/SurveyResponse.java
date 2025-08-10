@@ -2,6 +2,7 @@ package com.senifit.was.dto.response.survey;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,6 +14,14 @@ import java.util.List;
 public class SurveyResponse {
 
     private Long surveyId;
+
+    private String name;
+
+    private LocalDate birthDate;
+
+    private Long gender;
+
+    private Long memberRank;
 
     private List<TroublePartsResponse> troubleParts;
 

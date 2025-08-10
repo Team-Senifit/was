@@ -23,6 +23,9 @@ public class MemberRecord extends BaseTimeEntity {
     @JoinColumn(name = "record_id", nullable = false)
     private Record record;
 
+    @OneToOne(mappedBy = "memberRecord", orphanRemoval = true)
+    private Survey survey;
+
     @Builder
     public MemberRecord(Member member, Record record) {
         this.member = member;

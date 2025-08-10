@@ -37,24 +37,27 @@ public class MemberController {
     }
 
     @PostMapping
-    public ApiResponse<Map<String, Object>> createMemberById(HttpSession session, @Valid @RequestBody MemberRequest request) {
-        log.debug("CREATE MEMBER");
-        Long centerId = SessionUtils.getUserId(session);
-        return ApiResponse.success(memberService.addMember(request, centerId));
+    public ApiResponse<Void> createMemberById(HttpSession session, @Valid @RequestBody MemberRequest request) {
+        log.debug("CREATE MEMBER START");
+        memberService.addMember(request, SessionUtils.getUserId(session));
+        log.debug("CREATE MEMBER FINISH");
+        return ApiResponse.success();
     }
 
     @PutMapping("{memberId}")
-    public ApiResponse<Map<String, Object>> updateMemberById(HttpSession session, @PathVariable("memberId") Long memberId, @Valid @RequestBody MemberRequest request) {
-        log.debug("UPDATE MEMBER");
-        Long centerId = SessionUtils.getUserId(session);
-        return ApiResponse.success(memberService.updateMemberById(request, memberId, centerId));
+    public ApiResponse<Void> updateMemberById(HttpSession session, @PathVariable("memberId") Long memberId, @Valid @RequestBody MemberRequest request) {
+        log.debug("UPDATE MEMBER START");
+        memberService.updateMemberById(request, memberId, SessionUtils.getUserId(session));
+        log.debug("UPDATE MEMBER FINISH");
+        return ApiResponse.success();
     }
 
     @DeleteMapping("{memberId}")
-    public ApiResponse<Map<String, Object>> deleteMemberById(HttpSession session, @PathVariable("memberId") Long memberId) {
-        log.debug("DELETE MEMBER");
-        Long centerId = SessionUtils.getUserId(session);
-        return ApiResponse.success(memberService.deleteMemberById(memberId, centerId));
+    public ApiResponse<Void> deleteMemberById(HttpSession session, @PathVariable("memberId") Long memberId) {
+        log.debug("DELETE MEMBER START");
+        memberService.deleteMemberById(memberId, SessionUtils.getUserId(session));
+        log.debug("DELETE MEMBER FINISH");
+        return ApiResponse.success();
     }
 
 }

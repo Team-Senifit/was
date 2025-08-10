@@ -1,14 +1,12 @@
 package com.senifit.was.service;
 
-import com.senifit.was.dto.request.survey.SurveyCreateRequest;
-import com.senifit.was.dto.request.survey.SurveyUpdateRequest;
+import com.senifit.was.dto.request.survey.SurveyRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
 import com.senifit.was.entity.MemberRecord;
 import com.senifit.was.entity.Survey;
 import com.senifit.was.entity.SurveyTroublePart;
-import com.senifit.was.exception.api.ApiException;
 import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.exception.custom.SurveyNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -70,14 +68,14 @@ public class SurveyService {
     }
 
     @Transactional
-    public Long addSurvey(List<SurveyCreateRequest> request, Long recordId, Long centerId) {
+    public void addSurvey(List<SurveyRequest> request, Long recordId, Long centerId) {
         MemberRecord memberRecord = memberRecordRepository
                 .findByRecord_RecordIdAndMember_Center_CenterId(recordId, centerId)
                 .orElseThrow(MemberNotFoundException::new);
 
         List<Survey> surveyList = new ArrayList<>();
 
-        for (SurveyCreateRequest req : request) {
+        for (SurveyRequest req : request) {
             Survey survey = Survey.builder()
                     .memberRecord(memberRecord)
                     .attitudeScore(req.getAttitudeScore())
@@ -100,12 +98,10 @@ public class SurveyService {
         }
 
         surveysRepository.saveAll(surveyList);
-
-        return (long) surveyList.size();
     }
 
     @Transactional
-    public Long updateSurveyById(List<SurveyUpdateRequest> request, Long recordId, Long centerId) {
+    public void updateSurveyById(List<SurveyRequest> request, Long recordId, Long centerId) {
 
         // 1. RecordsMembers 조회
         MemberRecord memberRecord = memberRecordRepository
@@ -122,7 +118,7 @@ public class SurveyService {
 
         for (int i = 0; i < surveys.size(); i++) {
             Survey survey = surveys.get(i);
-            SurveyUpdateRequest req = request.get(i);
+            SurveyRequest req = request.get(i);
 
             // 기존 TroubleParts 삭제
             troublePartsRepository.deleteAll(survey.getSurveyTroubleParts());
@@ -131,16 +127,16 @@ public class SurveyService {
             // TroubleParts 생성 (Builder 사용)
             List<SurveyTroublePart> troubleParts = req.getTroubleParts().stream()
                     .map(tp -> SurveyTroublePart.builder()
-                            .target(lookupTargetRepository.getReferenceById(Long.valueOf(tp)))
+                            .target(lookupTargetRepository.getReferenceById(tp.getId()))
                             .survey(survey)
                             .build())
                     .toList();
 
 
             survey.updateSurvey(
-                    req.getAttitude(),
-                    req.getAbility(),
-                    req.isTrouble(),
+                    req.getAttitudeScore(),
+                    req.getAbilityScore(),
+                    req.isHadTrouble(),
                     centerId,
                     troubleParts
             );
@@ -150,9 +146,6 @@ public class SurveyService {
 
         // 3. 일괄 저장
         surveysRepository.saveAll(updatedSurveys);
-
-        // 4. 반영된 개수 반환
-        return (long) updatedSurveys.size();
     }
 
 //    public Map<String, Object> deleteSurveyById(Long surveyId, Long centerId) {

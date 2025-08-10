@@ -11,7 +11,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SurveyCreateRequest {
+public class SurveyRequest {
+
+    private Long surveyId;
 
     private List<TargetKind> troubleParts;
 
