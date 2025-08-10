@@ -37,13 +37,13 @@ public class SurveyController {
 //        return ApiResponse.success(surveyService.getSurveyById(surveyId));
 //    }
 
-    @PostMapping
-    public ApiResponse<Void> createSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyRequest> request) {
-        log.debug("CREATE SURVEY START");
-        surveyService.addSurvey(request, recordId, SessionUtils.getUserId(session));
-        log.debug("CREATE SURVEY FINISH");
-        return ApiResponse.success();
-    }
+//    @PostMapping
+//    public ApiResponse<Void> createSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyRequest> request) {
+//        log.debug("CREATE SURVEY START");
+//        surveyService.addSurvey(request, recordId, SessionUtils.getUserId(session));
+//        log.debug("CREATE SURVEY FINISH");
+//        return ApiResponse.success();
+//    }
 
     @PutMapping()
     public ApiResponse<Void> updateSurveyById(HttpSession session, @PathVariable("recordId") Long recordId, @Valid @RequestBody List<SurveyRequest> request) {
