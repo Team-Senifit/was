@@ -8,6 +8,8 @@ import com.senifit.was.entity.Record;
 import com.senifit.was.entity.MemberRecord;
 import com.senifit.was.entity.Survey;
 import com.senifit.was.entity.SurveyTroublePart;
+import com.senifit.was.entity.selections.BaseSelectionEnum;
+import com.senifit.was.entity.selections.TargetKind;
 import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.exception.custom.SurveyNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -54,7 +56,10 @@ public class SurveyService {
 
         List<TroublePartsResponse> troublePartsResponses = survey.getSurveyTroubleParts().stream()
                 .map(tp -> TroublePartsResponse.builder()
-                        .target(tp.getTarget().getId())
+                        .target(BaseSelectionEnum.fromId(
+                                TargetKind.class,
+                                tp.getTarget().getId()
+                        ))
                         .build())
                 .toList();
 

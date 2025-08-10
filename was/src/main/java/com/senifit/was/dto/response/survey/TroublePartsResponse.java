@@ -1,5 +1,6 @@
 package com.senifit.was.dto.response.survey;
 
+import com.senifit.was.entity.selections.TargetKind;
 import lombok.*;
 
 @Getter
@@ -8,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class TroublePartsResponse {
-    Long target;
+    TargetKind target;
 }
