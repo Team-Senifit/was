@@ -6,6 +6,8 @@ import com.senifit.was.dto.response.survey.TroublePartsResponse;
 import com.senifit.was.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,5 +57,20 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Survey> findAllByRecordId(Long recordId) {
+        QSurvey s = QSurvey.survey;
+        QMemberRecord mr = QMemberRecord.memberRecord;
+        QRecord r = QRecord.record;
+
+        // Survey 엔티티만 필요하므로 fetch join은 생략 (N+1 없음)
+        return queryFactory
+                .selectFrom(s)
+                .join(s.memberRecord, mr)
+                .join(mr.record, r)
+                .where(r.recordId.eq(recordId))
+                .fetch();
     }
 }

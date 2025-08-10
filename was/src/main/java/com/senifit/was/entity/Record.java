@@ -82,7 +82,11 @@ public class Record extends BaseTimeEntity {
     }
 
     public void updateMemberRecords(List<MemberRecord> memberRecords) {
-        this.memberRecords = memberRecords;
+        this.memberRecords.clear();
+        for (MemberRecord mr : memberRecords) {
+            mr.setRecord(this);
+            this.memberRecords.add(mr);
+        }
     }
 
     public void updateSurveyExist() {

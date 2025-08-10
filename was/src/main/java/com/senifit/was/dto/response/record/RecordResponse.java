@@ -35,5 +35,5 @@ public class RecordResponse {
 
     private DurationKind durationKind;
 
-    private boolean surveysExist;
+    private boolean surveyExist;
 }
