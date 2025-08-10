@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.senifit.was.entity.QSurvey.survey;
-
 @Repository
 @RequiredArgsConstructor
 public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
@@ -36,7 +34,6 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                 .map(r -> RecordResponse.builder()
                         .recordId(r.getRecordId())
                         .programId(r.getProgram().getId())
-                        .centerId(r.getCenter().getCenterId())
                         .startTime(r.getStartedAt())
                         .endTime(r.getFinishedAt())
                         .participantCount(r.getParticipantCount())
@@ -65,7 +62,6 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
         return RecordResponse.builder()
                 .recordId(r.getRecordId())
                 .programId(r.getProgram().getId())
-                .centerId(r.getCenter().getCenterId())
                 .startTime(r.getStartedAt())
                 .endTime(r.getFinishedAt())
                 .participantCount(r.getParticipantCount())

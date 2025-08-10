@@ -19,8 +19,6 @@ public class RecordResponse {
 
     private Long programId;
 
-    private Long centerId;
-
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
