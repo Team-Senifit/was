@@ -1,0 +1,76 @@
+// gradle/codegen-enum.gradle
+
+def enumInput   = file("src/data/global-enum.yml")
+def enumPkg     = "com.senifit.was.entity"
+def enumClass   = "GlobalEnum"
+def enumBuildOutDir  = layout.buildDirectory.dir("generated/sources/global-enum").get().asFile
+def enumSrcOutDir  = file("src/main/generated")
+def enumBuildOutFile = new File(enumBuildOutDir, enumPkg.replace('.','/') + "/${enumClass}.java")
+def enumSrcOutFile = new File(enumSrcOutDir, enumPkg.replace('.','/') + "/${enumClass}.java")
+
+String toConstName(String code) {
+    def s = code.toUpperCase(Locale.ROOT).replaceAll(/[^A-Z0-9]+/, "_").replaceAll(/_+/, "_")
+    s = s.replaceAll(/^_|_$/, "")
+    if (s.size() > 0 && Character.isDigit(s.charAt(0))) s = "_" + s
+    return s
+}
+
+tasks.register('generateGlobalEnum') {
+    group = "codegen"
+    description = "Generate GlobalEnum.java from YAML (id: code)"
+    inputs.file(enumInput)
+    outputs.dirs(enumSrcOutDir, enumBuildOutDir)
+
+    doLast {
+        def lines = enumInput.readLines()
+                .collect { it.trim() }
+                .findAll { it && !it.startsWith("#") }
+
+        def rows = []
+        def lineRe = ~/^(0x[0-9A-Fa-f]+)\s*:\s*(\S.*)$/
+
+        lines.eachWithIndex { line, idx ->
+            def m = lineRe.matcher(line)
+            if (!m.find()) throw new GradleException("YAML line ${idx + 1} is invalid: '${line}' (expect '0xNNNNNNNN: code')")
+            def hex = m.group(1)
+            def code = m.group(2).trim()
+            long id = Long.decode(hex)
+            rows << [hex: hex, code: code, id: id, constName: toConstName(code)]
+        }
+
+        def consts = rows.collect { r -> "    ${r.constName}(${r.hex}L, \"${r.code}\")" }.join(",\n") + ";\n"
+
+        def pkgDir = new File(enumBuildOutDir, enumPkg.replace('.', '/'))
+        pkgDir.mkdirs()
+        def srcDir = new File(enumSrcOutDir, enumPkg.replace('.', '/'))
+        srcDir.mkdirs()
+
+        def src = """
+package ${enumPkg};
+
+import java.util.*;
+
+/**
+ * Generated from src/data/global-enum.yml
+ * Format: "0xNNNNNNNN: code"
+ * DO NOT EDIT MANUALLY.
+ */
+public enum ${enumClass} {
+${consts}
+    public final long id;
+    public final String code;
+
+    ${enumClass}(long id, String code) {
+        this.id = id;
+        this.code = code;
+    }
+}
+""".stripIndent()
+        enumBuildOutFile.text = src
+        enumSrcOutFile.text = src
+        println "Generated: ${enumBuildOutFile}"
+        println "Generated: ${enumSrcOutFile}"
+    }
+}
+
+compileJava.dependsOn generateGlobalEnum

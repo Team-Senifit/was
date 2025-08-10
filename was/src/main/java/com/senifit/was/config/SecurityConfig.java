@@ -1,4 +1,4 @@
-package com.senifit.was.security;
+package com.senifit.was.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senifit.was.dto.response.ApiResponse;

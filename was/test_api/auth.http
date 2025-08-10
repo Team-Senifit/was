@@ -1,0 +1,23 @@
+### test
+GET localhost:8080
+
+### /auth/signup
+POST localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "loginId": "ssh9930",
+  "password": "12345",
+  "name": "송승환",
+  "location": "경기도 고양시 어딘가",
+  "role": "user"
+}
+
+### /auth/signin
+POST localhost:8080/auth/signin
+Content-Type: application/x-www-form-urlencoded
+
+id=ssh9930&password=12345
+
+### /auth/signout
+GET localhost:8080/auth/signout

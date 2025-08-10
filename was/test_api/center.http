@@ -1,0 +1,13 @@
+### get /centers
+GET localhost:8080/centers
+
+### put /centers
+PUT localhost:8080/centers
+Content-Type: application/json
+
+{
+  "centerId": "ssh9930",
+  "name": "진짜좋은센터",
+  "location": "aklwdfasdjklflkf"
+}
+

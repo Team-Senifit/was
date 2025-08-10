@@ -10,15 +10,14 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "members")
 public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "member_id")
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id", nullable = false)
@@ -61,6 +60,13 @@ public class Member extends BaseTimeEntity {
         this.name = name;
         this.birthDate = birthDate;
         this.gender = gender;
+    }
+
+    public void updateMember(String name, LocalDate birthDate, LookupGender gender, LookupRank rank) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.rank = rank;
     }
 }
 

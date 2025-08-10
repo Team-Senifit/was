@@ -1,5 +1,9 @@
 package com.senifit.was.dto.response.record;
 
+import com.senifit.was.entity.selections.CognitiveKind;
+import com.senifit.was.entity.selections.DurationKind;
+import com.senifit.was.entity.selections.IncludesSinging;
+import com.senifit.was.entity.selections.RoutineKind;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,11 +27,13 @@ public class RecordResponse {
 
     private Integer participantCount;
 
-    private Integer exerciseTimes;
+    private RoutineKind routineKind;
 
-    private String target;
+    private CognitiveKind cognitiveKind;
 
-    private boolean isSingingIncluded;
+    private IncludesSinging singingKind;
+
+    private DurationKind durationKind;
 
     private boolean surveysExist;
 }

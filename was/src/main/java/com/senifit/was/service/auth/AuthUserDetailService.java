@@ -1,10 +1,9 @@
 package com.senifit.was.service.auth;
 
+import com.senifit.was.entity.Center;
 import com.senifit.was.repository.center.CentersRepository;
-import com.senifit.was.repository.user.UserRepository;
-import com.senifit.was.security.AuthUserDetail;
+import com.senifit.was.security.CenterDetail;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,12 +13,18 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthUserDetailService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final CentersRepository centerRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new AuthUserDetail(userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("AuthUserDetailService: id 없음"))
-        );
+        Center center = centerRepository.findByLoginId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("ID가 존재하지 않습니다."));
+        CenterDetail cd = CenterDetail.builder()
+                .loginId(center.getLoginId())
+                .centerId(center.getCenterId())
+                .password(center.getPassword())
+                .role(center.getRole())
+                .build();
+        return cd;
     }
 }

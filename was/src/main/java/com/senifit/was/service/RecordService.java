@@ -5,7 +5,6 @@ import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.entity.*;
 import com.senifit.was.entity.Record;
-import com.senifit.was.exception.api.common.NotFoundApiException;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -13,6 +12,7 @@ import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.repository.program.ProgramRepository;
 import com.senifit.was.repository.record.RecordsRepository;
 import com.senifit.was.repository.member.MembersRepository;
+import com.senifit.was.repository.survey.SurveysRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +31,7 @@ public class RecordService {
     private final CentersRepository centersRepository;
     private final ProgramRepository programRepository;
     private final MembersRepository membersRepository;
+    private final SurveysRepository surveysRepository;
 
     /**
      * 목록 조회
@@ -68,6 +69,20 @@ public class RecordService {
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
                 .build();
 
+        // 선택값 설정 (DB에는 converter로 BIGINT id 저장)
+        if (request.getRoutineKind() != null) {
+            record.setRoutineKind(request.getRoutineKind());
+        }
+        if (request.getCognitiveKind() != null) {
+            record.setCognitiveKind(request.getCognitiveKind());
+        }
+        if (request.getSingingKind() != null) {
+            record.setIncludesSinging(request.getSingingKind());
+        }
+        if (request.getDurationKind() != null) {
+            record.setDurationKind(request.getDurationKind());
+        }
+
         // MemberRecord 생성 및 연관성 설정
         List<MemberRecord> participants = request.getParticipants().stream()
                 .map(memberId -> {
@@ -82,7 +97,31 @@ public class RecordService {
                 .collect(Collectors.toList());
 
         record.updateMemberRecords(participants);
-        return recordsRepository.save(record).getId();
+
+        Record saved = recordsRepository.save(record);
+
+        // Survey 생성 및 연관성 설정
+        List<Survey> surveysToCreate = saved.getMemberRecords().stream()
+                .filter(mr -> mr.getSurvey() == null)
+                .map(mr -> {
+                    Survey s = Survey.builder()
+                            .centerId(centerId)
+                            .memberRecord(mr)
+                            .abilityScore(0)
+                            .attitudeScore(0)
+                            .hadTrouble(false)
+                            .surveyTroubleParts(List.of())
+                            .build();
+                    mr.setSurvey(s);
+                    return s;
+                })
+                .toList();
+
+        if (!surveysToCreate.isEmpty()) {
+            surveysRepository.saveAll(surveysToCreate);
+        }
+
+        return saved.getRecordId();
     }
 
     /**
@@ -98,7 +137,7 @@ public class RecordService {
      */
     @Transactional
     public Long deleteRecordById(Long recordId, Long centerId) {
-        return recordsRepository.deleteByIdAndCenter_Id(recordId, centerId);
+        return recordsRepository.deleteByRecordIdAndCenter_CenterId(recordId, centerId);
     }
 
 }

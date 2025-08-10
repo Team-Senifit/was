@@ -17,8 +17,6 @@ public class MemberRequest {
 
     private LocalDate birthDate;
 
-    private Integer age;
-
     private Long gender;
 
     private Long memberRank;

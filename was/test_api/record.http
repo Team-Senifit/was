@@ -1,0 +1,21 @@
+### get /records
+GET localhost:8080/records
+
+### post /records
+POST localhost:8080/records
+Content-Type: application/json
+
+{
+  "programId": 301,
+  "participants": [4,201],
+  "startTime": "2025-08-09 11:22:33",
+  "endTime": "2025-08-09 12:22:33",
+  "routineKind": "workout.programs.selections.personal",
+  "cognitiveKind": "workout.kinds.cognitive.kinds.dualtasking",
+  "singingKind": "workout.kinds.singing",
+  "durationKind": "workout.duration.60minutes",
+  "targetKind": "workout.kinds.calisthenic.targets.abs"
+}
+
+### delete /records/{recordid}
+DELETE localhost:8080/records/1

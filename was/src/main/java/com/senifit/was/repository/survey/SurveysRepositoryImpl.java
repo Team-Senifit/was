@@ -3,11 +3,7 @@ package com.senifit.was.repository.survey;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
-import com.senifit.was.entity.QSurvey;
-import com.senifit.was.entity.QRecord;
-import com.senifit.was.entity.QMemberRecord;
-import com.senifit.was.entity.QSurveyTroublePart;
-import com.senifit.was.entity.Survey;
+import com.senifit.was.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -23,33 +19,41 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
         QSurvey survey = QSurvey.survey;
         QMemberRecord memberRecord = QMemberRecord.memberRecord;
         QRecord record = QRecord.record;
+        QMember member = QMember.member;
         QSurveyTroublePart troublePart = QSurveyTroublePart.surveyTroublePart;
 
         List<Survey> surveys = queryFactory
                 .selectFrom(survey)
-                .join(survey.memberRecord, memberRecord)
+                .join(survey.memberRecord, memberRecord).fetchJoin()
+                .join(memberRecord.member, member).fetchJoin()
                 .join(memberRecord.record, record)
                 .leftJoin(survey.surveyTroubleParts, troublePart).fetchJoin()
-                .where(record.id.eq(recordId),
+                .where(record.recordId.eq(recordId),
                         survey.centerId.eq(centerId))
                 .fetch();
 
         return surveys.stream()
-                .map(s -> SurveyResponse.builder()
-                        .surveyId(s.getId())
-                        .troubleParts(
-                                s.getSurveyTroubleParts().stream()
-                                        .map(tp -> TroublePartsResponse.builder()
-                                                .target(tp.getTarget().getId())
-                                                .build())
-                                        .collect(Collectors.toList())
-                        )
-                        .attitude(s.getAttitudeScore())
-                        .ability(s.getAbilityScore())
-                        .trouble(Boolean.TRUE.equals(s.getHadTrouble()))
-                        .centerId(s.getCenterId())
-                        .updatedAt(s.getUpdatedAt())
-                        .build())
+                .map(s -> {
+                    var m = s.getMemberRecord().getMember();
+                    return SurveyResponse.builder()
+                            .surveyId(s.getSurveyId())
+                            .name(m.getName())
+                            .birthDate(m.getBirthDate())
+                            .gender(m.getGender().getId())
+                            .memberRank(m.getRank().getId())
+                            .troubleParts(
+                                    s.getSurveyTroubleParts().stream()
+                                            .map(tp -> TroublePartsResponse.builder()
+                                                    .target(tp.getTarget().getId())
+                                                    .build())
+                                            .collect(Collectors.toList())
+                            )
+                            .attitudeScore(s.getAttitudeScore())
+                            .abilityScore(s.getAbilityScore())
+                            .hadTrouble(Boolean.TRUE.equals(s.getHadTrouble()))
+                            .updatedAt(s.getUpdatedAt())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 }

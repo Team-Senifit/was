@@ -1,0 +1,31 @@
+### get /centers/members
+GET localhost:8080/centers/members
+
+### get /centers/members/{memberid}
+GET localhost:8080/centers/members/1
+
+### post /centers/members
+POST localhost:8080/centers/members
+Content-Type: application/json
+
+{
+  "name": "김춘배",
+  "birthDate": "1950-03-03",
+  "gender": 1,
+  "memberRank": 3
+}
+
+### put /centers/members/{memberid}
+PUT localhost:8080/centers/members/1
+Content-Type: application/json
+
+{
+  "name": "김춘춘",
+  "birthDate": "9999-03-03",
+  "gender": 0,
+  "memberRank": 4
+}
+
+### delete /centers/members/{memberid}
+DELETE localhost:8080/centers/members/3
+

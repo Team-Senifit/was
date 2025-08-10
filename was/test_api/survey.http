@@ -1,0 +1,25 @@
+### get /records/{recordid}/surveys
+GET localhost:8080/records/601/surveys
+
+### post /records/{recordid}/surveys
+POST localhost:8080/records/601/surveys
+Content-Type: application/json
+
+[
+    {
+      "troubleParts": ["workout.kinds.calisthenic.targets.arms","workout.kinds.calisthenic.targets.shoulders"],
+      "attitudeScore": 3,
+      "abilityScore": 3,
+      "hadTrouble": true
+    }
+]
+
+### put /records/{recordid}/surveys
+PUT localhost:8080/records/1/surveys
+Content-Type: application/json
+
+{
+}
+
+
+

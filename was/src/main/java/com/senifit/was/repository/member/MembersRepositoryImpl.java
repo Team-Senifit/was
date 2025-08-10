@@ -20,7 +20,7 @@ public class MembersRepositoryImpl implements MembersRepositoryCustom{
 
         return queryFactory
                 .selectFrom(members)
-                .where(members.center.id.eq(centerId))
+                .where(members.center.centerId.eq(centerId))
                 .orderBy(members.createdAt.desc())
                 .limit(5)
                 .fetch();
