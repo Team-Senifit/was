@@ -13,8 +13,10 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")  // This changes the path pattern to match all paths
                 .allowedOrigins("*")
-                .allowedOrigins("http://localhost:3000") // 프론트 개발 임시
-                .allowedOrigins("https://localhost:3000") // 프론트 개발 임시
+                .allowedOrigins(
+                        "http://localhost:3000",
+                        "https://localhost:3000"
+                )
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .exposedHeaders(HttpHeaders.LOCATION);
     }
