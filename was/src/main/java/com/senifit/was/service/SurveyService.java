@@ -41,10 +41,7 @@ public class SurveyService {
 
     public List<SurveyResponse> getSurveysByRecordId(Long recordId, Long centerId) {
 
-        RecordResponse record = recordService.getRecordById(recordId);
-
-        // record가 없거나 centerId가 다를 시, 예외 처리
-        if (record == null || (record.getCenterId() != null && !record.getCenterId().equals(centerId))) {
+        if (!recordsRepository.existsByRecordIdAndCenter_CenterId(recordId, centerId)) {
             throw new RecordNotFoundException();
         }
 
