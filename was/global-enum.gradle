@@ -4,9 +4,7 @@ def enumInput   = file("src/data/global-enum.yml")
 def enumPkg     = "com.senifit.was.entity"
 def enumClass   = "GlobalEnum"
 def enumBuildOutDir  = layout.buildDirectory.dir("generated/sources/global-enum").get().asFile
-def enumSrcOutDir  = file("src/main/generated")
 def enumBuildOutFile = new File(enumBuildOutDir, enumPkg.replace('.','/') + "/${enumClass}.java")
-def enumSrcOutFile = new File(enumSrcOutDir, enumPkg.replace('.','/') + "/${enumClass}.java")
 
 String toConstName(String code) {
     def s = code.toUpperCase(Locale.ROOT).replaceAll(/[^A-Z0-9]+/, "_").replaceAll(/_+/, "_")
@@ -19,7 +17,7 @@ tasks.register('generateGlobalEnum') {
     group = "codegen"
     description = "Generate GlobalEnum.java from YAML (id: code)"
     inputs.file(enumInput)
-    outputs.dirs(enumSrcOutDir, enumBuildOutDir)
+    outputs.dirs(enumBuildOutDir)
 
     doLast {
         def lines = enumInput.readLines()
@@ -42,8 +40,6 @@ tasks.register('generateGlobalEnum') {
 
         def pkgDir = new File(enumBuildOutDir, enumPkg.replace('.', '/'))
         pkgDir.mkdirs()
-        def srcDir = new File(enumSrcOutDir, enumPkg.replace('.', '/'))
-        srcDir.mkdirs()
 
         def src = """
 package ${enumPkg};
@@ -67,10 +63,21 @@ ${consts}
 }
 """.stripIndent()
         enumBuildOutFile.text = src
-        enumSrcOutFile.text = src
         println "Generated: ${enumBuildOutFile}"
-        println "Generated: ${enumSrcOutFile}"
     }
 }
 
-compileJava.dependsOn generateGlobalEnum
+// Make generated sources visible to the Java plugin
+sourceSets {
+    main {
+        java {
+            srcDir enumBuildOutDir
+        }
+    }
+}
+
+// Ensure generation runs before compilation and the sources are included
+tasks.named('compileJava') {
+    dependsOn tasks.named('generateGlobalEnum')
+    source enumBuildOutDir
+}
