@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RecordsRepository extends JpaRepository<Record, Long>, RecordsRepositoryCustom {
     Long deleteByRecordIdAndCenter_CenterId(Long recordId, Long centerId);
+    boolean existsByRecordIdAndCenter_CenterId(Long recordId, Long centerId);
 
 }

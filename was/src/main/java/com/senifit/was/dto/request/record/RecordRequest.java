@@ -1,11 +1,7 @@
 package com.senifit.was.dto.request.record;
 
-import com.senifit.was.entity.selections.RoutineKind;
-import com.senifit.was.entity.selections.CognitiveKind;
-import com.senifit.was.entity.selections.DurationKind;
-import com.senifit.was.entity.selections.IncludesSinging;
-import com.senifit.was.entity.selections.TargetKind;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.senifit.was.entity.selections.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

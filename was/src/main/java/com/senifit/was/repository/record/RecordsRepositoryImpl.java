@@ -9,9 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.senifit.was.entity.QSurvey.survey;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,11 +34,10 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                 .map(r -> RecordResponse.builder()
                         .recordId(r.getRecordId())
                         .programId(r.getProgram().getId())
-                        .centerId(r.getCenter().getCenterId())
                         .startTime(r.getStartedAt())
                         .endTime(r.getFinishedAt())
                         .participantCount(r.getParticipantCount())
-                        .surveysExist(getSurveysExist(r.getRecordId()))
+                        .surveyExist(r.isSurveyExist())
                         .routineKind(r.getRoutineKind())
                         .cognitiveKind(r.getCognitiveKind())
                         .singingKind(r.getIncludesSinging())
@@ -64,20 +62,26 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
         return RecordResponse.builder()
                 .recordId(r.getRecordId())
                 .programId(r.getProgram().getId())
-                .centerId(r.getCenter().getCenterId())
                 .startTime(r.getStartedAt())
                 .endTime(r.getFinishedAt())
                 .participantCount(r.getParticipantCount())
-                .surveysExist(getSurveysExist(r.getRecordId()))
+                .surveyExist(r.isSurveyExist())
                 .build();
     }
 
-    private boolean getSurveysExist(Long recordId) {
+    @Override
+    public Optional<Record> findByRecordIdAndCenterId(Long recordId, Long centerId) {
+        QRecord r = QRecord.record;
 
-        return queryFactory
-                .selectOne()
-                .from(survey)
-                .where(survey.memberRecord.record.recordId.eq(recordId))
-                .fetchFirst() != null;
+        Record record = queryFactory
+                .selectFrom(r)
+                .where(
+                        r.recordId.eq(recordId),
+                        r.center.centerId.eq(centerId)
+                )
+                .fetchOne();
+
+        return Optional.ofNullable(record);
     }
+
 }

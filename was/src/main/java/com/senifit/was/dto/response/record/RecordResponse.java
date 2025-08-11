@@ -19,8 +19,6 @@ public class RecordResponse {
 
     private Long programId;
 
-    private Long centerId;
-
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -35,5 +33,5 @@ public class RecordResponse {
 
     private DurationKind durationKind;
 
-    private boolean surveysExist;
+    private boolean surveyExist;
 }

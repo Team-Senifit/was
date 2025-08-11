@@ -51,7 +51,7 @@ public class RecordService {
      * 기록 생성
      */
     @Transactional
-    public Long addRecord(RecordRequest request, Long centerId) {
+    public void addRecord(RecordRequest request, Long centerId) {
         // 센터 조회
         Center center = centersRepository.findById(centerId)
                 .orElseThrow(CenterNotFoundException::new);
@@ -120,8 +120,6 @@ public class RecordService {
         if (!surveysToCreate.isEmpty()) {
             surveysRepository.saveAll(surveysToCreate);
         }
-
-        return saved.getRecordId();
     }
 
     /**

@@ -1,9 +1,6 @@
 package com.senifit.was.entity;
 
-import com.senifit.was.entity.selections.CognitiveKind;
-import com.senifit.was.entity.selections.DurationKind;
-import com.senifit.was.entity.selections.IncludesSinging;
-import com.senifit.was.entity.selections.RoutineKind;
+import com.senifit.was.entity.selections.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -59,7 +56,7 @@ public class Record extends BaseTimeEntity {
     @Column(name = "duration_kind", nullable = false)
     private DurationKind durationKind;
 
-    @OneToMany(mappedBy = "record", orphanRemoval = true)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRecord> memberRecords = new ArrayList<>();
 
     @Column(name = "survey_exist", nullable = false)
@@ -82,7 +79,11 @@ public class Record extends BaseTimeEntity {
     }
 
     public void updateMemberRecords(List<MemberRecord> memberRecords) {
-        this.memberRecords = memberRecords;
+        this.memberRecords.clear();
+        for (MemberRecord mr : memberRecords) {
+            mr.setRecord(this);
+            this.memberRecords.add(mr);
+        }
     }
 
     public void updateSurveyExist() {

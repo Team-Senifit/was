@@ -1,0 +1,30 @@
+CognitiveKind:
+  - workout_kinds_cognitive_kinds_taekwondo
+  - workout_kinds_cognitive_kinds_dualtasking
+  - workout_kinds_cognitive_kinds_continuous
+  - workout_notSelected
+
+DurationKind:
+  - workout_duration_30minutes
+  - workout_duration_60minutes
+
+IncludesCognitive:
+  - workout_kinds_cognitive
+  - workout_notSelected
+
+IncludesSinging:
+  - workout_kinds_singing
+  - workout_notSelected
+
+RoutineKind:
+  - workout_programs_selections_popular
+  - workout_programs_selections_personal
+
+TargetKind:
+  - workout_kinds_calisthenic_targets_arms
+  - workout_kinds_calisthenic_targets_shoulders
+  - workout_kinds_calisthenic_targets_abs
+  - workout_kinds_calisthenic_targets_legs
+  - workout_kinds_calisthenic_targets_back
+  - workout_kinds_calisthenic_targets_arm
+  - workout_kinds_calisthenic_targets_arms_and_shoulders

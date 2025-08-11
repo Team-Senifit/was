@@ -4,15 +4,18 @@ import com.senifit.was.dto.request.survey.SurveyRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
+import com.senifit.was.entity.Record;
 import com.senifit.was.entity.MemberRecord;
 import com.senifit.was.entity.Survey;
 import com.senifit.was.entity.SurveyTroublePart;
+import com.senifit.was.entity.selections.TargetKind;
 import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.exception.custom.SurveyNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
 import com.senifit.was.exception.custom.SurveySizeMismatchException;
 import com.senifit.was.repository.lookup.LookupTargetRepository;
 import com.senifit.was.repository.record.RecordsMembersRepository;
+import com.senifit.was.repository.record.RecordsRepository;
 import com.senifit.was.repository.survey.SurveysRepository;
 import com.senifit.was.repository.survey.TroublePartsRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -31,16 +35,14 @@ public class SurveyService {
 
     private final RecordService recordService;
     private final SurveysRepository surveysRepository;
+    private final RecordsRepository recordsRepository;
     private final RecordsMembersRepository memberRecordRepository;
     private final TroublePartsRepository troublePartsRepository;
     private final LookupTargetRepository lookupTargetRepository;
 
     public List<SurveyResponse> getSurveysByRecordId(Long recordId, Long centerId) {
 
-        RecordResponse record = recordService.getRecordById(recordId);
-
-        // record가 없거나 centerId가 다를 시, 예외 처리
-        if (record == null || (record.getCenterId() != null && !record.getCenterId().equals(centerId))) {
+        if (!recordsRepository.existsByRecordIdAndCenter_CenterId(recordId, centerId)) {
             throw new RecordNotFoundException();
         }
 
@@ -53,7 +55,7 @@ public class SurveyService {
 
         List<TroublePartsResponse> troublePartsResponses = survey.getSurveyTroubleParts().stream()
                 .map(tp -> TroublePartsResponse.builder()
-                        .target(tp.getTarget().getId())
+                        .target(TargetKind.fromId(tp.getTarget().getId()))
                         .build())
                 .toList();
 
@@ -87,10 +89,10 @@ public class SurveyService {
             List<SurveyTroublePart> targets = req.getTroubleParts().stream()
                     .map(tp ->
                             new SurveyTroublePart(
-                                survey,
-                                lookupTargetRepository.getReferenceById(tp.getId())
+                                    survey,
+                                    lookupTargetRepository.getReferenceById(tp.getId())
                             )
-                        )
+                    )
                     .toList();
 
             survey.getSurveyTroubleParts().addAll(targets);
@@ -103,49 +105,67 @@ public class SurveyService {
     @Transactional
     public void updateSurveyById(List<SurveyRequest> request, Long recordId, Long centerId) {
 
-        // 1. RecordsMembers 조회
-        MemberRecord memberRecord = memberRecordRepository
-                .findByRecord_RecordIdAndMember_Center_CenterId(recordId, centerId)
-                .orElseThrow(MemberNotFoundException::new);
+        // recordId-centerId 매칭 검증 (존재+소속)
+        Record record = recordsRepository.findByRecordIdAndCenterId(recordId, centerId)
+                .orElseThrow(RecordNotFoundException::new);
 
-        // 2. Survey 목록 조회
-        List<Survey> surveys = surveysRepository.findByMemberRecord(memberRecord);
-        if (surveys.size() != request.size()) {
-            throw new SurveySizeMismatchException();
+        // 해당 record의 모든 Survey를 QueryDSL로 조회
+        List<Survey> surveys = surveysRepository.findAllByRecordId(record.getRecordId());
+
+        // 빠른 매칭을 위한 Map (surveyId -> Survey)
+        Map<Long, Survey> surveyMap = surveys.stream()
+                .collect(Collectors.toMap(Survey::getSurveyId, Function.identity()));
+
+        // 요청 id 유효성 검증: 요청된 surveyId 모두가 해당 record 소속인지 확인
+        Set<Long> reqIds = request.stream()
+                .map(SurveyRequest::getSurveyId)
+                .collect(Collectors.toSet());
+
+        Set<Long> missing = new HashSet<>(reqIds);
+        missing.removeAll(surveyMap.keySet());
+        if (!missing.isEmpty()) {
+            throw new SurveyNotFoundException();
         }
 
-        List<Survey> updatedSurveys = new ArrayList<>();
+        // 기존 TroubleParts를 삭제
+        //  - Bulk delete는 영속성 컨텍스트를 우회하므로, 이후 엔티티 컬렉션은 반드시 재세팅해야 함
+        troublePartsRepository.deleteBySurveyIds(reqIds);
 
-        for (int i = 0; i < surveys.size(); i++) {
-            Survey survey = surveys.get(i);
-            SurveyRequest req = request.get(i);
+        // 요청대로 엔티티 업데이트 (updateSurvey는 내부에서 clear() 후 addAll 수행)
+        List<Survey> toSave = new ArrayList<>(reqIds.size());
 
-            // 기존 TroubleParts 삭제
-            troublePartsRepository.deleteAll(survey.getSurveyTroubleParts());
-            survey.getSurveyTroubleParts().clear();
+        // 요청의 각 항목을 해당 Survey에 반영
+        for (SurveyRequest req : request) {
+            Survey survey = surveyMap.get(req.getSurveyId());
 
-            // TroubleParts 생성 (Builder 사용)
-            List<SurveyTroublePart> troubleParts = req.getTroubleParts().stream()
-                    .map(tp -> SurveyTroublePart.builder()
-                            .target(lookupTargetRepository.getReferenceById(tp.getId()))
-                            .survey(survey)
-                            .build())
-                    .toList();
-
+            List<SurveyTroublePart> newParts =
+                    (req.getTroubleParts() == null || req.getTroubleParts().isEmpty())
+                            ? List.of()
+                            : req.getTroubleParts().stream()
+                            .map(tp -> SurveyTroublePart.builder()
+                                    .survey(survey) // 역참조 필수
+                                    .target(lookupTargetRepository.getReferenceById(tp.getId()))
+                                    .build()
+                            ).toList();
 
             survey.updateSurvey(
                     req.getAttitudeScore(),
                     req.getAbilityScore(),
                     req.isHadTrouble(),
                     centerId,
-                    troubleParts
+                    newParts
             );
 
-            updatedSurveys.add(survey);
+            toSave.add(survey);
         }
 
-        // 3. 일괄 저장
-        surveysRepository.saveAll(updatedSurveys);
+        // 일괄 저장
+        surveysRepository.saveAll(toSave);
+
+        if (!record.isSurveyExist()) {
+            record.updateSurveyExist();
+            recordsRepository.save(record);
+        }
     }
 
 //    public Map<String, Object> deleteSurveyById(Long surveyId, Long centerId) {

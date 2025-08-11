@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -43,25 +44,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         return http
-            .userDetailsService(userDetailsService)
-            .formLogin(form -> form
-                .loginProcessingUrl("/auth/signin")
-                .successHandler(senifitAuthenticationSuccessHandler())
-                .failureHandler(senifitAuthenticationFailureHandler())
-                .usernameParameter("id")
-            )
-            .logout(logout -> logout
-                .logoutUrl("/auth/signout")
-                .deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true)
-                .logoutSuccessHandler(senifitSignOutSuccessHandler())
-            )
-            .sessionManagement(session -> session
-                .maximumSessions(maximumSessions)
-                .maxSessionsPreventsLogin(true)
-            )
-            .csrf(AbstractHttpConfigurer::disable)
-            .build();
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .userDetailsService(userDetailsService)
+                .formLogin(form -> form
+                    .loginProcessingUrl("/auth/signin")
+                    .successHandler(senifitAuthenticationSuccessHandler())
+                    .failureHandler(senifitAuthenticationFailureHandler())
+                    .usernameParameter("id")
+                )
+                .logout(logout -> logout
+                    .logoutUrl("/auth/signout")
+                    .deleteCookies("JSESSIONID")
+                    .invalidateHttpSession(true)
+                    .logoutSuccessHandler(senifitSignOutSuccessHandler())
+                )
+                .sessionManagement(session -> session
+                    .maximumSessions(maximumSessions)
+                    .maxSessionsPreventsLogin(true)
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .build();
     }
 
     @Bean

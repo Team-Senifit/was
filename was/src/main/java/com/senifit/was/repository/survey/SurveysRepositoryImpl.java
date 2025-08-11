@@ -4,8 +4,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
 import com.senifit.was.entity.*;
+import com.senifit.was.entity.selections.TargetKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +47,7 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                             .troubleParts(
                                     s.getSurveyTroubleParts().stream()
                                             .map(tp -> TroublePartsResponse.builder()
-                                                    .target(tp.getTarget().getId())
+                                                    .target(TargetKind.fromId(tp.getTarget().getId()))
                                                     .build())
                                             .collect(Collectors.toList())
                             )
@@ -55,5 +58,20 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Survey> findAllByRecordId(Long recordId) {
+        QSurvey s = QSurvey.survey;
+        QMemberRecord mr = QMemberRecord.memberRecord;
+        QRecord r = QRecord.record;
+
+        // Survey 엔티티만 필요하므로 fetch join은 생략 (N+1 없음)
+        return queryFactory
+                .selectFrom(s)
+                .join(s.memberRecord, mr)
+                .join(mr.record, r)
+                .where(r.recordId.eq(recordId))
+                .fetch();
     }
 }
