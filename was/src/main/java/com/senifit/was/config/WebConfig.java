@@ -11,13 +11,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
-        registry.addMapping("/**")  // This changes the path pattern to match all paths
-                .allowedOrigins("*")
+        registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000",
                         "https://localhost:3000"
                 )
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
-                .exposedHeaders(HttpHeaders.LOCATION);
+                .allowedHeaders("*")
+                .exposedHeaders(HttpHeaders.LOCATION)
+                .allowCredentials(true);
     }
 }
