@@ -26,8 +26,8 @@ public class RecordRequest {
     private LocalDateTime endTime;
 
     private RoutineKind routineKind;
-    private CognitiveKind cognitiveKind;
-    private IncludesSinging singingKind;
+    private CognitiveWorkoutKind cognitiveKind;
+    private IncludesSingingWorkout singingKind;
     private DurationKind durationKind;
     private TargetKind targetKind;
 }

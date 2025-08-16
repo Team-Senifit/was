@@ -2,7 +2,7 @@ package com.senifit.was.entity.lookup;
 
 import com.senifit.was.entity.base.BaseGlobalEnumLookupEntity;
 import com.senifit.was.entity.base.BaseLookupEntity;
-import com.senifit.was.entity.selections.CognitiveKind;
+import com.senifit.was.entity.selections.CognitiveWorkoutKind;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
@@ -12,15 +12,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LookupWorkoutCognitiveKind
         extends BaseLookupEntity
-        implements BaseGlobalEnumLookupEntity<LookupWorkoutCognitiveKind, CognitiveKind> {
+        implements BaseGlobalEnumLookupEntity<LookupWorkoutCognitiveKind, CognitiveWorkoutKind> {
 
-    public static LookupWorkoutCognitiveKind fromSelection(CognitiveKind selection) {
+    public static LookupWorkoutCognitiveKind fromSelection(CognitiveWorkoutKind selection) {
         return BaseGlobalEnumLookupEntity.fromSelection(LookupWorkoutCognitiveKind.class, selection);
     }
 
     @Override
-    public CognitiveKind toSelection() {
-        return CognitiveKind.fromId(this.getId());
+    public CognitiveWorkoutKind toSelection() {
+        return CognitiveWorkoutKind.fromId(this.getId());
     }
 }
 

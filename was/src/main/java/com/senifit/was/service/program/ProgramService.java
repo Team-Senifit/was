@@ -6,8 +6,8 @@ import com.senifit.was.entity.ProgramBundle;
 import com.senifit.was.entity.lookup.LookupTarget;
 import com.senifit.was.entity.lookup.LookupWorkoutCognitiveKind;
 import com.senifit.was.entity.lookup.LookupWorkoutSingingKind;
-import com.senifit.was.entity.selections.CognitiveKind;
-import com.senifit.was.entity.selections.IncludesSinging;
+import com.senifit.was.entity.selections.CognitiveWorkoutKind;
+import com.senifit.was.entity.selections.IncludesSingingWorkout;
 import com.senifit.was.entity.selections.TargetKind;
 import com.senifit.was.repository.program.ProgramRepository;
 import com.senifit.was.service.ParseXlsxService;
@@ -22,5 +22,4 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ProgramService {
-
 }
