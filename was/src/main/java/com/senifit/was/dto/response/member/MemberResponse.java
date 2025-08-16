@@ -18,6 +18,8 @@ public class MemberResponse {
 
     private LocalDate birthDate;
 
+    private Boolean isSolar;
+
     private Long gender;
 
     private Long memberRank;

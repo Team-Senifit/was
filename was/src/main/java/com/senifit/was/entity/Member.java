@@ -33,6 +33,9 @@ public class Member extends BaseTimeEntity {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
+    @Column(name = "is_solar", nullable = false)
+    private Boolean isSolar;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_id", nullable = false)
     private LookupGender gender;
@@ -53,18 +56,21 @@ public class Member extends BaseTimeEntity {
             LookupRank rank,
             String name,
             LocalDate birthDate,
+            Boolean isSolar,
             LookupGender gender
     ) {
         this.center = center;
         this.rank = rank;
         this.name = name;
         this.birthDate = birthDate;
+        this.isSolar = isSolar;
         this.gender = gender;
     }
 
-    public void updateMember(String name, LocalDate birthDate, LookupGender gender, LookupRank rank) {
+    public void updateMember(String name, LocalDate birthDate, Boolean isSolar, LookupGender gender, LookupRank rank) {
         this.name = name;
         this.birthDate = birthDate;
+        this.isSolar = isSolar;
         this.gender = gender;
         this.rank = rank;
     }
