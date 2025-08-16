@@ -1,9 +1,11 @@
 package com.senifit.was.entity;
 
-import com.senifit.was.entity.selections.CognitiveKind;
-import com.senifit.was.entity.selections.DurationKind;
-import com.senifit.was.entity.selections.IncludesSinging;
-import com.senifit.was.entity.selections.RoutineKind;
+import com.senifit.was.entity.base.BaseTimeEntity;
+import com.senifit.was.entity.lookup.LookupDurationKind;
+import com.senifit.was.entity.lookup.LookupRoutineKind;
+import com.senifit.was.entity.lookup.LookupWorkoutCognitiveKind;
+import com.senifit.was.entity.lookup.LookupWorkoutSingingKind;
+import com.senifit.was.entity.selections.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,34 +32,37 @@ public class Record extends BaseTimeEntity {
     @JoinColumn(name = "center_id", nullable = false)
     private Center center;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id", nullable = false)
-    private Program program;
+    @Column(name = "program_id", nullable = false)
+    private Long programId;
 
-    @Column(name = "started_at", nullable = false)
+    @Column(name = "started_at")
     private LocalDateTime startedAt;
 
-    @Column(name = "finished_at", nullable = false)
+    @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
     @Column(name = "participant_count", nullable = false)
     private Integer participantCount;
 
     @Setter
-    @Column(name = "routine_kind", nullable = false)
-    private RoutineKind routineKind;
+    @JoinColumn(name = "routine_kind", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private LookupRoutineKind routineKind;
 
     @Setter
-    @Column(name = "cognitive_kind", nullable = false)
-    private CognitiveKind cognitiveKind;
+    @JoinColumn(name = "cognitive_kind", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private LookupWorkoutCognitiveKind cognitiveKind;
 
     @Setter
-    @Column(name = "singing_kind", nullable = false)
-    private IncludesSinging includesSinging;
+    @JoinColumn(name = "singing_kind", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private LookupWorkoutSingingKind includesSinging;
 
     @Setter
-    @Column(name = "duration_kind", nullable = false)
-    private DurationKind durationKind;
+    @JoinColumn(name = "duration_kind", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private LookupDurationKind durationKind;
 
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRecord> memberRecords = new ArrayList<>();
@@ -68,13 +73,13 @@ public class Record extends BaseTimeEntity {
     @Builder
     public Record(
         Center center,
-        Program program,
+        Long programId,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         Integer participantCount
     ) {
         this.center = center;
-        this.program = program;
+        this.programId = programId;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.participantCount = participantCount;

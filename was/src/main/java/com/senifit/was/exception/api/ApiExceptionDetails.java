@@ -33,10 +33,13 @@ public enum ApiExceptionDetails {
     CENTER_DUPLICATE_CODE(409, "CEN002", "이미 존재하는 센터 ID 입니다."),
 
     // Programs
-    PROGRAM_NOT_FOUND(404, "PRO001", "프로그램이 존재하지 않습니다."),
+    PROGRAM_NOT_FOUND(404, "PRO002", "프로그램이 존재하지 않습니다."),
 
     // Members
-    MEMBER_NOT_FOUND(404, "MEM001", "사용자가 존재하지 않습니다.");
+    MEMBER_NOT_FOUND(404, "MEM001", "사용자가 존재하지 않습니다."),
+
+    // Programs
+    PROGRAM_TEMPLATE_PARSE_FAIL(401, "PRO003", "sdkljf");
 
     private final int httpStatusCode;
     private final String errorCode;

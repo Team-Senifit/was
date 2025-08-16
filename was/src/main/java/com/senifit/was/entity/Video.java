@@ -1,7 +1,12 @@
 package com.senifit.was.entity;
 
+import com.senifit.was.entity.base.BaseTimeEntity;
+import com.senifit.was.entity.lookup.LookupVideoKind;
+import com.senifit.was.entity.lookup.LookupTarget;
+import com.senifit.was.entity.lookup.LookupWorkoutPurpose;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,14 +43,39 @@ public class Video extends BaseTimeEntity {
     private String thumbnailPath;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kind_id", nullable = false)
-    private LookupContentKind kind;
+    @JoinColumn(name = "kind_id")
+    private LookupVideoKind kind;
 
-    @OneToMany(mappedBy = "video", orphanRemoval = true)
-    private List<VideoPurpose> videoPurposes = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_kind_id")
+    private LookupTarget targetKind;
 
-    @OneToMany(mappedBy = "video", orphanRemoval = true)
-    private List<BundleVideo> bundleVideos = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "video_purposes",
+            joinColumns = @JoinColumn(name = "video_id"),
+            inverseJoinColumns = @JoinColumn(name = "purpose_id")
+    )
+    private List<LookupWorkoutPurpose> purposes = new ArrayList<>();
+
+    @Builder
+    public Video(
+            Long id, String name, String description, String script,
+            Integer duration, String videoPath,
+            String thumbnailPath, LookupVideoKind kind, LookupTarget targetKind,
+            List<LookupWorkoutPurpose> purposes
+            ) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.script = script;
+        this.duration = duration;
+        this.videoPath = videoPath;
+        this.thumbnailPath = thumbnailPath;
+        this.kind = kind;
+        this.targetKind = targetKind;
+        this.purposes = purposes;
+    }
 
 }
 

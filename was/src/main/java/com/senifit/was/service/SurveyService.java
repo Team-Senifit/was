@@ -8,7 +8,6 @@ import com.senifit.was.entity.Record;
 import com.senifit.was.entity.MemberRecord;
 import com.senifit.was.entity.Survey;
 import com.senifit.was.entity.SurveyTroublePart;
-import com.senifit.was.entity.selections.BaseSelectionEnum;
 import com.senifit.was.entity.selections.TargetKind;
 import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.exception.custom.SurveyNotFoundException;
@@ -56,10 +55,7 @@ public class SurveyService {
 
         List<TroublePartsResponse> troublePartsResponses = survey.getSurveyTroubleParts().stream()
                 .map(tp -> TroublePartsResponse.builder()
-                        .target(BaseSelectionEnum.fromId(
-                                TargetKind.class,
-                                tp.getTarget().getId()
-                        ))
+                        .target(TargetKind.fromId(tp.getTarget().getId()))
                         .build())
                 .toList();
 
@@ -93,10 +89,10 @@ public class SurveyService {
             List<SurveyTroublePart> targets = req.getTroubleParts().stream()
                     .map(tp ->
                             new SurveyTroublePart(
-                                survey,
-                                lookupTargetRepository.getReferenceById(tp.getId())
+                                    survey,
+                                    lookupTargetRepository.getReferenceById(tp.getId())
                             )
-                        )
+                    )
                     .toList();
 
             survey.getSurveyTroubleParts().addAll(targets);
@@ -168,7 +164,7 @@ public class SurveyService {
 
         if (!record.isSurveyExist()) {
             record.updateSurveyExist();
-             recordsRepository.save(record);
+            recordsRepository.save(record);
         }
     }
 

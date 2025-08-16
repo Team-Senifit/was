@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface RecordsRepositoryCustom {
     List<RecordResponse> findAllRecordByCenterId(Long centerId);
-    RecordResponse findRecordById(Long recordId);
+    RecordResponse findRecordById(Long centerId, Long recordId);
     Optional<Record> findByRecordIdAndCenterId(Long recordId, Long centerId);
 }

@@ -4,12 +4,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
 import com.senifit.was.entity.*;
-import com.senifit.was.entity.selections.BaseSelectionEnum;
 import com.senifit.was.entity.selections.TargetKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,11 +47,7 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                             .troubleParts(
                                     s.getSurveyTroubleParts().stream()
                                             .map(tp -> TroublePartsResponse.builder()
-                                                    .target(
-                                                            BaseSelectionEnum.fromId(
-                                                                    TargetKind.class,
-                                                                    tp.getTarget().getId()
-                                                            ))
+                                                    .target(TargetKind.fromId(tp.getTarget().getId()))
                                                     .build())
                                             .collect(Collectors.toList())
                             )

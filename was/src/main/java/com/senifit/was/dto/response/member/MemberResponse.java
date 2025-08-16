@@ -1,6 +1,5 @@
 package com.senifit.was.dto.response.member;
 
-import com.senifit.was.entity.LookupGender;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,6 +16,8 @@ public class MemberResponse {
     private String name;
 
     private LocalDate birthDate;
+
+    private Boolean isSolar;
 
     private Long gender;
 

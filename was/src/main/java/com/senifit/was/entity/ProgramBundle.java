@@ -1,12 +1,11 @@
 package com.senifit.was.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "programs_bundles")
 public class ProgramBundle {
@@ -26,5 +25,13 @@ public class ProgramBundle {
 
     @Column(name = "sequence")
     private Integer sequence;
+
+    @Builder
+    public ProgramBundle(Program program, Bundle bundle, Integer sequence, Long id) {
+        this.program = program;
+        this.bundle = bundle;
+        this.sequence = sequence;
+        this.id = id;
+    }
 }
 

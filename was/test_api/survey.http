@@ -1,8 +1,8 @@
 ### get /records/{recordid}/surveys
-GET localhost:8080/records/601/surveys
+GET localhost:8080/records/640/surveys
 
 ### post /records/{recordid}/surveys
-POST localhost:8080/records/601/surveys
+POST localhost:8080/records/640/surveys
 Content-Type: application/json
 
 [

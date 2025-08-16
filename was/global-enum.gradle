@@ -1,16 +1,19 @@
 // gradle/codegen-enum.gradle
 
-def enumInput   = file("src/data/global-enum.yml")
+def enumInput   = file("src/main/resources/global-enum.yml")
 def enumPkg     = "com.senifit.was.entity"
 def enumClass   = "GlobalEnum"
 def enumBuildOutDir  = layout.buildDirectory.dir("generated/sources/global-enum").get().asFile
 def enumBuildOutFile = new File(enumBuildOutDir, enumPkg.replace('.','/') + "/${enumClass}.java")
 
+// Global enum selections configuration
+def selectionsInput = file("src/main/resources/global-enum-selections.yml")
+def globalEnumInput = file("src/main/resources/global-enum.yml")
+def selectionsPkg = "com.senifit.was.entity.selections"
+def selectionsBuildOutDir = layout.buildDirectory.dir("generated/sources/global-enum-selections").get().asFile
+
 String toConstName(String code) {
-    def s = code.toUpperCase(Locale.ROOT).replaceAll(/[^A-Z0-9]+/, "_").replaceAll(/_+/, "_")
-    s = s.replaceAll(/^_|_$/, "")
-    if (s.size() > 0 && Character.isDigit(s.charAt(0))) s = "_" + s
-    return s
+    return code;
 }
 
 tasks.register('generateGlobalEnum') {
@@ -20,7 +23,7 @@ tasks.register('generateGlobalEnum') {
     outputs.dirs(enumBuildOutDir)
 
     doLast {
-        def lines = enumInput.readLines()
+        def lines = enumInput.getText('UTF-8').readLines()
                 .collect { it.trim() }
                 .findAll { it && !it.startsWith("#") }
 
@@ -36,7 +39,7 @@ tasks.register('generateGlobalEnum') {
             rows << [hex: hex, code: code, id: id, constName: toConstName(code)]
         }
 
-        def consts = rows.collect { r -> "    ${r.constName}(${r.hex}L, \"${r.code}\")" }.join(",\n") + ";\n"
+        def consts = rows.collect { r -> "    ${r.constName}(${r.hex}, \"${r.code}\")" }.join(",\n") + ";\n"
 
         def pkgDir = new File(enumBuildOutDir, enumPkg.replace('.', '/'))
         pkgDir.mkdirs()
@@ -47,9 +50,9 @@ package ${enumPkg};
 import java.util.*;
 
 /**
- * Generated from src/data/global-enum.yml
+ * src/data/global-enum.yml 로 생성함
  * Format: "0xNNNNNNNN: code"
- * DO NOT EDIT MANUALLY.
+ * 수동으로 수정하지 마세요.
  */
 public enum ${enumClass} {
 ${consts}
@@ -60,10 +63,190 @@ ${consts}
         this.id = id;
         this.code = code;
     }
+    
+    public static ${enumClass} fromId(long id) {
+        for (${enumClass} value : values()) {
+            if (value.id == id) {
+                return value;
+            }
+        }
+        return null;
+    }
+    
+    public static ${enumClass} fromCode(String code) {
+        for (${enumClass} value : values()) {
+            if (value.code.equals(code)) {
+                return value;
+            }
+        }
+        return null;
+    }
+    
+    public static List<${enumClass}> fromCodePattern(String pattern) {
+        List<${enumClass}> result = new ArrayList<>();
+        String regexPattern = pattern.replace("*", ".*");
+        
+        for (${enumClass} value : values()) {
+            if (value.code.matches(regexPattern)) {
+                result.add(value);
+            }
+        }
+        return result;
+    }
 }
 """.stripIndent()
         enumBuildOutFile.text = src
         println "Generated: ${enumBuildOutFile}"
+    }
+}
+
+tasks.register('generateGlobalEnumSelections') {
+    group = "codegen"
+    description = "Generate enum classes from global-enum-selections.yml"
+    inputs.file(selectionsInput)
+    inputs.file(globalEnumInput)
+    outputs.dirs(selectionsBuildOutDir)
+
+    doLast {
+        // Parse global-enum.yml to get code to id mapping
+        def globalEnumLines = globalEnumInput.getText('UTF-8').readLines()
+        def codeToId = [:]
+        def lineRe = ~/^(0x[0-9A-Fa-f]+)\s*:\s*(\S.*)$/
+        
+        globalEnumLines.each { line ->
+            def trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#')) {
+                def m = lineRe.matcher(trimmed)
+                if (m.find()) {
+                    def hex = m.group(1)
+                    def code = m.group(2).trim()
+                    codeToId[code] = hex
+                }
+            }
+        }
+        
+        // Parse selections file
+        def lines = selectionsInput.getText('UTF-8').readLines()
+        def currentEnum = null
+        def currentValues = []
+        def enums = [:]
+        
+        lines.each { line ->
+            def trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#')) {
+                if (trimmed.endsWith(':')) {
+                    // New enum definition
+                    if (currentEnum) {
+                        enums[currentEnum] = currentValues
+                    }
+                    currentEnum = trimmed.substring(0, trimmed.length() - 1)
+                    currentValues = []
+                } else if (trimmed.startsWith('- ')) {
+                    // Enum value
+                    currentValues << trimmed.substring(2)
+                }
+            }
+        }
+        
+        // Add the last enum
+        if (currentEnum) {
+            enums[currentEnum] = currentValues
+        }
+        
+        def pkgDir = new File(selectionsBuildOutDir, selectionsPkg.replace('.', '/'))
+        pkgDir.mkdirs()
+
+        // ④ ★★★ 여기 추가: BaseGlobalEnumSelection 인터페이스 생성 ★★★
+        //    - enum들이 implements 하는 인터페이스가 반드시 동일 소스셋에 존재해야 함
+        def ifaceFile = new File(pkgDir, "BaseGlobalEnumSelection.java")
+        if (!ifaceFile.exists()) {
+            ifaceFile.text = """
+package ${selectionsPkg};
+
+public interface BaseGlobalEnumSelection {
+    Long getId();
+    String getCode();
+}
+""".stripIndent()
+            println "Generated: ${ifaceFile}"
+        }
+        
+        enums.each { enumName, values ->
+            def enumFile = new File(pkgDir, "${enumName}.java")
+            
+            def expandedValues = []
+            values.each { value ->
+                if (value.contains("*")) {
+                    // 와일드카드 확장
+                    def pattern = value.replace("*", ".*")
+                    codeToId.each { code, id ->
+                        if (code.matches(pattern)) {
+                            expandedValues << code
+                        }
+                    }
+                } else {
+                    expandedValues << value
+                }
+            }
+            
+            def enumValues = expandedValues.collect { value ->
+                def constName = value
+                def id = codeToId[value] ?: "0x0L"
+                "    ${constName}(${id}L, \"${value}\")"
+            }.join(",\n") + ";"
+
+            def src = """
+package ${selectionsPkg};
+import com.senifit.was.entity.base.BaseGlobalEnumSelection;
+
+/**
+ * Generated from global-enum-selections.yml
+ * DO NOT EDIT MANUALLY.
+ */
+public enum ${enumName} implements BaseGlobalEnumSelection {
+${enumValues}
+    
+    private final Long id;
+    private final String code;
+    
+    ${enumName}(Long id, String code) {
+        this.id = id;
+        this.code = code;
+    }
+    
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+    
+    @Override
+    public String getCode() {
+        return this.code;
+    }
+    
+    public static ${enumName} fromId(Long id) {
+        for (${enumName} value : values()) {
+            if (value.id.equals(id)) {
+                return value;
+            }
+        }
+        return null;
+    }
+    
+    public static ${enumName} fromCode(String code) {
+        for (${enumName} value : values()) {
+            if (value.code.equals(code)) {
+                return value;
+            }
+        }
+        return null;
+    }
+}
+""".stripIndent()
+
+            enumFile.text = src
+            println "Generated: ${enumFile}"
+        }
     }
 }
 
@@ -72,6 +255,7 @@ sourceSets {
     main {
         java {
             srcDir enumBuildOutDir
+            srcDir selectionsBuildOutDir
         }
     }
 }
@@ -79,5 +263,7 @@ sourceSets {
 // Ensure generation runs before compilation and the sources are included
 tasks.named('compileJava') {
     dependsOn tasks.named('generateGlobalEnum')
-    source enumBuildOutDir
+    dependsOn tasks.named('generateGlobalEnumSelections')
+//    source enumBuildOutDir
+//    source selectionsBuildOutDir
 }

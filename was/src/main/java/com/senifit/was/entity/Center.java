@@ -1,5 +1,6 @@
 package com.senifit.was.entity;
 
+import com.senifit.was.entity.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
