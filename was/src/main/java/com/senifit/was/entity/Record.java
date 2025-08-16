@@ -30,10 +30,10 @@ public class Record extends BaseTimeEntity {
     @Column(name = "program_id", nullable = false)
     private Long programId;
 
-    @Column(name = "started_at", nullable = false)
+    @Column(name = "started_at")
     private LocalDateTime startedAt;
 
-    @Column(name = "finished_at", nullable = false)
+    @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
     @Column(name = "participant_count", nullable = false)
