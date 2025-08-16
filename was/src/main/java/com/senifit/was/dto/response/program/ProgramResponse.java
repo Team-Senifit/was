@@ -1,8 +1,8 @@
 package com.senifit.was.dto.response.program;
 
-import com.senifit.was.entity.selections.CognitiveKind;
+import com.senifit.was.entity.selections.CognitiveWorkoutKind;
 import com.senifit.was.entity.selections.CooldownWorkoutKind;
-import com.senifit.was.entity.selections.IncludesSinging;
+import com.senifit.was.entity.selections.IncludesSingingWorkout;
 import com.senifit.was.entity.selections.WarmupWorkoutKind;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,8 +21,8 @@ public class ProgramResponse {
 
     private final WarmupWorkoutKind warmup_workout_code;
     private final CooldownWorkoutKind cooldown_workout_code;
-    private final CognitiveKind cognitive_workout_code;
-    private final IncludesSinging singing_workout_code;
+    private final CognitiveWorkoutKind cognitive_workout_code;
+    private final IncludesSingingWorkout singing_workout_code;
 
     private final String thumbnail_path;
 

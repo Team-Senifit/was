@@ -31,10 +31,10 @@ public class ProgramDataParseService {
 
             LookupWorkoutCognitiveKind cognitiveKind =
                     LookupWorkoutCognitiveKind.fromSelection(
-                            CognitiveKind.fromCode((String) row.get("cognitive_workout_kind_id")));
+                            CognitiveWorkoutKind.fromCode((String) row.get("cognitive_workout_kind_id")));
             LookupWorkoutSingingKind singingKind =
                     LookupWorkoutSingingKind.fromSelection(
-                            IncludesSinging.fromCode((String) row.get("singing_workout_kind_id")));
+                            IncludesSingingWorkout.fromCode((String) row.get("singing_workout_kind_id")));
             LookupTarget targetKind =
                     LookupTarget.fromSelection(
                             TargetKind.fromCode((String) row.get("primary_target_kind_id")));

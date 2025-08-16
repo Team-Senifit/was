@@ -1,8 +1,8 @@
 package com.senifit.was.dto.response.record;
 
-import com.senifit.was.entity.selections.CognitiveKind;
+import com.senifit.was.entity.selections.CognitiveWorkoutKind;
 import com.senifit.was.entity.selections.DurationKind;
-import com.senifit.was.entity.selections.IncludesSinging;
+import com.senifit.was.entity.selections.IncludesSingingWorkout;
 import com.senifit.was.entity.selections.RoutineKind;
 import lombok.*;
 
@@ -27,9 +27,9 @@ public class RecordResponse {
 
     private RoutineKind routineKind;
 
-    private CognitiveKind cognitiveKind;
+    private CognitiveWorkoutKind cognitiveKind;
 
-    private IncludesSinging singingKind;
+    private IncludesSingingWorkout singingKind;
 
     private DurationKind durationKind;
 
