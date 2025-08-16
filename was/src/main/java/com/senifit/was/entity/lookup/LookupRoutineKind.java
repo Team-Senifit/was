@@ -19,8 +19,8 @@ public class LookupRoutineKind
     }
 
     @Override
-    public RoutineKind toSelection(LookupRoutineKind selection) {
-        return RoutineKind.fromId(selection.getId());
+    public RoutineKind toSelection() {
+        return RoutineKind.fromId(this.getId());
     }
 }
 

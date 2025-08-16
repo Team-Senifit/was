@@ -19,8 +19,8 @@ public class LookupWorkoutCognitiveKind
     }
 
     @Override
-    public CognitiveKind toSelection(LookupWorkoutCognitiveKind selection) {
-        return CognitiveKind.fromId(selection.getId());
+    public CognitiveKind toSelection() {
+        return CognitiveKind.fromId(this.getId());
     }
 }
 

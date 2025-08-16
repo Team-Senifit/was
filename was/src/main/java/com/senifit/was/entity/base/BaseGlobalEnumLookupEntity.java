@@ -1,13 +1,5 @@
 package com.senifit.was.entity.base;
 
-import com.senifit.was.entity.GlobalEnum;
-import com.senifit.was.entity.base.BaseGlobalEnumSelection;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 public interface BaseGlobalEnumLookupEntity<
         E extends BaseGlobalEnumLookupEntity<?, ?>,
         T extends BaseGlobalEnumSelection> {
@@ -24,5 +16,5 @@ public interface BaseGlobalEnumLookupEntity<
       }
    }
 
-   T toSelection(E selection);
+   T toSelection();
 }

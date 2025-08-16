@@ -158,7 +158,7 @@ public class ProgramDataParseService {
         Map<Long, Program> programs
     ) {
         for (Bundle bundle : bundles.values()) {
-            bundle
+          //  bundle
         }
     }
 

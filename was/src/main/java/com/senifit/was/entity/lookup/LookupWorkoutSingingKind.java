@@ -2,7 +2,6 @@ package com.senifit.was.entity.lookup;
 
 import com.senifit.was.entity.base.BaseGlobalEnumLookupEntity;
 import com.senifit.was.entity.base.BaseLookupEntity;
-import com.senifit.was.entity.selections.CooldownWorkoutKind;
 import com.senifit.was.entity.selections.IncludesSinging;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -20,8 +19,8 @@ public class LookupWorkoutSingingKind
     }
 
     @Override
-    public IncludesSinging toSelection(LookupWorkoutSingingKind selection) {
-        return IncludesSinging.fromId(selection.getId());
+    public IncludesSinging toSelection() {
+        return IncludesSinging.fromId(this.getId());
     }
 }
 

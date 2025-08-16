@@ -21,8 +21,8 @@ public class LookupVideoKind extends BaseLookupEntity implements BaseGlobalEnumL
     }
 
     @Override
-    public VideoKind toSelection(LookupVideoKind selection) {
-        return VideoKind.fromId(selection.getId());
+    public VideoKind toSelection() {
+        return VideoKind.fromId(this.getId());
     }
 }
 

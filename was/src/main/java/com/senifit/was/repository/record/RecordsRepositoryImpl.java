@@ -37,10 +37,10 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                         .endTime(r.getFinishedAt())
                         .participantCount(r.getParticipantCount())
                         .surveyExist(r.isSurveyExist())
-                        .routineKind(r.getRoutineKind())
-                        .cognitiveKind(r.getCognitiveKind())
-                        .singingKind(r.getIncludesSinging())
-                        .durationKind(r.getDurationKind())
+                        .routineKind(r.getRoutineKind().toSelection())
+                        .cognitiveKind(r.getCognitiveKind().toSelection())
+                        .singingKind(r.getIncludesSinging().toSelection())
+                        .durationKind(r.getDurationKind().toSelection())
                         .build())
                 .collect(Collectors.toList());
     }

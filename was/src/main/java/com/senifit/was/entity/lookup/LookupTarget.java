@@ -23,8 +23,8 @@ implements BaseGlobalEnumLookupEntity<LookupTarget, TargetKind> {
     }
 
     @Override
-    public TargetKind toSelection(LookupTarget selection) {
-        return TargetKind.fromCode(selection.getName());
+    public TargetKind toSelection() {
+        return TargetKind.fromCode(this.getName());
     }
 }
 

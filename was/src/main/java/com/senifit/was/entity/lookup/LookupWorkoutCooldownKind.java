@@ -19,8 +19,8 @@ public class LookupWorkoutCooldownKind
     }
 
     @Override
-    public CooldownWorkoutKind toSelection(LookupWorkoutCooldownKind selection) {
-        return CooldownWorkoutKind.fromId(selection.getId());
+    public CooldownWorkoutKind toSelection() {
+        return CooldownWorkoutKind.fromId(this.getId());
     }
 }
 

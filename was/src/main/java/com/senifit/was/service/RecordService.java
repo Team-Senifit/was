@@ -5,6 +5,10 @@ import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.entity.*;
 import com.senifit.was.entity.Record;
+import com.senifit.was.entity.lookup.LookupDurationKind;
+import com.senifit.was.entity.lookup.LookupRoutineKind;
+import com.senifit.was.entity.lookup.LookupWorkoutCognitiveKind;
+import com.senifit.was.entity.lookup.LookupWorkoutSingingKind;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -71,16 +75,16 @@ public class RecordService {
 
         // 선택값 설정 (DB에는 converter로 BIGINT id 저장)
         if (request.getRoutineKind() != null) {
-            record.setRoutineKind(request.getRoutineKind());
+            record.setRoutineKind(LookupRoutineKind.fromSelection(request.getRoutineKind()));
         }
         if (request.getCognitiveKind() != null) {
-            record.setCognitiveKind(request.getCognitiveKind());
+            record.setCognitiveKind(LookupWorkoutCognitiveKind.fromSelection(request.getCognitiveKind()));
         }
         if (request.getSingingKind() != null) {
-            record.setIncludesSinging(request.getSingingKind());
+            record.setIncludesSinging(LookupWorkoutSingingKind.fromSelection(request.getSingingKind()));
         }
         if (request.getDurationKind() != null) {
-            record.setDurationKind(request.getDurationKind());
+            record.setDurationKind(LookupDurationKind.fromSelection(request.getDurationKind()));
         }
 
         // MemberRecord 생성 및 연관성 설정

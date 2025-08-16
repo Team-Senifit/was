@@ -23,8 +23,8 @@ implements BaseGlobalEnumLookupEntity<LookupWorkoutPurpose, WorkoutPurposeKind> 
     }
 
     @Override
-    public WorkoutPurposeKind toSelection(LookupWorkoutPurpose selection) {
-        return WorkoutPurposeKind.fromCode(selection.getName());
+    public WorkoutPurposeKind toSelection() {
+        return WorkoutPurposeKind.fromCode(this.getName());
     }
 }
 
