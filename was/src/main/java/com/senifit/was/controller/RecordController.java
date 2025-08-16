@@ -25,17 +25,13 @@ public class RecordController {
     @GetMapping
     public ApiResponse<List<RecordResponse>> listRecord(HttpSession session) {
         log.debug("LIST RECORD");
-        Long centerId = SessionUtils.getUserId(session);
-        return ApiResponse.success(recordService.getRecordsByCenterId(centerId));
+        return ApiResponse.success(recordService.getRecordsByCenterId(SessionUtils.getUserId(session)));
     }
 
 //    @GetMapping("{recordId}")
 //    public ApiResponse<RecordResponse> getRecordById(HttpSession session, @PathVariable Long recordId) {
-//        Long centerId = (Long) session.getAttribute("centerId");
-//        if (centerId == null) {
-//            throw new BadRequestApiException();
-//        }
-//            return ApiResponse.success(recordService.getRecordById(recordId));
+//        log.debug("RECORD ID: {}", recordId);
+//        return ApiResponse.success(recordService.getRecordById(SessionUtils.getUserId(session), recordId));
 //    }
 
     @PostMapping

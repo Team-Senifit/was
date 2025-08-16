@@ -2,17 +2,18 @@
 GET localhost:8080/centers/members
 
 ### get /centers/members/{memberid}
-GET localhost:8080/centers/members/1
+GET localhost:8080/centers/members/201
 
 ### post /centers/members
 POST localhost:8080/centers/members
 Content-Type: application/json
 
 {
-  "name": "김춘배",
-  "birthDate": "1950-03-03",
+  "name": "음력테스트",
+  "birthDate": "2000-03-03",
   "gender": 1,
-  "memberRank": 3
+  "memberRank": 3,
+  "isSolar": false
 }
 
 ### put /centers/members/{memberid}

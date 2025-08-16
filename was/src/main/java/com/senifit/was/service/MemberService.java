@@ -49,6 +49,7 @@ public class MemberService {
                         .memberId(m.getMemberId())
                         .name(m.getName())
                         .birthDate(m.getBirthDate())
+                        .isSolar(m.getIsSolar())
                         .gender(m.getGender().getId())
                         .memberRank(m.getRank().getId())
                         .build())
@@ -77,6 +78,7 @@ public class MemberService {
                 .memberId(member.getMemberId())
                 .name(member.getName())
                 .birthDate(member.getBirthDate())
+                .isSolar(member.getIsSolar())
                 .gender(member.getGender().getId())
                 .memberRank(member.getRank().getId())
                 .build();
@@ -86,37 +88,39 @@ public class MemberService {
      * 회원 추가
      */
     @Transactional
-    public Long addMember(MemberRequest request, Long centerId) {
+    public void addMember(MemberRequest request, Long centerId) {
         Center center = centersRepository.findById(centerId)
                 .orElseThrow(CenterNotFoundException::new);
 
         Member member = Member.builder()
                 .name(request.getName())
                 .birthDate(request.getBirthDate())
+                .isSolar(request.getIsSolar())
                 .gender(lookupGenderRepository.getReferenceById(request.getGender()))
                 .rank(lookupRankRepository.getReferenceById(request.getMemberRank()))
                 .center(center)
                 .build();
 
         membersRepository.save(member);
-        return member.getMemberId();
     }
 
     /**
      * 회원 수정
      */
     @Transactional
-    public Long updateMemberById(MemberRequest request, Long memberId, Long centerId) {
+    public void updateMemberById(MemberRequest request, Long memberId, Long centerId) {
         Member member = membersRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        member.updateMember(request.getName(), request.getBirthDate(), lookupGenderRepository.getReferenceById(request.getGender()), lookupRankRepository.getReferenceById(request.getMemberRank()));
-
-        return member.getMemberId();
+        member.updateMember(request.getName(),
+                request.getBirthDate(),
+                request.getIsSolar(),
+                lookupGenderRepository.getReferenceById(request.getGender()),
+                lookupRankRepository.getReferenceById(request.getMemberRank()));
     }
 
     @Transactional
-    public Long deleteMemberById(Long memberId, Long centerId) {
+    public void deleteMemberById(Long memberId, Long centerId) {
         QMember qmember = QMember.member;
 
         Member member = queryFactory
@@ -132,6 +136,5 @@ public class MemberService {
         }
 
         membersRepository.delete(member);
-        return memberId;
     }
 }
