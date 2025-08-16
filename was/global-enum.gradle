@@ -23,7 +23,7 @@ tasks.register('generateGlobalEnum') {
     outputs.dirs(enumBuildOutDir)
 
     doLast {
-        def lines = enumInput.readLines()
+        def lines = enumInput.getText('UTF-8').readLines()
                 .collect { it.trim() }
                 .findAll { it && !it.startsWith("#") }
 
@@ -97,7 +97,7 @@ tasks.register('generateGlobalEnumSelections') {
 
     doLast {
         // Parse global-enum.yml to get code to id mapping
-        def globalEnumLines = globalEnumInput.readLines()
+        def globalEnumLines = globalEnumInput.getText('UTF-8').readLines()
         def codeToId = [:]
         def lineRe = ~/^(0x[0-9A-Fa-f]+)\s*:\s*(\S.*)$/
         
@@ -115,7 +115,7 @@ tasks.register('generateGlobalEnumSelections') {
         }
         
         // Parse selections file
-        def lines = selectionsInput.readLines()
+        def lines = selectionsInput.getText('UTF-8').readLines()
         def currentEnum = null
         def currentValues = []
         def enums = [:]
@@ -144,6 +144,21 @@ tasks.register('generateGlobalEnumSelections') {
         
         def pkgDir = new File(selectionsBuildOutDir, selectionsPkg.replace('.', '/'))
         pkgDir.mkdirs()
+
+        // ④ ★★★ 여기 추가: BaseGlobalEnumSelection 인터페이스 생성 ★★★
+        //    - enum들이 implements 하는 인터페이스가 반드시 동일 소스셋에 존재해야 함
+        def ifaceFile = new File(pkgDir, "BaseGlobalEnumSelection.java")
+        if (!ifaceFile.exists()) {
+            ifaceFile.text = """
+package ${selectionsPkg};
+
+public interface BaseGlobalEnumSelection {
+    Long getId();
+    String getCode();
+}
+""".stripIndent()
+            println "Generated: ${ifaceFile}"
+        }
         
         enums.each { enumName, values ->
             def enumFile = new File(pkgDir, "${enumName}.java")
@@ -222,6 +237,6 @@ sourceSets {
 tasks.named('compileJava') {
     dependsOn tasks.named('generateGlobalEnum')
     dependsOn tasks.named('generateGlobalEnumSelections')
-    source enumBuildOutDir
-    source selectionsBuildOutDir
+//    source enumBuildOutDir
+//    source selectionsBuildOutDir
 }

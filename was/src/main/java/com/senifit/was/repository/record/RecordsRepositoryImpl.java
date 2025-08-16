@@ -22,10 +22,9 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
         QRecord records = QRecord.record;
         QProgram program = QProgram.program;
 
-        // records + programs fetch
+        // records
         List<Record> result = queryFactory
                 .selectFrom(records)
-                .leftJoin(records.program, program).fetchJoin()
                 .where(records.center.centerId.eq(centerId))
                 .orderBy(records.createdAt.desc())
                 .fetch();
@@ -33,7 +32,7 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
         return result.stream()
                 .map(r -> RecordResponse.builder()
                         .recordId(r.getRecordId())
-                        .programId(r.getProgram().getId())
+                        .programId(r.getProgramId())
                         .startTime(r.getStartedAt())
                         .endTime(r.getFinishedAt())
                         .participantCount(r.getParticipantCount())
@@ -47,21 +46,20 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
     }
 
     @Override
-    public RecordResponse findRecordById(Long recordId) {
+    public RecordResponse findRecordById(Long centerId, Long recordId) {
         QRecord records = QRecord.record;
-        QProgram program = QProgram.program;
 
         Record r = queryFactory
                 .selectFrom(records)
-                .leftJoin(records.program, program).fetchJoin()
-                .where(records.recordId.eq(recordId))
+                .where(records.recordId.eq(recordId),
+                        records.center.centerId.eq(centerId))
                 .fetchOne();
 
         if (r == null) return null;
 
         return RecordResponse.builder()
                 .recordId(r.getRecordId())
-                .programId(r.getProgram().getId())
+                .programId(r.getProgramId())
                 .startTime(r.getStartedAt())
                 .endTime(r.getFinishedAt())
                 .participantCount(r.getParticipantCount())

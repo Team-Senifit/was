@@ -43,8 +43,8 @@ public class RecordService {
     /**
      * 상세 조회
      */
-    public RecordResponse getRecordById(Long recordId) {
-        return recordsRepository.findRecordById(recordId);
+    public RecordResponse getRecordById(Long centerId, Long recordId) {
+        return recordsRepository.findRecordById(centerId, recordId);
     }
 
     /**
@@ -63,7 +63,7 @@ public class RecordService {
         // Record 생성
         Record record = Record.builder()
                 .center(center)
-                .program(program)
+                .programId(program.getId())
                 .startedAt(request.getStartTime())
                 .finishedAt(request.getEndTime())
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
@@ -134,8 +134,8 @@ public class RecordService {
      * 기록 삭제
      */
     @Transactional
-    public Long deleteRecordById(Long recordId, Long centerId) {
-        return recordsRepository.deleteByRecordIdAndCenter_CenterId(recordId, centerId);
+    public void deleteRecordById(Long recordId, Long centerId) {
+        recordsRepository.deleteByRecordIdAndCenter_CenterId(recordId, centerId);
     }
 
 }

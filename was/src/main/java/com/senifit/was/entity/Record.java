@@ -27,9 +27,8 @@ public class Record extends BaseTimeEntity {
     @JoinColumn(name = "center_id", nullable = false)
     private Center center;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id", nullable = false)
-    private Program program;
+    @Column(name = "program_id", nullable = false)
+    private Long programId;
 
     @Column(name = "started_at", nullable = false)
     private LocalDateTime startedAt;
@@ -65,13 +64,13 @@ public class Record extends BaseTimeEntity {
     @Builder
     public Record(
         Center center,
-        Program program,
+        Long programId,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         Integer participantCount
     ) {
         this.center = center;
-        this.program = program;
+        this.programId = programId;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.participantCount = participantCount;
