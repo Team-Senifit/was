@@ -1,5 +1,6 @@
 package com.senifit.was.entity;
 
+import com.senifit.was.entity.lookup.LookupTarget;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

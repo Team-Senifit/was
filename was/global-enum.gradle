@@ -39,7 +39,7 @@ tasks.register('generateGlobalEnum') {
             rows << [hex: hex, code: code, id: id, constName: toConstName(code)]
         }
 
-        def consts = rows.collect { r -> "    ${r.constName}(${r.hex}L, \"${r.code}\")" }.join(",\n") + ";\n"
+        def consts = rows.collect { r -> "    ${r.constName}(${r.hex}, \"${r.code}\")" }.join(",\n") + ";\n"
 
         def pkgDir = new File(enumBuildOutDir, enumPkg.replace('.', '/'))
         pkgDir.mkdirs()
@@ -50,9 +50,9 @@ package ${enumPkg};
 import java.util.*;
 
 /**
- * Generated from src/data/global-enum.yml
+ * src/data/global-enum.yml 로 생성함
  * Format: "0xNNNNNNNN: code"
- * DO NOT EDIT MANUALLY.
+ * 수동으로 수정하지 마세요.
  */
 public enum ${enumClass} {
 ${consts}
@@ -81,6 +81,18 @@ ${consts}
         }
         return null;
     }
+    
+    public static List<${enumClass}> fromCodePattern(String pattern) {
+        List<${enumClass}> result = new ArrayList<>();
+        String regexPattern = pattern.replace("*", ".*");
+        
+        for (${enumClass} value : values()) {
+            if (value.code.matches(regexPattern)) {
+                result.add(value);
+            }
+        }
+        return result;
+    }
 }
 """.stripIndent()
         enumBuildOutFile.text = src
@@ -108,8 +120,7 @@ tasks.register('generateGlobalEnumSelections') {
                 if (m.find()) {
                     def hex = m.group(1)
                     def code = m.group(2).trim()
-                    long id = Long.decode(hex)
-                    codeToId[code] = id
+                    codeToId[code] = hex
                 }
             }
         }
@@ -148,14 +159,30 @@ tasks.register('generateGlobalEnumSelections') {
         enums.each { enumName, values ->
             def enumFile = new File(pkgDir, "${enumName}.java")
             
-            def enumValues = values.collect { value ->
-                def constName = value.toLowerCase().replaceAll(/[^a-z0-9_]/, '_')
-                def id = codeToId[value] ?: 0L
+            def expandedValues = []
+            values.each { value ->
+                if (value.contains("*")) {
+                    // 와일드카드 확장
+                    def pattern = value.replace("*", ".*")
+                    codeToId.each { code, id ->
+                        if (code.matches(pattern)) {
+                            expandedValues << code
+                        }
+                    }
+                } else {
+                    expandedValues << value
+                }
+            }
+            
+            def enumValues = expandedValues.collect { value ->
+                def constName = value
+                def id = codeToId[value] ?: "0x0L"
                 "    ${constName}(${id}L, \"${value}\")"
             }.join(",\n") + ";"
-            
+
             def src = """
 package ${selectionsPkg};
+import com.senifit.was.entity.base.BaseGlobalEnumSelection;
 
 /**
  * Generated from global-enum-selections.yml
@@ -201,7 +228,7 @@ ${enumValues}
     }
 }
 """.stripIndent()
-            
+
             enumFile.text = src
             println "Generated: ${enumFile}"
         }

@@ -1,30 +1,61 @@
-CognitiveKind:
-  - workout_kinds_cognitive_kinds_taekwondo
-  - workout_kinds_cognitive_kinds_dualtasking
-  - workout_kinds_cognitive_kinds_continuous
+# lookup_workout_cognitive_kinds
+CognitiveWorkoutKind:
+  - workout_kinds_cognitive_kinds_*
   - workout_notSelected
 
-DurationKind:
-  - workout_duration_30minutes
-  - workout_duration_60minutes
-
-IncludesCognitive:
-  - workout_kinds_cognitive
+# lookup_workout_warmup_kinds
+WarmupWorkoutKind:
+  - workout_kinds_warmup
   - workout_notSelected
 
-IncludesSinging:
+# lookup_workout_cooldown_kinds
+CooldownWorkoutKind:
+  - workout_kinds_cooldown
+  - workout_notSelected
+
+# lookup_workout_singing_kinds
+IncludesSingingWorkout:
   - workout_kinds_singing
   - workout_notSelected
 
+# lookup_routine_kinds
 RoutineKind:
-  - workout_programs_selections_popular
-  - workout_programs_selections_personal
+  - workout_programs_selections_*
 
+# lookup_targets
 TargetKind:
-  - workout_kinds_calisthenic_targets_arms
-  - workout_kinds_calisthenic_targets_shoulders
-  - workout_kinds_calisthenic_targets_abs
-  - workout_kinds_calisthenic_targets_legs
-  - workout_kinds_calisthenic_targets_back
-  - workout_kinds_calisthenic_targets_arm
-  - workout_kinds_calisthenic_targets_arms_and_shoulders
+  - workout_kinds_calisthenic_targets_*
+  - workout_notSelected
+
+# lookup_content_kinds
+VideoKind:
+  - workout_kinds_warmup
+  - workout_kinds_cooldown
+  - workout_kinds_cognitive_*
+  - workout_kinds_calisthenic_kinds_*
+  - workout_kinds_singing
+  - workout_notSelected
+
+# lookup_bundle_kinds
+BundleKind:
+  - workout_kinds_warmup
+  - workout_kinds_cooldown
+  - workout_kinds_cognitive_*
+  - workout_kinds_calisthenic_*
+  - workout_kinds_singing
+  - workout_notSelected
+
+
+# lookup_workout_purposes
+WorkoutPurposeKind:
+  - workout_purposes_*
+  - workout_notSelected
+  -
+DurationKind:
+  - workout_duration_*
+
+ProgramRecommendationPerTargetKind:
+  - workout_kinds_cognitive_kinds_*
+  - workout_kinds_calisthenic_kinds_*
+  - workout_kinds_singing
+

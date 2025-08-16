@@ -1,5 +1,6 @@
 package com.senifit.was.entity;
 
+import com.senifit.was.entity.base.BaseTimeEntity;
 import com.senifit.was.entity.selections.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,5 +1,8 @@
 package com.senifit.was.entity;
 
+import com.senifit.was.entity.base.BaseTimeEntity;
+import com.senifit.was.entity.lookup.LookupGender;
+import com.senifit.was.entity.lookup.LookupRank;
 import jakarta.persistence.*;
 import lombok.*;
 

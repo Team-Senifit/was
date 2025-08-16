@@ -1,4 +1,4 @@
-package com.senifit.was.entity;
+package com.senifit.was.entity.base;
 
 import java.time.LocalDateTime;
 

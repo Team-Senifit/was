@@ -1,20 +1,21 @@
 package com.senifit.was.entity;
 
+import com.senifit.was.entity.base.BaseTimeEntity;
+import com.senifit.was.entity.lookup.LookupBundleKind;
+import com.senifit.was.entity.lookup.LookupVideoKind;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
-@Getter
+@Entity @Table(name = "bundles")
+@Getter @Setter @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "bundles")
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bundle extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(name = "name", length = 255)
@@ -22,15 +23,9 @@ public class Bundle extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kind_id", nullable = false)
-    private LookupContentKind kind;
+    private LookupBundleKind kind;
 
     @Column(name = "duration", nullable = false)
     private Integer duration;
-
-    @OneToMany(mappedBy = "bundle", orphanRemoval = true)
-    private List<ProgramBundle> programBundles = new ArrayList<>();
-
-    @OneToMany(mappedBy = "bundle", orphanRemoval = true)
-    private List<BundleVideo> bundleVideos = new ArrayList<>();
 }
 

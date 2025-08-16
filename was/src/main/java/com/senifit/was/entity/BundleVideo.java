@@ -2,6 +2,7 @@ package com.senifit.was.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,13 @@ public class BundleVideo {
 
     @Column(name = "sequence")
     private Integer sequence;
+
+    @Builder
+    public BundleVideo(Bundle bundle, Video video, Integer sequence, Long id) {
+        this.bundle = bundle;
+        this.video = video;
+        this.sequence = sequence;
+        this.id = id;
+    }
 }
 
