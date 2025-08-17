@@ -5,18 +5,15 @@ import com.senifit.was.entity.lookup.LookupVideoKind;
 import com.senifit.was.entity.lookup.LookupTarget;
 import com.senifit.was.entity.lookup.LookupWorkoutPurpose;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Getter
+@Entity @Table(name = "videos")
+@Getter @Setter @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "videos")
+@AllArgsConstructor
 public class Video extends BaseTimeEntity {
 
     @Id
@@ -50,6 +47,7 @@ public class Video extends BaseTimeEntity {
     @JoinColumn(name = "target_kind_id")
     private LookupTarget targetKind;
 
+    @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "video_purposes",
@@ -57,25 +55,6 @@ public class Video extends BaseTimeEntity {
             inverseJoinColumns = @JoinColumn(name = "purpose_id")
     )
     private List<LookupWorkoutPurpose> purposes = new ArrayList<>();
-
-    @Builder
-    public Video(
-            Long id, String name, String description, String script,
-            Integer duration, String videoPath,
-            String thumbnailPath, LookupVideoKind kind, LookupTarget targetKind,
-            List<LookupWorkoutPurpose> purposes
-            ) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.script = script;
-        this.duration = duration;
-        this.videoPath = videoPath;
-        this.thumbnailPath = thumbnailPath;
-        this.kind = kind;
-        this.targetKind = targetKind;
-        this.purposes = purposes;
-    }
 
 }
 
