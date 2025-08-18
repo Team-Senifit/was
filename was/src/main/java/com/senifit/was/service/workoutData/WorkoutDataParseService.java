@@ -1,12 +1,12 @@
-package com.senifit.was.service.program;
+package com.senifit.was.service.workoutData;
 
 import com.senifit.was.entity.*;
 import com.senifit.was.entity.lookup.*;
 import com.senifit.was.entity.selections.*;
-import com.senifit.was.repository.program.ProgramRepository;
 import com.senifit.was.service.ParseXlsxService;
-import com.senifit.was.service.program.exception.InvalidXlsxTemplateApiException;
+import com.senifit.was.service.workoutData.exception.InvalidXlsxTemplateApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,20 +15,26 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class ProgramDataParseService {
+public class WorkoutDataParseService {
     private final ParseXlsxService parseXlsxService;
 
-    public void parseProgramAndProgramBundle(
+    void parseProgramAndProgramBundle(
             List<Map<String, Object>> programSheetInput,
-            Map<Long, Bundle> bundleMapInput,
-            Map<Program, ProgramBundle> programBundleMapOutput,
-            Map<Long, Program> programMapOutput
+            BundleParseVo bundles,
+            ProgramBundleListParseVo programBundles,
+            ProgramParseVo programs
     ) {
         for (Map<String, Object> row : programSheetInput) {
             Long programId = (Long) row.get("id");
             if (programId == null)
                 continue;
 
+            LookupWorkoutCooldownKind cooldownKind =
+                    LookupWorkoutCooldownKind.fromSelection(
+                            CooldownWorkoutKind.fromCode((String) row.get("cooldown_workout_kind_id")));
+            LookupWorkoutWarmupKind warmupKind =
+                    LookupWorkoutWarmupKind.fromSelection(
+                            WarmupWorkoutKind.fromCode((String) row.get("warmup_workout_kind_id")));
             LookupWorkoutCognitiveKind cognitiveKind =
                     LookupWorkoutCognitiveKind.fromSelection(
                             CognitiveWorkoutKind.fromCode((String) row.get("cognitive_workout_kind_id")));
@@ -43,35 +49,41 @@ public class ProgramDataParseService {
                     .id(programId)
                     .name((String) row.get("name"))
                     .description((String) row.get("description"))
+                    .thumbnailPath((String) row.get("thumbnail_path"))
                     .duration(Math.toIntExact((Long) row.get("duration")))
+                    .warmupWorkoutKind(warmupKind)
+                    .cooldownWorkoutKind(cooldownKind)
                     .cognitiveWorkoutKind(cognitiveKind)
                     .singingWorkoutKind(singingKind)
                     .primaryTarget(targetKind).build();
-            programMapOutput.put(programId, p);
+            programs.put(programId, p);
 
             for (int i = 1; i <= 15; i++) {
                 Long bundleId = (Long) row.get("bundle" + i);
                 if (bundleId == null)
                     continue;
-                if (!bundleMapInput.containsKey(bundleId))
+                if (!bundles.containsKey(bundleId))
                     throw new InvalidXlsxTemplateApiException();
 
                 ProgramBundle pb = ProgramBundle.builder()
                         .program(p)
-                        .bundle(bundleMapInput.get(bundleId))
+                        .bundle(bundles.get(bundleId))
                         .sequence(i)
                         .build();
-                programBundleMapOutput.put(p, pb);
+                if (!(programBundles.containsKey(p))) {
+                    programBundles.put(p, new ProgramBundleParseVo());
+                }
+                programBundles.get(p).add(pb);
             }
 
         }
     }
 
-    public void parseBundleAndBundleVideo(
+    void parseBundleAndBundleVideo(
         List<Map<String, Object>> bundleSheetInput,
-        Map<Long, Video> videoMapInput,
-        Map<Bundle, BundleVideo> bundleVideoMapOutput,
-        Map<Long, Bundle> bundleMapOutput
+        VideoParseVo videos,
+        BundleVideoListParseVo bundleVideos,
+        BundleParseVo bundles
     ) {
         for (Map<String, Object> row : bundleSheetInput) {
             Long bundleId = (Long) row.get("id");
@@ -88,7 +100,7 @@ public class ProgramDataParseService {
                     .name("")
                     .kind(bundleKind)
                     .build();
-            bundleMapOutput.put(bundleId, b);
+            bundles.put(bundleId, b);
 
             int duration = 0;
             for (int i = 1; i <= 5; i++) {
@@ -96,14 +108,17 @@ public class ProgramDataParseService {
                 if (videoId == null)
                     continue;
 
-                Video video = videoMapInput.get(videoId);
+                Video video = videos.get(videoId);
                 BundleVideo bv = BundleVideo.builder()
                         .bundle(b)
                         .video(video)
                         .sequence(i)
                         .build();
 
-                bundleVideoMapOutput.put(b, bv);
+                if (!(bundleVideos.containsKey(b))) {
+                   bundleVideos.put(b, new BundleVideoParseVo());
+                }
+                bundleVideos.get(b).add(bv);
                 duration += video.getDuration();
             }
             b.setDuration(duration);
@@ -111,9 +126,9 @@ public class ProgramDataParseService {
     }
 
 
-    public void parseVideo(
+    void parseVideo(
             List<Map<String, Object>> videoSheetInput,
-            Map<Long, Video> videoMapOutput
+            VideoParseVo videos
     ) {
         for (Map<String, Object> row : videoSheetInput) {
             Long videoId = (Long) row.get("id");
@@ -129,9 +144,10 @@ public class ProgramDataParseService {
             if (purpose1 == null || purpose2 == null)
                 throw new InvalidXlsxTemplateApiException();
 
-            List<LookupWorkoutPurpose> purposes = new ArrayList<>();
-            purposes.add(LookupWorkoutPurpose.fromSelection(purpose1));
-            purposes.add(LookupWorkoutPurpose.fromSelection(purpose2));
+            List<LookupWorkoutPurpose> firstPriorityPurposes = new ArrayList<>();
+            firstPriorityPurposes.add(LookupWorkoutPurpose.fromSelection(purpose1));
+            List<LookupWorkoutPurpose> secondPriorityPurposes = new ArrayList<>();
+            secondPriorityPurposes.add(LookupWorkoutPurpose.fromSelection(purpose2));
 
             Video video = Video.builder()
                     .id(videoId)
@@ -143,22 +159,11 @@ public class ProgramDataParseService {
                     .duration(Math.toIntExact((Long) row.get("duration")))
                     .thumbnailPath((String) row.get("thumbnail_path"))
                     .videoPath((String) row.get("video_path"))
-                    .purposes(purposes)
+                    .firstPriorityPurposes(firstPriorityPurposes)
+                    .secondPriorityPurposes(secondPriorityPurposes)
                     .build();
 
-            videoMapOutput.put(videoId, video);
-        }
-    }
-
-    public void validate(
-        Map<Long, Video> videos,
-        Map<Bundle, BundleVideo> bundleVideos,
-        Map<Long, Bundle> bundles,
-        Map<Program, ProgramBundle> programBundles,
-        Map<Long, Program> programs
-    ) {
-        for (Bundle bundle : bundles.values()) {
-          //  bundle
+            videos.put(videoId, video);
         }
     }
 
