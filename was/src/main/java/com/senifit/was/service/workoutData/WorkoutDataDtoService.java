@@ -43,21 +43,23 @@ public class WorkoutDataDtoService {
             .cooldown_workout_code(program.getCooldownWorkoutKind().toSelection())
             .cognitive_workout_code(program.getCognitiveWorkoutKind().toSelection())
             .singing_workout_code(program.getSingingWorkoutKind().toSelection())
+            .primary_target_code(program.getPrimaryTarget().toSelection())
             .thumbnail_path(program.getThumbnailPath())
             .videos(videoResponses)
             .build();
     }
     public ProgramInfoResponse buildProgramInfoDto(Program program) {
         return ProgramInfoResponse.builder()
-                .id(program.getId())
-                .name(program.getName())
-                .description(program.getDescription())
-                .duration(program.getDuration())
-                .warmup_workout_code(program.getWarmupWorkoutKind().toSelection())
-                .cooldown_workout_code(program.getCooldownWorkoutKind().toSelection())
-                .cognitive_workout_code(program.getCognitiveWorkoutKind().toSelection())
-                .singing_workout_code(program.getSingingWorkoutKind().toSelection())
-                .thumbnail_path(program.getThumbnailPath())
-                .build();
+            .id(program.getId())
+            .name(program.getName())
+            .description(program.getDescription())
+            .duration(program.getDuration())
+            .warmup_workout_code(program.getWarmupWorkoutKind().toSelection())
+            .cooldown_workout_code(program.getCooldownWorkoutKind().toSelection())
+            .cognitive_workout_code(program.getCognitiveWorkoutKind().toSelection())
+            .singing_workout_code(program.getSingingWorkoutKind().toSelection())
+            .primary_target_code(program.getPrimaryTarget().toSelection())
+            .thumbnail_path(program.getThumbnailPath())
+            .build();
     }
 }
