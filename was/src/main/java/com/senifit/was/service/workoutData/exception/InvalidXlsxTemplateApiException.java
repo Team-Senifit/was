@@ -1,4 +1,4 @@
-package com.senifit.was.service.program.exception;
+package com.senifit.was.service.workoutData.exception;
 
 import com.senifit.was.exception.api.ApiException;
 import com.senifit.was.exception.api.ApiExceptionDetails;

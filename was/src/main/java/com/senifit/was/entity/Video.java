@@ -17,7 +17,6 @@ import java.util.List;
 public class Video extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -49,12 +48,23 @@ public class Video extends BaseTimeEntity {
 
     @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.LAZY)
+    @Builder.Default
     @JoinTable(
-            name = "video_purposes",
+            name = "video_first_priority_purposes",
             joinColumns = @JoinColumn(name = "video_id"),
             inverseJoinColumns = @JoinColumn(name = "purpose_id")
     )
-    private List<LookupWorkoutPurpose> purposes = new ArrayList<>();
+    private List<LookupWorkoutPurpose> firstPriorityPurposes = new ArrayList<>();
+
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @Builder.Default
+    @JoinTable(
+            name = "video_second_priority_purposes",
+            joinColumns = @JoinColumn(name = "video_id"),
+            inverseJoinColumns = @JoinColumn(name = "purpose_id")
+    )
+    private List<LookupWorkoutPurpose> secondPriorityPurposes = new ArrayList<>();
 
 }
 

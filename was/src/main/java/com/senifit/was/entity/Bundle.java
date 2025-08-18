@@ -13,7 +13,6 @@ import lombok.*;
 public class Bundle extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @Setter(AccessLevel.NONE)
     private Long id;

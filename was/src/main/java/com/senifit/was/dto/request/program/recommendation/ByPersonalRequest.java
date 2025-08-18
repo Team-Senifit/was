@@ -13,5 +13,5 @@ public class ByPersonalRequest {
     private DurationKind duration;
     private CognitiveWorkoutKind cognitive_workout_code;
     private TargetKind primary_target_code;
-    private IncludesSingingWorkout signing_workout_code;
+    private IncludesSingingWorkout singing_workout_code;
 }

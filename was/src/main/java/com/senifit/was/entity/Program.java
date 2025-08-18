@@ -21,7 +21,6 @@ import lombok.*;
 public class Program extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
