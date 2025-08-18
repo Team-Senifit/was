@@ -56,6 +56,6 @@ DurationKind:
 
 ProgramRecommendationPerTargetKind:
   - workout_kinds_cognitive_kinds_*
-  - workout_kinds_calisthenic_kinds_*
+  - workout_kinds_calisthenic_targets_*
   - workout_kinds_singing
 

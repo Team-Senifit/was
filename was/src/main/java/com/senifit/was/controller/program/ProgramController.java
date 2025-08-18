@@ -2,13 +2,13 @@ package com.senifit.was.controller.program;
 
 import com.senifit.was.dto.request.center.CenterCreateRequest;
 import com.senifit.was.dto.response.ApiResponse;
+import com.senifit.was.dto.response.program.ProgramResponse;
+import com.senifit.was.service.RecordService;
+import com.senifit.was.service.workoutData.RecommendationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -16,11 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 @Slf4j
 public class ProgramController {
-    @PostMapping("signup")
-    public ApiResponse<Void> createCenter(@Valid @RequestBody CenterCreateRequest request) {
-        log.debug("CREATE CENTER");
-        return ApiResponse.success();
+    private final RecommendationService recommendationService;
+
+    @GetMapping("{programId}")
+    public ApiResponse<ProgramResponse> getProgram(@PathVariable Long programId) {
+       return ApiResponse.success(recommendationService.getProgram(programId));
     }
-
-
 }

@@ -11,19 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Entity
-@Getter
+@Entity @Table(name = "programs")
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "programs")
+@AllArgsConstructor
+@Builder
 public class Program extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -58,29 +55,5 @@ public class Program extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_target_id")
     private LookupTarget primaryTarget;
-
-    @Builder
-    public Program(
-            Long id,
-            String name,
-            String description,
-            Integer duration,
-            String thumbnailPath,
-            LookupWorkoutWarmupKind warmupWorkoutKind,
-            LookupWorkoutCooldownKind cooldownWorkoutKind,
-            LookupWorkoutCognitiveKind cognitiveWorkoutKind,
-            LookupWorkoutSingingKind singingWorkoutKind,
-            LookupTarget primaryTarget
-    ) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.thumbnailPath = thumbnailPath;
-        this.warmupWorkoutKind = warmupWorkoutKind;
-        this.cooldownWorkoutKind = cooldownWorkoutKind;
-        this.cognitiveWorkoutKind = cognitiveWorkoutKind;
-        this.singingWorkoutKind = singingWorkoutKind;
-        this.primaryTarget = primaryTarget;
-    }
 }
 

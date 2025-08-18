@@ -1,0 +1,24 @@
+### test
+GET localhost:8080
+
+### /programs/recommendation/by-personal
+POST localhost:8080/programs/recommendation/by-personal
+Content-Type: application/json
+
+{
+  "duration": "workout_duration_30minutes",
+  "cognitive_workout_code": "workout_kinds_cognitive_kinds_continuous",
+  "primary_target_code": "workout_kinds_calisthenic_targets_back",
+  "singing_workout_code": "workout_kinds_singing"
+}
+
+### /programs/recommendation/by-target
+POST localhost:8080/programs/recommendation/by-target
+Content-Type: application/json
+
+{
+  "workout_kind": "workout_kinds_calisthenic_targets_legs"
+}
+
+### /programs/1013
+GET localhost:8080/programs/1044

@@ -8,5 +8,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class ByTargetRequest {
-   private final ProgramRecommendationPerTargetKind workoutKind;
+   private final ProgramRecommendationPerTargetKind workout_kind;
 }

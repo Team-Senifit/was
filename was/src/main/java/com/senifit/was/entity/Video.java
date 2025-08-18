@@ -5,22 +5,18 @@ import com.senifit.was.entity.lookup.LookupVideoKind;
 import com.senifit.was.entity.lookup.LookupTarget;
 import com.senifit.was.entity.lookup.LookupWorkoutPurpose;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Getter
+@Entity @Table(name = "videos")
+@Getter @Setter @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "videos")
+@AllArgsConstructor
 public class Video extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -50,32 +46,25 @@ public class Video extends BaseTimeEntity {
     @JoinColumn(name = "target_kind_id")
     private LookupTarget targetKind;
 
+    @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.LAZY)
+    @Builder.Default
     @JoinTable(
-            name = "video_purposes",
+            name = "video_first_priority_purposes",
             joinColumns = @JoinColumn(name = "video_id"),
             inverseJoinColumns = @JoinColumn(name = "purpose_id")
     )
-    private List<LookupWorkoutPurpose> purposes = new ArrayList<>();
+    private List<LookupWorkoutPurpose> firstPriorityPurposes = new ArrayList<>();
 
-    @Builder
-    public Video(
-            Long id, String name, String description, String script,
-            Integer duration, String videoPath,
-            String thumbnailPath, LookupVideoKind kind, LookupTarget targetKind,
-            List<LookupWorkoutPurpose> purposes
-            ) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.script = script;
-        this.duration = duration;
-        this.videoPath = videoPath;
-        this.thumbnailPath = thumbnailPath;
-        this.kind = kind;
-        this.targetKind = targetKind;
-        this.purposes = purposes;
-    }
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @Builder.Default
+    @JoinTable(
+            name = "video_second_priority_purposes",
+            joinColumns = @JoinColumn(name = "video_id"),
+            inverseJoinColumns = @JoinColumn(name = "purpose_id")
+    )
+    private List<LookupWorkoutPurpose> secondPriorityPurposes = new ArrayList<>();
 
 }
 
