@@ -45,17 +45,18 @@ BundleKind:
   - workout_kinds_singing
   - workout_notSelected
 
-
 # lookup_workout_purposes
 WorkoutPurposeKind:
   - workout_purposes_*
   - workout_notSelected
-  -
-DurationKind:
-  - workout_duration_*
 
-ProgramRecommendationPerTargetKind:
+# lookup_specialized_workout_kinds
+SpecializedWorkoutKind:
   - workout_kinds_cognitive_kinds_*
   - workout_kinds_calisthenic_targets_*
   - workout_kinds_singing
+  - workout_notSelected
+
+DurationKind:
+  - workout_duration_*
 

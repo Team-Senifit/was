@@ -40,6 +40,6 @@
 0x14A00000: workout_purposes_agilityImprovement
 0x14B00000: workout_purposes_bloodSugarPressureControl
 
-0x15110000: workout_programs_selections_popular
-0x15120000: workout_programs_selections_personal
-0x15130000: workout_programs_selections_target
+0x15110000: workout_programs_selections_byPopular
+0x15120000: workout_programs_selections_byPersonal
+0x15130000: workout_programs_selections_byTarget
