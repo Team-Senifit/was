@@ -22,3 +22,6 @@ Content-Type: application/json
 
 ### /programs/1013
 GET localhost:8080/programs/1044
+
+### /programs/recommendation/by-popular?count=??
+GET localhost:8080/programs/recommendation/by-popular
