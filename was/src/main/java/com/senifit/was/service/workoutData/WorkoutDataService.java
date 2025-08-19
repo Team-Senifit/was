@@ -5,6 +5,7 @@ import com.senifit.was.repository.bundle.BundleRepository;
 import com.senifit.was.repository.bundle.BundleVideoRepository;
 import com.senifit.was.repository.bundle.ProgramBundleRepository;
 import com.senifit.was.repository.program.ProgramRepository;
+import com.senifit.was.repository.program.ProgramStatRepository;
 import com.senifit.was.repository.video.VideoRepository;
 import com.senifit.was.service.ParseXlsxService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import java.util.Map;
 @Slf4j
 public class WorkoutDataService {
     private final ProgramRepository programRepository;
+    private final ProgramStatRepository programStatRepository;
     private final BundleRepository bundleRepository;
     private final VideoRepository videoRepository;
     private final ProgramBundleRepository programBundleRepository;

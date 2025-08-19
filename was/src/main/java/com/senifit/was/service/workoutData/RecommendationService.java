@@ -112,6 +112,27 @@ public class RecommendationService {
         return result;
     }
 
+    public List<ProgramInfoResponse> byPopular(Integer programCount){
+        if (!(1 <= programCount && programCount <= 20))
+            throw new BadRequestApiException();
+
+        QProgram p = QProgram.program;
+        QProgramStat ps = QProgramStat.programStat;
+
+        List<Program> queryResult = queryFactory
+            .selectFrom(p)
+            .join(ps).on(p.eq(ps.program))
+            .orderBy(ps.usedCount.desc())
+            .limit(programCount)
+            .fetch();
+
+        List<ProgramInfoResponse> result = new ArrayList<>(queryResult.size());
+        for (Program program : queryResult) {
+            result.add(workoutDataDtoService.buildProgramInfoDto(program));
+        }
+        return result;
+    }
+
     private BooleanExpression durationEquals(QProgram program, Integer duration) {
         return program.duration.eq(duration);
     }
