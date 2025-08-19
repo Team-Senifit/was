@@ -44,6 +44,9 @@ public class WorkoutDataParseService {
             LookupTarget targetKind =
                     LookupTarget.fromSelection(
                             TargetKind.fromCode((String) row.get("primary_target_kind_id")));
+            LookupSpecializedWorkoutKind specializedWorkoutKind =
+                    LookupSpecializedWorkoutKind.fromSelection(
+                            SpecializedWorkoutKind.fromCode((String) row.get("specialized_workout_kind_id")));
 
             Program p = Program.builder()
                     .id(programId)
@@ -55,6 +58,7 @@ public class WorkoutDataParseService {
                     .cooldownWorkoutKind(cooldownKind)
                     .cognitiveWorkoutKind(cognitiveKind)
                     .singingWorkoutKind(singingKind)
+                    .specializedWorkoutKind(specializedWorkoutKind)
                     .status(new ProgramStat(programId, 0L))
                     .primaryTarget(targetKind).build();
             programs.put(programId, p);

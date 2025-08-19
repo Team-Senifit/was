@@ -44,6 +44,10 @@ public class Program extends BaseTimeEntity {
     @JoinColumn(name = "singing_workout_kind_id")
     private LookupWorkoutSingingKind singingWorkoutKind;
 
+    @ManyToOne
+    @JoinColumn(name = "specialized_kind_id")
+    private LookupSpecializedWorkoutKind specializedWorkoutKind;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_target_id")
     private LookupTarget primaryTarget;
