@@ -2,15 +2,7 @@ package com.senifit.was.entity;
 
 import com.senifit.was.entity.base.BaseTimeEntity;
 import com.senifit.was.entity.lookup.*;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity @Table(name = "programs")
@@ -52,8 +44,15 @@ public class Program extends BaseTimeEntity {
     @JoinColumn(name = "singing_workout_kind_id")
     private LookupWorkoutSingingKind singingWorkoutKind;
 
+    @ManyToOne
+    @JoinColumn(name = "specialized_kind_id")
+    private LookupSpecializedWorkoutKind specializedWorkoutKind;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_target_id")
     private LookupTarget primaryTarget;
+
+    @Column(name = "used_count")
+    private Long usedCount;
 }
 

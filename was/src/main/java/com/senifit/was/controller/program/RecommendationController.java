@@ -9,10 +9,7 @@ import com.senifit.was.service.workoutData.RecommendationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,6 +34,13 @@ public class RecommendationController {
             @RequestBody ByTargetRequest request
     ){
         return ApiResponse.success(recommendationService.byTarget(request));
+    }
+
+    @GetMapping("by-popular")
+    public ApiResponse<List<ProgramInfoResponse>> byPopular(
+            @RequestParam(required = false, defaultValue = "2") Integer count
+    ) {
+        return ApiResponse.success(recommendationService.byPopular(count));
     }
 
 }

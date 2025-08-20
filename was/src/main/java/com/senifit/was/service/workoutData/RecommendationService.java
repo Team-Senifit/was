@@ -10,12 +10,9 @@ import com.senifit.was.entity.*;
 import com.senifit.was.entity.base.BaseGlobalEnumSelection;
 import com.senifit.was.entity.selections.CognitiveWorkoutKind;
 import com.senifit.was.entity.selections.IncludesSingingWorkout;
-import com.senifit.was.entity.selections.ProgramRecommendationPerTargetKind;
+import com.senifit.was.entity.selections.SpecializedWorkoutKind;
 import com.senifit.was.entity.selections.TargetKind;
 import com.senifit.was.exception.api.common.BadRequestApiException;
-import com.senifit.was.repository.bundle.BundleVideoRepository;
-import com.senifit.was.repository.bundle.ProgramBundleRepository;
-import com.senifit.was.repository.video.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -80,30 +77,34 @@ public class RecommendationService {
     }
 
     public List<ProgramInfoResponse> byTarget(ByTargetRequest request){
-        QProgram p = QProgram.program;
-        QProgramBundle pb = QProgramBundle.programBundle;
-        QBundleVideo bv = QBundleVideo.bundleVideo;
-        QVideo v = QVideo.video;
-
-        ProgramRecommendationPerTargetKind rawKind = request.getWorkout_kind();
-        BaseGlobalEnumSelection kind = CognitiveWorkoutKind.fromId(rawKind.getId());
-
-        if (kind == null)
-            kind = TargetKind.fromId(rawKind.getId());
-        if (kind == null)
-            kind = IncludesSingingWorkout.fromId(rawKind.getId());
-        if (kind == null)
+        if (request.getWorkout_kind().equals(SpecializedWorkoutKind.workout_notSelected))
             throw new BadRequestApiException();
 
+        QProgram p = QProgram.program;
         List<Program> queryResult = queryFactory
                 .selectFrom(p)
-                .where(
-                    kind instanceof CognitiveWorkoutKind ? p.cognitiveWorkoutKind.id.eq(kind.getId()) :
-                    kind instanceof TargetKind ? p.primaryTarget.id.eq(kind.getId()) :
-                    p.singingWorkoutKind.id.eq(kind.getId())
-                )
+                .where(specializedWorkoutCodeEquals(p, request.getWorkout_kind().getId()))
                 .orderBy(p.createdAt.desc())
                 .fetch();
+
+        List<ProgramInfoResponse> result = new ArrayList<>(queryResult.size());
+        for (Program program : queryResult) {
+            result.add(workoutDataDtoService.buildProgramInfoDto(program));
+        }
+        return result;
+    }
+
+    public List<ProgramInfoResponse> byPopular(Integer programCount){
+        if (!(1 <= programCount && programCount <= 20))
+            throw new BadRequestApiException();
+
+        QProgram p = QProgram.program;
+
+        List<Program> queryResult = queryFactory
+            .selectFrom(p)
+            .orderBy(p.usedCount.desc())
+            .limit(programCount)
+            .fetch();
 
         List<ProgramInfoResponse> result = new ArrayList<>(queryResult.size());
         for (Program program : queryResult) {
@@ -123,6 +124,9 @@ public class RecommendationService {
     }
     private BooleanExpression singingWorkoutCodeEquals(QProgram program, Long code) {
         return program.singingWorkoutKind.id.eq(code);
+    }
+    private BooleanExpression specializedWorkoutCodeEquals(QProgram program, Long code) {
+        return program.specializedWorkoutKind.id.eq(code);
     }
 
 }
