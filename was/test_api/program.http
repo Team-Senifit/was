@@ -17,8 +17,11 @@ POST localhost:8080/programs/recommendation/by-target
 Content-Type: application/json
 
 {
-  "workout_kind": "workout_kinds_calisthenic_targets_legs"
+  "workout_kind": "workout_kinds_singing"
 }
 
 ### /programs/1013
 GET localhost:8080/programs/1044
+
+### /programs/recommendation/by-popular?count=??
+GET localhost:8080/programs/recommendation/by-popular

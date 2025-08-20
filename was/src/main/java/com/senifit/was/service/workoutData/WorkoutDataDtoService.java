@@ -44,6 +44,7 @@ public class WorkoutDataDtoService {
             .cognitive_workout_code(program.getCognitiveWorkoutKind().toSelection())
             .singing_workout_code(program.getSingingWorkoutKind().toSelection())
             .primary_target_code(program.getPrimaryTarget().toSelection())
+            .specialized_workout_code(program.getSpecializedWorkoutKind().toSelection())
             .thumbnail_path(program.getThumbnailPath())
             .videos(videoResponses)
             .build();
@@ -59,6 +60,7 @@ public class WorkoutDataDtoService {
             .cognitive_workout_code(program.getCognitiveWorkoutKind().toSelection())
             .singing_workout_code(program.getSingingWorkoutKind().toSelection())
             .primary_target_code(program.getPrimaryTarget().toSelection())
+            .specialized_workout_code(program.getSpecializedWorkoutKind().toSelection())
             .thumbnail_path(program.getThumbnailPath())
             .build();
     }

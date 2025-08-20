@@ -21,8 +21,8 @@ public class ProgramResponse {
     private final CognitiveWorkoutKind cognitive_workout_code;
     private final IncludesSingingWorkout singing_workout_code;
     private final TargetKind primary_target_code;
+    private final SpecializedWorkoutKind specialized_workout_code;
 
     private final String thumbnail_path;
-
     private final List<VideoResponse> videos;
 }
