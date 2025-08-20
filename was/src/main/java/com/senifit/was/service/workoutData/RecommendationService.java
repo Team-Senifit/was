@@ -99,12 +99,10 @@ public class RecommendationService {
             throw new BadRequestApiException();
 
         QProgram p = QProgram.program;
-        QProgramStat ps = QProgramStat.programStat;
 
         List<Program> queryResult = queryFactory
             .selectFrom(p)
-            .join(ps).on(p.eq(ps.program))
-            .orderBy(ps.usedCount.desc())
+            .orderBy(p.usedCount.desc())
             .limit(programCount)
             .fetch();
 

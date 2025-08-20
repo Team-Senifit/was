@@ -52,7 +52,7 @@ public class Program extends BaseTimeEntity {
     @JoinColumn(name = "primary_target_id")
     private LookupTarget primaryTarget;
 
-    @OneToOne(mappedBy = "program", cascade = CascadeType.ALL)
-    private ProgramStat status;
+    @Column(name = "used_count")
+    private Long usedCount;
 }
 

@@ -59,7 +59,6 @@ public class WorkoutDataParseService {
                     .cognitiveWorkoutKind(cognitiveKind)
                     .singingWorkoutKind(singingKind)
                     .specializedWorkoutKind(specializedWorkoutKind)
-                    .status(new ProgramStat(programId, 0L))
                     .primaryTarget(targetKind).build();
             programs.put(programId, p);
 
