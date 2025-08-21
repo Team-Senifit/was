@@ -2,7 +2,7 @@
 GET localhost:8080/centers/members
 
 ### get /centers/members/{memberid}
-GET localhost:8080/centers/members/201
+GET localhost:8080/centers/members/208
 
 ### post /centers/members
 POST localhost:8080/centers/members
@@ -17,14 +17,15 @@ Content-Type: application/json
 }
 
 ### put /centers/members/{memberid}
-PUT localhost:8080/centers/members/1
+PUT localhost:8080/centers/members/208
 Content-Type: application/json
 
 {
-  "name": "김춘춘",
-  "birthDate": "9999-03-03",
-  "gender": 0,
-  "memberRank": 4
+  "name": "음력테스트",
+  "birthDate": "2000-03-03",
+  "gender": 1,
+  "memberRank": 3,
+  "isSolar": true
 }
 
 ### delete /centers/members/{memberid}
