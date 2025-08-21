@@ -2,6 +2,7 @@ package com.senifit.was.service;
 
 import com.senifit.was.dto.request.survey.SurveyRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
+import com.senifit.was.dto.response.record.RecordSurveyResponse;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.dto.response.survey.TroublePartsResponse;
 import com.senifit.was.entity.Record;
@@ -40,13 +41,24 @@ public class SurveyService {
     private final TroublePartsRepository troublePartsRepository;
     private final LookupTargetRepository lookupTargetRepository;
 
-    public List<SurveyResponse> getSurveysByRecordId(Long recordId, Long centerId) {
+    public RecordSurveyResponse getSurveysByRecordId(Long recordId, Long centerId) {
 
         if (!recordsRepository.existsByRecordIdAndCenter_CenterId(recordId, centerId)) {
             throw new RecordNotFoundException();
         }
 
-        return surveysRepository.findAllSurveyByRecordIdAndCenterId(recordId, centerId);
+        List<SurveyResponse> surveys = surveysRepository.findAllSurveyByRecordIdAndCenterId(recordId, centerId);
+
+        // 3) Record 단건 조회 → RecordResponse 매핑
+        RecordResponse recordResponse = recordsRepository
+                .findRecordById(recordId, centerId)
+                .orElseThrow(RecordNotFoundException::new);
+
+        // 4) 최종 DTO로 감싸서 반환
+        return RecordSurveyResponse.builder()
+                .record(recordResponse)
+                .surveys(surveys) // 기존 매핑 그대로 사용
+                .build();
     }
 
     public SurveyResponse getSurveyById(Long surveyId) {

@@ -33,8 +33,8 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                 .map(r -> RecordResponse.builder()
                         .recordId(r.getRecordId())
                         .programId(r.getProgramId())
-                        .startTime(r.getStartedAt())
-                        .endTime(r.getFinishedAt())
+                        .startedAt(r.getStartedAt())
+                        .finishedAt(r.getFinishedAt())
                         .participantCount(r.getParticipantCount())
                         .surveyExist(r.isSurveyExist())
                         .routineKind(r.getRoutineKind().toSelection())
@@ -46,7 +46,7 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
     }
 
     @Override
-    public RecordResponse findRecordById(Long centerId, Long recordId) {
+    public Optional<RecordResponse> findRecordById(Long centerId, Long recordId) {
         QRecord records = QRecord.record;
 
         Record r = queryFactory
@@ -57,14 +57,18 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
 
         if (r == null) return null;
 
-        return RecordResponse.builder()
+        return Optional.ofNullable(RecordResponse.builder()
                 .recordId(r.getRecordId())
                 .programId(r.getProgramId())
-                .startTime(r.getStartedAt())
-                .endTime(r.getFinishedAt())
+                .startedAt(r.getStartedAt())
+                .finishedAt(r.getFinishedAt())
                 .participantCount(r.getParticipantCount())
+                .routineKind(r.getRoutineKind().toSelection())
+                .cognitiveKind(r.getCognitiveKind().toSelection())
+                .singingKind(r.getIncludesSinging().toSelection())
+                .durationKind(r.getDurationKind().toSelection())
                 .surveyExist(r.isSurveyExist())
-                .build();
+                .build());
     }
 
     @Override
