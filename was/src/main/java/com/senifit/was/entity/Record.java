@@ -97,5 +97,9 @@ public class Record extends BaseTimeEntity {
     public void updateSurveyExist() {
         this.surveyExist = true;
     }
+
+    public void updateRecordFinishedAt() {
+        this.finishedAt = LocalDateTime.now();
+    }
 }
 
