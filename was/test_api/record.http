@@ -6,16 +6,17 @@ POST localhost:8080/records
 Content-Type: application/json
 
 {
-  "programId": 306,
+  "programId": 1113,
   "participants": [204,205],
-  "startTime": "2025-08-10 12:22:33",
-  "endTime": "2025-08-10 13:22:33",
-  "routineKind": "workout_programs_selections_personal",
+  "routineKind": "workout_programs_selections_byPopular",
   "cognitiveKind": "workout_kinds_cognitive_kinds_taekwondo",
   "singingKind": "workout_kinds_singing",
-  "durationKind": "workout_duration_60minutes",
-  "targetKind": "workout_kinds_calisthenic_targets_abs"
+  "durationKind": "workout_duration_30minutes",
+  "targetKind": "workout_kinds_calisthenic_targets_arms"
 }
+
+### put /records/{recordId}
+PUT localhost:8080/records/641
 
 ### delete /records/{recordid}
 DELETE localhost:8080/records/1
