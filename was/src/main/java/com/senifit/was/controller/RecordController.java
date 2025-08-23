@@ -31,7 +31,7 @@ public class RecordController {
 //    @GetMapping("{recordId}")
 //    public ApiResponse<RecordResponse> getRecordById(HttpSession session, @PathVariable Long recordId) {
 //        log.debug("RECORD ID: {}", recordId);
-//        return ApiResponse.success(recordService.getRecordById(SessionUtils.getUserId(session), recordId));
+//        return ApiResponse.success(recordService.getRecordById(recordId, SessionUtils.getUserId(session)));
 //    }
 
     @PostMapping

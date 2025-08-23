@@ -17,11 +17,11 @@ spring:
     database: mysql
     hibernate:
       ddl-auto: none
-      show-sql: false
       properties:
         hibernate:
           format_sql: true
           dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
 
   logging:
     level:
@@ -36,3 +36,21 @@ spring:
   session:
     store-type: redis
     timeout: 1800s
+
+app:
+  s3:
+    # 리전은 .env의 AWS_REGION을 우선 사용(없으면 ap-northeast-2)
+    region: ${AWS_REGION}
+
+    # 버킷/프리픽스는 .env로 덮어쓰기 가능
+    bucket: ${S3_BUCKET}
+    video-prefix: ${S3_VIDEO_PREFIX}
+    thumb-prefix: ${S3_THUMB_PREFIX}
+
+    presign:
+      # 프리사인드 URL 만료(초) — 영상 전체 재생 고려해서 충분히 줘야 함
+      expiry-seconds: ${S3_PRESIGN_EXPIRY:7200}       # 2시간
+      # 브라우저 동작: inline(스트리밍) / attachment(다운로드)
+      content-disposition: ${S3_PRESIGN_CONTENT_DISPOSITION:inline}
+      # 업로드 때 저장된 Content-Type을 응답 헤더에 강제 반영할지 여부
+      force-content-type: ${S3_PRESIGN_FORCE_CONTENT_TYPE:false}

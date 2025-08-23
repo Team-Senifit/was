@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,8 +50,8 @@ public class RecordService {
     /**
      * 상세 조회
      */
-    public RecordResponse getRecordById(Long centerId, Long recordId) {
-        return recordsRepository.findRecordById(centerId, recordId);
+    public Optional<RecordResponse> getRecordById(Long centerId, Long recordId) {
+        return recordsRepository.findRecordById(recordId, centerId);
     }
 
     /**

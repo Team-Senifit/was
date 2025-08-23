@@ -2,6 +2,7 @@ package com.senifit.was.controller;
 
 import com.senifit.was.dto.request.survey.SurveyRequest;
 import com.senifit.was.dto.response.ApiResponse;
+import com.senifit.was.dto.response.record.RecordSurveyResponse;
 import com.senifit.was.dto.response.survey.SurveyResponse;
 import com.senifit.was.service.SurveyService;
 import com.senifit.was.util.SessionUtils;
@@ -23,7 +24,7 @@ public class SurveyController {
     private final SurveyService surveyService;
 
     @GetMapping()
-    public ApiResponse<List<SurveyResponse>> listSurvey(@PathVariable("recordId") Long recordId, HttpSession session) {
+    public ApiResponse<RecordSurveyResponse> listSurvey(@PathVariable("recordId") Long recordId, HttpSession session) {
         log.debug("LIST SURVEY");
         return ApiResponse.success(surveyService.getSurveysByRecordId(recordId, SessionUtils.getUserId(session)));
     }
