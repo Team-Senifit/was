@@ -49,7 +49,7 @@ public class RecordService {
      * 상세 조회
      */
     public Optional<RecordResponse> getRecordById(Long centerId, Long recordId) {
-        return recordsRepository.findRecordById(centerId, recordId);
+        return recordsRepository.findRecordById(recordId, centerId);
     }
 
     /**

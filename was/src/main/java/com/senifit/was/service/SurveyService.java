@@ -1,6 +1,7 @@
 package com.senifit.was.service;
 
 import com.senifit.was.dto.request.survey.SurveyRequest;
+import com.senifit.was.dto.response.program.SimpleVideoResponse;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.dto.response.record.RecordSurveyResponse;
 import com.senifit.was.dto.response.survey.SurveyResponse;
@@ -9,6 +10,7 @@ import com.senifit.was.entity.Record;
 import com.senifit.was.entity.MemberRecord;
 import com.senifit.was.entity.Survey;
 import com.senifit.was.entity.SurveyTroublePart;
+import com.senifit.was.entity.Video;
 import com.senifit.was.entity.selections.TargetKind;
 import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.exception.custom.SurveyNotFoundException;
@@ -19,6 +21,7 @@ import com.senifit.was.repository.record.RecordsMembersRepository;
 import com.senifit.was.repository.record.RecordsRepository;
 import com.senifit.was.repository.survey.SurveysRepository;
 import com.senifit.was.repository.survey.TroublePartsRepository;
+import com.senifit.was.repository.video.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,8 @@ public class SurveyService {
     private final RecordsMembersRepository memberRecordRepository;
     private final TroublePartsRepository troublePartsRepository;
     private final LookupTargetRepository lookupTargetRepository;
+    private final VideoRepository videoRepository;
+    private final S3Service s3Service;
 
     public RecordSurveyResponse getSurveysByRecordId(Long recordId, Long centerId) {
 
@@ -49,15 +54,33 @@ public class SurveyService {
 
         List<SurveyResponse> surveys = surveysRepository.findAllSurveyByRecordIdAndCenterId(recordId, centerId);
 
-        // 3) Record 단건 조회 → RecordResponse 매핑
         RecordResponse recordResponse = recordsRepository
                 .findRecordById(recordId, centerId)
                 .orElseThrow(RecordNotFoundException::new);
 
-        // 4) 최종 DTO로 감싸서 반환
+        // programId가 있으면 해당 프로그램의 모든 video를 sequence 순서대로 조회
+        List<SimpleVideoResponse> routines = new ArrayList<>();
+        if (recordResponse.getProgramId() != null) {
+            List<Video> videos = videoRepository.findVideosByProgramIdOrderBySequenceAsc(recordResponse.getProgramId());
+            for (Video video : videos) {
+                String thumbnailUrl = null;
+                if (video.getThumbnailPath() != null) {
+                    thumbnailUrl = s3Service.generatePresignedUrl(video.getThumbnailPath());
+                }
+                
+                routines.add(SimpleVideoResponse.builder()
+                        .id(video.getId())
+                        .name(video.getName())
+                        .thumbnail_path(thumbnailUrl)
+                        .build());
+            }
+        }
+
+        // 최종 DTO로 감싸서 반환
         return RecordSurveyResponse.builder()
                 .record(recordResponse)
-                .surveys(surveys) // 기존 매핑 그대로 사용
+                .routines(routines)
+                .surveys(surveys)
                 .build();
     }
 

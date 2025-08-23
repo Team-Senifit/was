@@ -2,8 +2,7 @@ package com.senifit.was.repository.record;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.response.record.RecordResponse;
-import com.senifit.was.entity.QProgram;
-import com.senifit.was.entity.QRecord;
+import com.senifit.was.entity.*;
 import com.senifit.was.entity.Record;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -46,7 +45,7 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
     }
 
     @Override
-    public Optional<RecordResponse> findRecordById(Long centerId, Long recordId) {
+    public Optional<RecordResponse> findRecordById(Long recordId, Long centerId) {
         QRecord records = QRecord.record;
 
         Record r = queryFactory
