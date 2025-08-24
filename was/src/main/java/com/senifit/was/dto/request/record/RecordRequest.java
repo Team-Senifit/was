@@ -20,10 +20,6 @@ public class RecordRequest {
     @NotNull
     private Long programId;
     private List<Long> participants;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endTime;
 
     private RoutineKind routineKind;
     private CognitiveWorkoutKind cognitiveKind;

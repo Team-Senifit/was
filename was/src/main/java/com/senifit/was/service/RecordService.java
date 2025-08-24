@@ -12,6 +12,7 @@ import com.senifit.was.entity.lookup.LookupWorkoutSingingKind;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
+import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.repository.center.CentersRepository;
 import com.senifit.was.repository.program.ProgramRepository;
 import com.senifit.was.repository.record.RecordsRepository;
@@ -22,7 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,15 +50,15 @@ public class RecordService {
     /**
      * 상세 조회
      */
-    public RecordResponse getRecordById(Long centerId, Long recordId) {
-        return recordsRepository.findRecordById(centerId, recordId);
+    public Optional<RecordResponse> getRecordById(Long centerId, Long recordId) {
+        return recordsRepository.findRecordById(recordId, centerId);
     }
 
     /**
      * 기록 생성
      */
     @Transactional
-    public void addRecord(RecordRequest request, Long centerId) {
+    public Long addRecord(RecordRequest request, Long centerId) {
         // 센터 조회
         Center center = centersRepository.findById(centerId)
                 .orElseThrow(CenterNotFoundException::new);
@@ -68,8 +71,8 @@ public class RecordService {
         Record record = Record.builder()
                 .center(center)
                 .programId(program.getId())
-                .startedAt(request.getStartTime())
-                .finishedAt(request.getEndTime())
+                .startedAt(LocalDateTime.now())
+                .finishedAt(null)
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
                 .build();
 
@@ -124,6 +127,8 @@ public class RecordService {
         if (!surveysToCreate.isEmpty()) {
             surveysRepository.saveAll(surveysToCreate);
         }
+
+        return saved.getRecordId();
     }
 
     /**
@@ -132,6 +137,17 @@ public class RecordService {
     @Transactional
     public Long updateRecordById(Long recordId, RecordUpdateRequest request, Long centerId) {
         return null;
+    }
+
+    /**
+     * 기록 종료
+     */
+    @Transactional
+    public void updateRecordFinishAt(Long recordId, Long centerId) {
+        Record record = recordsRepository.findByRecordIdAndCenterId(recordId, centerId)
+                .orElseThrow(RecordNotFoundException::new);
+        
+        record.updateRecordFinishedAt();
     }
 
     /**

@@ -19,9 +19,9 @@ public class RecordResponse {
 
     private Long programId;
 
-    private LocalDateTime startTime;
+    private LocalDateTime startedAt;
 
-    private LocalDateTime endTime;
+    private LocalDateTime finishedAt;
 
     private Integer participantCount;
 

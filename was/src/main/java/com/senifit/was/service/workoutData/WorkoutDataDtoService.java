@@ -5,12 +5,17 @@ import com.senifit.was.dto.response.program.ProgramResponse;
 import com.senifit.was.dto.response.program.VideoResponse;
 import com.senifit.was.entity.Program;
 import com.senifit.was.entity.Video;
+import com.senifit.was.service.S3Service;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class WorkoutDataDtoService {
+    private final S3Service s3Service;
+
     public VideoResponse buildVideoDto(Video video) {
         return VideoResponse.builder()
             .id(video.getId())
@@ -19,8 +24,8 @@ public class WorkoutDataDtoService {
             .description(video.getDescription())
             .script(video.getScript())
             .duration(video.getDuration())
-            .video_path(video.getVideoPath())
-            .thumbnail_path(video.getThumbnailPath())
+            .video_path(s3Service.generatePresignedUrl(video.getVideoPath()))
+            .thumbnail_path(s3Service.generatePresignedUrl(video.getThumbnailPath()))
             .build();
     }
     public List<VideoResponse> buildVideoDtoList(List<Video> videos) {
@@ -45,7 +50,7 @@ public class WorkoutDataDtoService {
             .singing_workout_code(program.getSingingWorkoutKind().toSelection())
             .primary_target_code(program.getPrimaryTarget().toSelection())
             .specialized_workout_code(program.getSpecializedWorkoutKind().toSelection())
-            .thumbnail_path(program.getThumbnailPath())
+            .thumbnail_path(s3Service.generatePresignedUrl(program.getThumbnailPath()))
             .videos(videoResponses)
             .build();
     }
@@ -61,7 +66,7 @@ public class WorkoutDataDtoService {
             .singing_workout_code(program.getSingingWorkoutKind().toSelection())
             .primary_target_code(program.getPrimaryTarget().toSelection())
             .specialized_workout_code(program.getSpecializedWorkoutKind().toSelection())
-            .thumbnail_path(program.getThumbnailPath())
+            .thumbnail_path(s3Service.generatePresignedUrl(program.getThumbnailPath()))
             .build();
     }
 }

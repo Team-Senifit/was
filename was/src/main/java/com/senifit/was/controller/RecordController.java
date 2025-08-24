@@ -31,15 +31,15 @@ public class RecordController {
 //    @GetMapping("{recordId}")
 //    public ApiResponse<RecordResponse> getRecordById(HttpSession session, @PathVariable Long recordId) {
 //        log.debug("RECORD ID: {}", recordId);
-//        return ApiResponse.success(recordService.getRecordById(SessionUtils.getUserId(session), recordId));
+//        return ApiResponse.success(recordService.getRecordById(recordId, SessionUtils.getUserId(session)));
 //    }
 
     @PostMapping
-    public ApiResponse<Void> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
+    public ApiResponse<Map<String, Object>> createRecordById(HttpSession session, @Valid @RequestBody RecordRequest request) {
         log.debug("CREATE RECORD START");
-        recordService.addRecord(request, SessionUtils.getUserId(session));
-        log.debug("CREATE RECORD FINISH");
-        return ApiResponse.success();
+        Long recordId = recordService.addRecord(request, SessionUtils.getUserId(session));
+        log.debug("CREATE RECORD FINISH - Record ID: {}", recordId);
+        return ApiResponse.success(recordId);
     }
 
 //    @PutMapping("{recordId}")
@@ -51,11 +51,19 @@ public class RecordController {
 //        return ApiResponse.success(recordService.updateRecordById(recordId, request, centerId));
 //    }
 
+    @PutMapping("{recordId}")
+    public ApiResponse<Void> updateRecordFinishAtById(@PathVariable Long recordId, HttpSession session) {
+        log.debug("FINISH RECORD START - Record ID: {}", recordId);
+        recordService.updateRecordFinishAt(recordId, SessionUtils.getUserId(session));
+        log.debug("FINISH RECORD FINISH - Record ID: {}", recordId);
+        return ApiResponse.success();
+    }
+
     @DeleteMapping("{recordId}")
     public ApiResponse<Void> deleteRecordById(@PathVariable Long recordId, HttpSession session) {
-        log.debug("DELETE RECORD START");
+        log.debug("DELETE RECORD START - Record ID: {}", recordId);
         recordService.deleteRecordById(recordId, SessionUtils.getUserId(session));
-        log.debug("DELETE RECORD FINISH");
+        log.debug("DELETE RECORD FINISH - Record ID: {}", recordId);
         return ApiResponse.success();
     }
 
