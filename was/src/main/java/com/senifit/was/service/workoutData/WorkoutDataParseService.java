@@ -57,6 +57,7 @@ public class WorkoutDataParseService {
                     .warmupWorkoutKind(warmupKind)
                     .cooldownWorkoutKind(cooldownKind)
                     .cognitiveWorkoutKind(cognitiveKind)
+                    .usedCount((Long) row.get("used_count"))
                     .singingWorkoutKind(singingKind)
                     .specializedWorkoutKind(specializedWorkoutKind)
                     .primaryTarget(targetKind).build();
