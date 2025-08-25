@@ -93,7 +93,7 @@ public class SecurityConfig {
         cookieSerializer.setCookieName("JSESSIONID");
         cookieSerializer.setUseSecureCookie(sslEnabled);  // HTTPS에서만 전송
         cookieSerializer.setUseHttpOnlyCookie(true);      // JavaScript 접근 차단
-        cookieSerializer.setSameSite("Strict");           // CSRF 방지
+        cookieSerializer.setSameSite("None");           // CSRF 방지
         cookieSerializer.setCookieMaxAge(1800);          // 30분
         
         resolver.setCookieSerializer(cookieSerializer);
