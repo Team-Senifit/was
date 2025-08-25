@@ -22,6 +22,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.session.web.http.CookieHttpSessionIdResolver;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 
 @Configuration
 @Slf4j
@@ -29,6 +31,9 @@ public class SecurityConfig {
 
     @Value("${spring.application.maximum-sessions}")
     private int maximumSessions;
+
+    @Value("${server.ssl.enabled:false}")
+    private boolean sslEnabled;
 
 
     @Bean
@@ -79,6 +84,24 @@ public class SecurityConfig {
         };
     }
 
+    // 시큐어 쿠키 설정
+    @Bean
+    public CookieHttpSessionIdResolver httpSessionIdResolver() {
+        CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
+        DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
+        
+        cookieSerializer.setCookieName("JSESSIONID");
+        cookieSerializer.setUseSecureCookie(sslEnabled);  // HTTPS에서만 전송
+        cookieSerializer.setUseHttpOnlyCookie(true);      // JavaScript 접근 차단
+        cookieSerializer.setSameSite("Strict");           // CSRF 방지
+        cookieSerializer.setCookieMaxAge(1800);          // 30분
+        
+        resolver.setCookieSerializer(cookieSerializer);
+        log.info("Secure cookie configured - SSL enabled: {}", sslEnabled);
+        
+        return resolver;
+    }
+
     @Bean
     public LogoutSuccessHandler senifitSignOutSuccessHandler() {
         return (request, response, authentication) -> {
@@ -111,6 +134,4 @@ public class SecurityConfig {
             response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
         };
     }
-
-
 }

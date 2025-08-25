@@ -37,6 +37,16 @@ spring:
     store-type: redis
     timeout: 1800s
 
+# HTTPS 설정
+server:
+  port: ${SERVER_PORT:8443}
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEYSTORE_PATH:keystore.p12}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD:changeit}
+    key-store-type: PKCS12
+    key-alias: letsencrypt
+
 app:
   s3:
     # 리전은 .env의 AWS_REGION을 우선 사용(없으면 ap-northeast-2)
