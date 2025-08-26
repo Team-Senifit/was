@@ -44,6 +44,7 @@ public class CenterService {
                         .memberId(m.getMemberId())
                         .name(m.getName())
                         .birthDate(m.getBirthDate())
+                        .isSolar(m.getIsSolar())
                         .gender(m.getGender().getId())
                         .memberRank(m.getRank().getId())
                         .build())
