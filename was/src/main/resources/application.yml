@@ -39,13 +39,13 @@ spring:
 
 # HTTPS 설정
 server:
-  port: ${SERVER_PORT:8443}
+  port: ${SERVER_PORT}
   ssl:
-    enabled: ${SSL_ENABLED:false}
-    key-store: ${SSL_KEYSTORE_PATH:keystore.p12}
-    key-store-password: ${SSL_KEYSTORE_PASSWORD:changeit}
+    enabled: ${SSL_ENABLED}
+    key-store: ${SSL_KEYSTORE_PATH}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD}
     key-store-type: PKCS12
-    key-alias: letsencrypt
+    key-alias: ${SSL_CERT_ALIAS}
 
 app:
   s3:
