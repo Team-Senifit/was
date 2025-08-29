@@ -35,7 +35,7 @@ spring:
 
   session:
     store-type: redis
-    timeout: 1800s
+    timeout: 5400s
 
 # HTTPS 설정
 server:
