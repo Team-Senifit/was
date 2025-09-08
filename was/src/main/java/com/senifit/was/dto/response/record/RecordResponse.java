@@ -1,9 +1,7 @@
 package com.senifit.was.dto.response.record;
 
-import com.senifit.was.entity.selections.CognitiveWorkoutKind;
-import com.senifit.was.entity.selections.DurationKind;
-import com.senifit.was.entity.selections.IncludesSingingWorkout;
-import com.senifit.was.entity.selections.RoutineKind;
+import com.senifit.was.entity.lookup.LookupTarget;
+import com.senifit.was.entity.selections.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +17,8 @@ public class RecordResponse {
 
     private Long programId;
 
+    private Integer duration;
+
     private LocalDateTime startedAt;
 
     private LocalDateTime finishedAt;
@@ -31,7 +31,7 @@ public class RecordResponse {
 
     private IncludesSingingWorkout singingKind;
 
-    private DurationKind durationKind;
+    private TargetKind targetKind;
 
     private boolean surveyExist;
 }

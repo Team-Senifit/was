@@ -32,6 +32,7 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                 .map(r -> RecordResponse.builder()
                         .recordId(r.getRecordId())
                         .programId(r.getProgramId())
+                        .duration(r.getDuration())
                         .startedAt(r.getStartedAt())
                         .finishedAt(r.getFinishedAt())
                         .participantCount(r.getParticipantCount())
@@ -39,7 +40,6 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                         .routineKind(r.getRoutineKind().toSelection())
                         .cognitiveKind(r.getCognitiveKind().toSelection())
                         .singingKind(r.getIncludesSinging().toSelection())
-                        .durationKind(r.getDurationKind().toSelection())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -59,13 +59,13 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
         return Optional.ofNullable(RecordResponse.builder()
                 .recordId(r.getRecordId())
                 .programId(r.getProgramId())
+                .duration(r.getDuration())
                 .startedAt(r.getStartedAt())
                 .finishedAt(r.getFinishedAt())
                 .participantCount(r.getParticipantCount())
                 .routineKind(r.getRoutineKind().toSelection())
                 .cognitiveKind(r.getCognitiveKind().toSelection())
                 .singingKind(r.getIncludesSinging().toSelection())
-                .durationKind(r.getDurationKind().toSelection())
                 .surveyExist(r.isSurveyExist())
                 .build());
     }

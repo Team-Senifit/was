@@ -5,10 +5,7 @@ import com.senifit.was.dto.request.record.RecordUpdateRequest;
 import com.senifit.was.dto.response.record.RecordResponse;
 import com.senifit.was.entity.*;
 import com.senifit.was.entity.Record;
-import com.senifit.was.entity.lookup.LookupDurationKind;
-import com.senifit.was.entity.lookup.LookupRoutineKind;
-import com.senifit.was.entity.lookup.LookupWorkoutCognitiveKind;
-import com.senifit.was.entity.lookup.LookupWorkoutSingingKind;
+import com.senifit.was.entity.lookup.*;
 import com.senifit.was.exception.custom.CenterNotFoundException;
 import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
@@ -71,6 +68,7 @@ public class RecordService {
         Record record = Record.builder()
                 .center(center)
                 .programId(program.getId())
+                .duration(program.getDuration())
                 .startedAt(LocalDateTime.now())
                 .finishedAt(null)
                 .participantCount(request.getParticipants() != null ? request.getParticipants().size() : 0)
@@ -86,8 +84,8 @@ public class RecordService {
         if (request.getSingingKind() != null) {
             record.setIncludesSinging(LookupWorkoutSingingKind.fromSelection(request.getSingingKind()));
         }
-        if (request.getDurationKind() != null) {
-            record.setDurationKind(LookupDurationKind.fromSelection(request.getDurationKind()));
+        if (request.getTargetKind() != null) {
+            record.setTargetKind(LookupTarget.fromSelection(request.getTargetKind()));
         }
 
         // MemberRecord 생성 및 연관성 설정

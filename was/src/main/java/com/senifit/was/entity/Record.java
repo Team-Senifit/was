@@ -1,10 +1,7 @@
 package com.senifit.was.entity;
 
 import com.senifit.was.entity.base.BaseTimeEntity;
-import com.senifit.was.entity.lookup.LookupDurationKind;
-import com.senifit.was.entity.lookup.LookupRoutineKind;
-import com.senifit.was.entity.lookup.LookupWorkoutCognitiveKind;
-import com.senifit.was.entity.lookup.LookupWorkoutSingingKind;
+import com.senifit.was.entity.lookup.*;
 import com.senifit.was.entity.selections.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,6 +32,9 @@ public class Record extends BaseTimeEntity {
     @Column(name = "program_id", nullable = false)
     private Long programId;
 
+    @Column(name = "duration", nullable = false)
+    private Integer duration;
+
     @Column(name = "started_at")
     private LocalDateTime startedAt;
 
@@ -60,9 +60,9 @@ public class Record extends BaseTimeEntity {
     private LookupWorkoutSingingKind includesSinging;
 
     @Setter
-    @JoinColumn(name = "duration_kind", nullable = false)
+    @JoinColumn(name = "target_kind", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private LookupDurationKind durationKind;
+    private LookupTarget targetKind;
 
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRecord> memberRecords = new ArrayList<>();
@@ -74,12 +74,14 @@ public class Record extends BaseTimeEntity {
     public Record(
         Center center,
         Long programId,
+        Integer duration,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         Integer participantCount
     ) {
         this.center = center;
         this.programId = programId;
+        this.duration = duration;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.participantCount = participantCount;

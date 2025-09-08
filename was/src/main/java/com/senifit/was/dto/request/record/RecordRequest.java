@@ -24,6 +24,5 @@ public class RecordRequest {
     private RoutineKind routineKind;
     private CognitiveWorkoutKind cognitiveKind;
     private IncludesSingingWorkout singingKind;
-    private DurationKind durationKind;
     private TargetKind targetKind;
 }
