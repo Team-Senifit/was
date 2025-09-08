@@ -55,6 +55,7 @@ SpecializedWorkoutKind:
   - workout_kinds_cognitive_kinds_*
   - workout_kinds_calisthenic_targets_*
   - workout_kinds_singing
+  - workout_programs_selections_byPopular
   - workout_notSelected
 
 DurationKind:

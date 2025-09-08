@@ -94,6 +94,8 @@ public class RecommendationService {
         return result;
     }
 
+    /* TODO: programCount는 이제 의미 없음. 하지만 호환성 유지를 위해 유지중
+       MVP 종료 후 프로그램 개선하며 API도 같이 개선 필요 */
     public List<ProgramInfoResponse> byPopular(Integer programCount){
         if (!(1 <= programCount && programCount <= 20))
             throw new BadRequestApiException();
@@ -102,7 +104,9 @@ public class RecommendationService {
 
         List<Program> queryResult = queryFactory
             .selectFrom(p)
-            .orderBy(p.usedCount.desc())
+            .where(
+                specializedWorkoutCodeEquals(p, SpecializedWorkoutKind.workout_programs_selections_byPopular.getId()))
+            .orderBy(p.createdAt.desc())
             .limit(programCount)
             .fetch();
 
