@@ -20,6 +20,11 @@ public class SurveyTroublePartId implements Serializable {
     @Column(name = "target")
     private Long targetId;
 
+    public SurveyTroublePartId(Long surveyId, Long id) {
+        this.surveyId = surveyId;
+        this.targetId = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

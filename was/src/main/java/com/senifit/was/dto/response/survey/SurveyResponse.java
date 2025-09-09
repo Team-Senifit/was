@@ -30,6 +30,4 @@ public class SurveyResponse {
     private int abilityScore;
 
     private boolean hadTrouble;
-
-    private LocalDateTime updatedAt;
 }

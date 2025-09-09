@@ -40,6 +40,7 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                         .routineKind(r.getRoutineKind().toSelection())
                         .cognitiveKind(r.getCognitiveKind().toSelection())
                         .singingKind(r.getIncludesSinging().toSelection())
+                        .targetKind(r.getTargetKind().toSelection())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -66,6 +67,7 @@ public class RecordsRepositoryImpl implements RecordsRepositoryCustom {
                 .routineKind(r.getRoutineKind().toSelection())
                 .cognitiveKind(r.getCognitiveKind().toSelection())
                 .singingKind(r.getIncludesSinging().toSelection())
+                .targetKind(r.getTargetKind().toSelection())
                 .surveyExist(r.isSurveyExist())
                 .build());
     }

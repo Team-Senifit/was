@@ -2,10 +2,7 @@ package com.senifit.was.entity;
 
 import com.senifit.was.entity.lookup.LookupTarget;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -30,6 +27,11 @@ public class SurveyTroublePart {
     public SurveyTroublePart(Survey survey, LookupTarget target) {
         this.survey = survey;
         this.target = target;
+
+        this.id = new SurveyTroublePartId(
+                survey.getSurveyId(),
+                target.getId()
+        );
     }
 }
 
