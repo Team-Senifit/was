@@ -40,6 +40,7 @@ public class SurveysRepositoryImpl implements SurveysRepositoryCustom {
                     var m = s.getMemberRecord().getMember();
                     return SurveyResponse.builder()
                             .surveyId(s.getSurveyId())
+                            .memo(s.getMemo())
                             .name(m.getName())
                             .birthDate(m.getBirthDate())
                             .gender(m.getGender().getId())

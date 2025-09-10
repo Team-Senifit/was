@@ -201,6 +201,7 @@ public class SurveyService {
             survey.updateSurvey(
                     req.getAttitudeScore(),
                     req.getAbilityScore(),
+                    req.getMemo(),
                     req.isHadTrouble(),
                     centerId,
                     newParts

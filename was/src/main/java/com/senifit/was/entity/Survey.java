@@ -2,6 +2,7 @@ package com.senifit.was.entity;
 
 import com.senifit.was.entity.base.BaseTimeEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -31,6 +32,10 @@ public class Survey extends BaseTimeEntity {
     @Column(name = "attitude_score")
     private Integer attitudeScore;
 
+    @Size(max = 200)
+    @Column(name = "memo", length = 200)
+    private String memo;
+
     @Column(name = "had_trouble")
     private Boolean hadTrouble;
 
@@ -43,21 +48,24 @@ public class Survey extends BaseTimeEntity {
             MemberRecord memberRecord,
             Integer abilityScore,
             Integer attitudeScore,
+            String memo,
             Boolean hadTrouble,
             List<SurveyTroublePart> surveyTroubleParts) {
         this.centerId = centerId;
         this.memberRecord = memberRecord;
         this.abilityScore = abilityScore;
         this.attitudeScore = attitudeScore;
+        this.memo = memo;
         this.hadTrouble = hadTrouble;
         if (surveyTroubleParts != null) {
             this.surveyTroubleParts = surveyTroubleParts;
         }
     }
 
-    public void updateSurvey(int attitude, int ability, boolean trouble, Long centerId, List<SurveyTroublePart> newTroubleParts) {
+    public void updateSurvey(int attitude, int ability, String memo, boolean trouble, Long centerId, List<SurveyTroublePart> newTroubleParts) {
         this.attitudeScore = attitude;
         this.abilityScore = ability;
+        this.memo = memo;
         this.hadTrouble = trouble;
         this.centerId = centerId;
         this.surveyTroubleParts.clear();

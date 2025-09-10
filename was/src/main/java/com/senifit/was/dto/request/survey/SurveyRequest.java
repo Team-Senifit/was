@@ -21,5 +21,7 @@ public class SurveyRequest {
 
     private int abilityScore;
 
+    private String memo;
+
     private boolean hadTrouble;
 }

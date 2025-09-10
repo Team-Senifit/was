@@ -29,5 +29,7 @@ public class SurveyResponse {
 
     private int abilityScore;
 
+    private String memo;
+
     private boolean hadTrouble;
 }

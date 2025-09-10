@@ -114,6 +114,7 @@ public class RecordService {
                             .memberRecord(mr)
                             .abilityScore(0)
                             .attitudeScore(0)
+                            .memo(null)
                             .hadTrouble(false)
                             .surveyTroubleParts(List.of())
                             .build();
