@@ -1,6 +1,7 @@
 package com.senifit.was.service.workoutData;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.request.program.recommendation.ByPersonalRequest;
 import com.senifit.was.dto.request.program.recommendation.ByTargetRequest;
@@ -72,7 +73,7 @@ public class RecommendationService {
                         targetCodeEquals(p, request.getPrimary_target_code().getId()),
                         singingWorkoutCodeEquals(p, request.getSinging_workout_code().getId())
                 )
-                .orderBy(p.createdAt.desc())
+                .orderBy(Expressions.numberTemplate(Double.class, "function('RAND')").asc())
                 .fetch();
 
         List<ProgramInfoResponse> result = new ArrayList<>(queryResult.size());
