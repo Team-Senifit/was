@@ -9,7 +9,8 @@ public enum ApiExceptionDetails {
 
     UNHANDLED(500, "INTERNAL000", "내부 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."),
     BAD_REQUEST(400, "BADREQUEST000", "잘못된 요청입니다."),
-    ACCESS_DENIED(403, "ACCESS000", "권한이 부족합니다."),
+    ACCESS_DENIED(401, "ACCESS000", "인증에 실패하였습니다."),
+    NOT_AUTHORIZED(403, "ACCESS001", "권한이 부족합니다."),
     NOT_FOUND(404, "NOTFOUND000", "잘못된 경로입니다."),
     UN_AUTH_SESSION(401, "SESSION000", "유효하지 않은 세션 정보 입니다."),
 

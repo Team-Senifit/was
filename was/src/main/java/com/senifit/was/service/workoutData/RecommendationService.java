@@ -1,6 +1,7 @@
 package com.senifit.was.service.workoutData;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.dto.request.program.recommendation.ByPersonalRequest;
 import com.senifit.was.dto.request.program.recommendation.ByTargetRequest;
@@ -32,15 +33,21 @@ public class RecommendationService {
         QBundleVideo bv = QBundleVideo.bundleVideo;
         QVideo v = QVideo.video;
 
-        List<Video> videos = queryFactory
-            .selectFrom(v)
-            .join(bv).on(bv.video.eq(v))
-            .join(pb).on(pb.bundle.eq(bv.bundle))
-            .join(p).on(pb.program.eq(p))
-            .where(p.id.eq(programId))
-            .orderBy(pb.sequence.asc())
-            .orderBy(bv.sequence.asc())
-            .fetch();
+        // 1) 행 단위로 가져오기 (중복 유지)
+        List<BundleVideo> rows = queryFactory
+                .selectFrom(bv)
+                .join(v).on(bv.video.eq(v))
+                .join(pb).on(pb.bundle.eq(bv.bundle))
+                .join(p).on(pb.program.eq(p))
+                .where(p.id.eq(programId))
+                .orderBy(pb.sequence.asc(),  // 프로그램 내 번들 순서
+                        bv.sequence.asc())  // 번들 내 비디오 순서
+                .fetch();
+
+        // 2) 순서를 유지한 채 Video 리스트로 변환
+        List<Video> videos = rows.stream()
+                .map(BundleVideo::getVideo)
+                .toList();
 
         Program program = queryFactory
                 .selectFrom(p)
@@ -66,7 +73,7 @@ public class RecommendationService {
                         targetCodeEquals(p, request.getPrimary_target_code().getId()),
                         singingWorkoutCodeEquals(p, request.getSinging_workout_code().getId())
                 )
-                .orderBy(p.createdAt.desc())
+                .orderBy(Expressions.numberTemplate(Double.class, "function('RAND')").asc())
                 .fetch();
 
         List<ProgramInfoResponse> result = new ArrayList<>(queryResult.size());

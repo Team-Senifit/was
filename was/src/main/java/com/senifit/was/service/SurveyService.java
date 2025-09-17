@@ -186,17 +186,17 @@ public class SurveyService {
             Survey survey = newSurveyMap.get(req.getSurveyId());
 
             List<SurveyTroublePart> newParts =
-                    (req.getTroubleParts() == null || req.getTroubleParts().isEmpty())
+                    !req.isHadTrouble()
                             ? List.of()
-                            : req.getTroubleParts().stream()
-                            .map(TargetKind::getId)                 // ★ 당신이 가진 타입의 getId() 사용
+                            : ((req.getTroubleParts() == null ? List.<TargetKind>of() : req.getTroubleParts()).stream()
+                            .map(TargetKind::getId)
                             .filter(Objects::nonNull)
-                            .distinct()                             // ★ 같은 설문 내 targetId 중복 제거
+                            .distinct()
                             .map(tid -> SurveyTroublePart.builder()
                                     .survey(survey)
                                     .target(lookupTargetRepository.getReferenceById(tid))
                                     .build())
-                            .toList();
+                            .toList());
 
             survey.updateSurvey(
                     req.getAttitudeScore(),
