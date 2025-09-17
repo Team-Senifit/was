@@ -5,6 +5,8 @@ import com.senifit.was.dto.response.ApiResponse;
 import com.senifit.was.dto.response.program.ProgramResponse;
 import com.senifit.was.service.RecordService;
 import com.senifit.was.service.workoutData.RecommendationService;
+import com.senifit.was.util.SessionUtils;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,11 @@ public class ProgramController {
     private final RecommendationService recommendationService;
 
     @GetMapping("{programId}")
-    public ApiResponse<ProgramResponse> getProgram(@PathVariable Long programId) {
+    public ApiResponse<ProgramResponse> getProgram(
+            @PathVariable Long programId,
+            HttpSession session
+            ) {
+       Long centerId = SessionUtils.getUserId(session);
        return ApiResponse.success(recommendationService.getProgram(programId));
     }
 }

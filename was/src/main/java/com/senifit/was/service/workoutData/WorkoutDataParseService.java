@@ -64,9 +64,12 @@ public class WorkoutDataParseService {
             programs.put(programId, p);
 
             for (int i = 1; i <= 15; i++) {
-                Long bundleId = (Long) row.get("bundle" + i);
-                if (bundleId == null)
+                Object bundleIdRaw = row.get(Integer.toString(i));
+                if (bundleIdRaw == null)
                     continue;
+                if (bundleIdRaw.equals(""))
+                    continue;
+                Long bundleId = (Long) bundleIdRaw;
                 if (!bundles.containsKey(bundleId))
                     throw new InvalidXlsxTemplateApiException();
 
