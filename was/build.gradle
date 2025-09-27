@@ -45,6 +45,9 @@ dependencies {
 	implementation "software.amazon.awssdk:s3-transfer-manager"
 	implementation "software.amazon.awssdk:url-connection-client"
 
+	// Prometheus metrics
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 	// QueryDSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
