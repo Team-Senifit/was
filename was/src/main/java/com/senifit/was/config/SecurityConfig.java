@@ -52,7 +52,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/health", "/actuator/prometheus", "/actuator/metrics/**").permitAll()
+                        .requestMatchers("/health", "/actuator/health", "/actuator/prometheus", "/actuator/metrics/**", "/ui/home").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
                 .formLogin(form -> form
