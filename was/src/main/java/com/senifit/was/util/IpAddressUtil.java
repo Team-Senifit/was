@@ -12,6 +12,9 @@ public class IpAddressUtil {
         String ip = request.getHeader("X-Forwarded-For");
         
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
