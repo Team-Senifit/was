@@ -22,6 +22,7 @@ public class AuthUserDetailService implements UserDetailsService {
         CenterDetail cd = CenterDetail.builder()
                 .loginId(center.getLoginId())
                 .centerId(center.getCenterId())
+                .centerName(center.getName())
                 .password(center.getPassword())
                 .role(center.getRole())
                 .build();
