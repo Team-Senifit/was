@@ -2,10 +2,17 @@ package com.senifit.was.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senifit.was.dto.response.ApiResponse;
+import com.senifit.was.entity.Center;
+import com.senifit.was.entity.LoginAccessStatus;
 import com.senifit.was.exception.api.ApiExceptionDetails;
 import com.senifit.was.exception.api.ApiException;
+import com.senifit.was.repository.center.CentersRepository;
+import com.senifit.was.security.CenterDetail;
+import com.senifit.was.service.auth.LoginAccessService;
 import com.senifit.was.service.auth.exception.SigninAuthenticationFailureException;
+import com.senifit.was.util.IpAddressUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +34,15 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
+import java.util.Optional;
+
 @Configuration
+@RequiredArgsConstructor
 @Slf4j
 public class SecurityConfig {
+
+    private final LoginAccessService loginAccessService;
+    private final CentersRepository centersRepository;
 
     @Value("${spring.application.maximum-sessions}")
     private int maximumSessions;
@@ -85,6 +98,21 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler senifitAuthenticationSuccessHandler() {
         return (request, response, authentication) -> {
             log.info("signIn success");
+            
+            // 로그인 이력 저장
+            try {
+                CenterDetail centerDetail = (CenterDetail) authentication.getPrincipal();
+                String ipAddress = IpAddressUtil.getClientIp(request);
+                loginAccessService.saveLoginAccess(
+                    centerDetail.getLoginId(),
+                    centerDetail.getCenterName(),
+                    ipAddress,
+                    LoginAccessStatus.SUCCESS
+                );
+            } catch (Exception e) {
+                log.error("Failed to log login access: {}", e.getMessage(), e);
+            }
+            
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json; charset=UTF-8");
 
@@ -127,6 +155,27 @@ public class SecurityConfig {
     public AuthenticationFailureHandler senifitAuthenticationFailureHandler() {
         return (request, response, exception) -> {
             log.info("signIn fail");
+            
+            // 로그인 실패 이력 저장 (아이디가 존재하고 비밀번호가 틀린 경우에만)
+            try {
+                String loginId = request.getParameter("id");
+                if (loginId != null && !loginId.isEmpty()) {
+                    // 아이디가 DB에 존재하는지 확인
+                    Optional<Center> centerOptional = centersRepository.findByLoginId(loginId);
+                    if (centerOptional.isPresent()) {
+                        Center center = centerOptional.get();
+                        String ipAddress = IpAddressUtil.getClientIp(request);
+                        loginAccessService.saveLoginAccess(
+                            center.getLoginId(),
+                            center.getName(),
+                            ipAddress,
+                            LoginAccessStatus.FAILED
+                        );
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Failed to log login access: {}", e.getMessage(), e);
+            }
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json; charset=UTF-8");
             ObjectMapper objectMapper = new ObjectMapper();

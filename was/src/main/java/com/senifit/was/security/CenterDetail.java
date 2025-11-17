@@ -22,6 +22,7 @@ public class CenterDetail implements UserDetails, CredentialsContainer {
 
     private String loginId;
     private Long centerId;
+    private String centerName;
     private String password;
     private CenterRole role;
 
