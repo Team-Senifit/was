@@ -9,17 +9,8 @@ import java.io.IOException;
 @SpringBootTest
 class WasApplicationTests {
 
-	@Autowired
-	public WorkoutDataService workoutDataService;
-
-
 	@Test
 	void contextLoads() {
-	}
-
-	@Test
-	void xlsx() throws IOException {
-		workoutDataService.loadFromXlsx();
 	}
 }
 

@@ -6,9 +6,11 @@ import com.senifit.was.entity.selections.IncludesSingingWorkout;
 import com.senifit.was.entity.selections.TargetKind;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @RequiredArgsConstructor
 @Getter
+@Setter
 public class ByPersonalRequest {
     private DurationKind duration;
     private CognitiveWorkoutKind cognitive_workout_code;

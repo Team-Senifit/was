@@ -16,18 +16,14 @@ public class VideoRepositoryImpl implements VideoRepositoryCustom {
 
     public List<Video> findVideosByProgramIdOrderBySequenceAsc(Long programId) {
         QVideo video = QVideo.video;
-        QBundleVideo bundleVideo = QBundleVideo.bundleVideo;
-        QBundle bundle = QBundle.bundle;
-        QProgramBundle programBundle = QProgramBundle.programBundle;
+        QProgramVideo programVideo = QProgramVideo.programVideo;
 
         return queryFactory
                 .select(video)
                 .from(video)
-                .join(bundleVideo).on(bundleVideo.video.eq(video))
-                .join(bundle).on(bundleVideo.bundle.eq(bundle))
-                .join(programBundle).on(programBundle.bundle.eq(bundle))
-                .where(programBundle.program.id.eq(programId))
-                .orderBy(programBundle.sequence.asc(), bundleVideo.sequence.asc())
+                .join(programVideo).on(programVideo.id.videoId.eq(video.id))
+                .where(programVideo.id.programId.eq(programId))
+                .orderBy(programVideo.sequence.asc())
                 .fetch();
     }
 }

@@ -412,7 +412,7 @@
     },
     {
       "key": "environment_url",
-      "value": "https://localhost:8443",
+      "value": "http://localhost:8443",
       "type": "string"
     }
   ]

@@ -5,9 +5,6 @@ import com.senifit.was.entity.lookup.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity @Table(name = "programs")
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
