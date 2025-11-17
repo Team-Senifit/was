@@ -11,7 +11,7 @@ import com.senifit.was.exception.custom.ProgramNotFoundException;
 import com.senifit.was.exception.custom.MemberNotFoundException;
 import com.senifit.was.exception.custom.RecordNotFoundException;
 import com.senifit.was.repository.center.CentersRepository;
-import com.senifit.was.repository.program.ProgramRepository;
+import com.senifit.was.repository.program.api.ProgramRepository;
 import com.senifit.was.repository.record.RecordsRepository;
 import com.senifit.was.repository.member.MembersRepository;
 import com.senifit.was.repository.survey.SurveysRepository;

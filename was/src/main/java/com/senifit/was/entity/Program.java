@@ -5,6 +5,9 @@ import com.senifit.was.entity.lookup.*;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity @Table(name = "programs")
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,7 +55,15 @@ public class Program extends BaseTimeEntity {
     @JoinColumn(name = "primary_target_id")
     private LookupTarget primaryTarget;
 
-    @Column(name = "used_count")
-    private Long usedCount;
+    // 엔티티 생성시 수동 주입 필요
+    @Column(name = "hash")
+    private String hash;
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Program))
+            return false;
+        return ((Program) other).getHash().equals(this.getHash());
+    }
 }
 

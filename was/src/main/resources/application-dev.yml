@@ -18,3 +18,16 @@
 #logging:
 #  level:
 #    root: debug
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: classpath:cert/localhost.p12
+    key-store-type: PKCS12
+    key-store-password: ${SSL_KEYSTORE_PASSWORD}
+    key-alias: localhost
+
+spring:
+  profiles:
+    active: dev

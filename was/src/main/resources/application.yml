@@ -8,7 +8,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?rewriteBatchedStatements=true
     username: ${DB_USER}
     password: ${DB_PASS}
     pbkdf2_pepper: ${PBKDF2_PEPPER}
@@ -21,6 +21,11 @@ spring:
         hibernate:
           format_sql: true
           dialect: org.hibernate.dialect.MySQL8Dialect
+          jdbc:
+            batch_size: 20  # Bulk insert를 위한 배치 크기 설정
+          order_inserts: true  # Insert 순서 최적화
+          order_updates: true  # Update 순서 최적화
+          batch_versioned_data: true  # 버전 필드가 있는 엔티티도 배치 처리
     show-sql: false
 
   logging:

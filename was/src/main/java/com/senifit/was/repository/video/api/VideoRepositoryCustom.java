@@ -1,4 +1,4 @@
-package com.senifit.was.repository.video;
+package com.senifit.was.repository.video.api;
 
 import com.senifit.was.entity.Video;
 import org.springframework.stereotype.Repository;

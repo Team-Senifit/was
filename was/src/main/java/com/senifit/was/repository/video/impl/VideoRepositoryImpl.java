@@ -1,7 +1,8 @@
-package com.senifit.was.repository.video;
+package com.senifit.was.repository.video.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.senifit.was.entity.*;
+import com.senifit.was.repository.video.api.VideoRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,6 @@ public class VideoRepositoryImpl implements VideoRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    @Override
     public List<Video> findVideosByProgramIdOrderBySequenceAsc(Long programId) {
         QVideo video = QVideo.video;
         QBundleVideo bundleVideo = QBundleVideo.bundleVideo;
