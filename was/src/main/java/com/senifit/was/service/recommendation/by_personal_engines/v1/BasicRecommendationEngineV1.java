@@ -24,7 +24,7 @@ public class BasicRecommendationEngineV1 extends BaseRecommendationEngine {
                 .name("맞춤형 프로그램")
                 .description("맞춤형 프로그램")
                 .thumbnailPath(metaDataHelper.generateThumbnailPath(videoList))
-                .duration(metaDataHelper.calculateDuration(videoList))
+                .duration(metaDataHelper.calculateDurationByMinutes(videoList))
                 .videos(videoList)
                 .warmupWorkoutKind(WarmupWorkoutKind.workout_kinds_warmup)
                 .cooldownWorkoutKind(CooldownWorkoutKind.workout_kinds_cooldown)

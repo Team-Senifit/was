@@ -22,5 +22,9 @@ public class MetaDataHelper {
        return totalDuration;
    }
 
+   public int calculateDurationByMinutes(List<VideoData> videoList) {
+       return calculateDuration(videoList) / 60;
+   }
+
 
 }

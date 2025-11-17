@@ -31,33 +31,20 @@ public class RecommendationService {
     public List<ProgramInfoResponse> byPersonal(ByPersonalRequest request){
         ProgramData programData = recommendationEngine.generate(request);
         String programHash = byPersonalRequestHelper.generateProgramHash(programData.videos());
-
         Program program = programService.getPersonalByHash(programHash);
+
         if (program == null) {
             program = byPersonalRequestHelper.buildProgram(programData, programHash);
+            programService.save(program);
+
+            List<ProgramVideo> programDataList =
+                    byPersonalRequestHelper.buildProgramVideos(
+                            program.getId(), programData.videos());
+            programService.saveProgramVideos(programDataList);
         }
-        programService.save(program);
 
-        List<ProgramVideo> programDataList =
-                byPersonalRequestHelper.buildProgramVideos(
-                        program.getId(), programData.videos());
-        programService.saveProgramVideos(programDataList);
-
-        List<ProgramInfoResponse> result = new ArrayList<>();
-        result.add(ProgramInfoResponse.builder()
-            .id(program.getId())
-            .name(programData.name())
-            .description(programData.description())
-            .thumbnail_path(programData.thumbnailPath())
-            .duration(programData.duration())
-            .warmup_workout_code(programData.warmupWorkoutKind())
-            .cooldown_workout_code(programData.cooldownWorkoutKind())
-            .cognitive_workout_code(programData.cognitiveWorkoutKind())
-            .singing_workout_code(programData.singingWorkoutKind())
-            .primary_target_code(programData.primaryTarget())
-            .specialized_workout_code(programData.specializedWorkoutKind())
-            .build()
-        );
+        ArrayList<ProgramInfoResponse> result = new ArrayList<>();
+        result.add(programService.buildProgramInfoDto(program));
         return result;
     }
 
