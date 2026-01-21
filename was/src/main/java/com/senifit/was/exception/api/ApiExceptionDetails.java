@@ -37,10 +37,7 @@ public enum ApiExceptionDetails {
     PROGRAM_NOT_FOUND(404, "PRO002", "프로그램이 존재하지 않습니다."),
 
     // Members
-    MEMBER_NOT_FOUND(404, "MEM001", "사용자가 존재하지 않습니다."),
-
-    // Programs
-    PROGRAM_TEMPLATE_PARSE_FAIL(401, "PRO003", "sdkljf");
+    MEMBER_NOT_FOUND(404, "MEM001", "사용자가 존재하지 않습니다.");
 
     private final int httpStatusCode;
     private final String errorCode;
