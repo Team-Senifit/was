@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,15 +24,18 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Configuration
@@ -67,11 +69,20 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/health", "/actuator/health", "/actuator/prometheus", "/actuator/metrics/**", "/ui/home").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(
+                                "/health",
+                                "/actuator/health",
+                                "/actuator/prometheus",
+                                "/actuator/metrics/**",
+                                "/ui/home",
+                                "/auth/signin",
+                                "/auth/signout"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                        .authenticationEntryPoint(apiAuthenticationEntryPoint())
+                        .accessDeniedHandler(apiAccessDeniedHandler())
                 )
                 .userDetailsService(userDetailsService)
                 .formLogin(form -> form
@@ -90,8 +101,36 @@ public class SecurityConfig {
                     .maximumSessions(maximumSessions)
                     .maxSessionsPreventsLogin(true)
                 )
-                .csrf(AbstractHttpConfigurer::disable)
                 .build();
+    }
+
+    /**
+     * 인증되지 않은 요청에 대한 응답 (401)
+     */
+    private AuthenticationEntryPoint apiAuthenticationEntryPoint() {
+        return (request, response, authException) -> {
+            log.debug("Authentication failed: {}", authException.getMessage());
+            writeApiErrorResponse(response, ApiExceptionDetails.ACCESS_DENIED);
+        };
+    }
+
+    /**
+     * 인증은 되었으나 권한이 없는 요청에 대한 응답 (403)
+     */
+    private AccessDeniedHandler apiAccessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            log.debug("Access denied: {}", accessDeniedException.getMessage());
+            writeApiErrorResponse(response, ApiExceptionDetails.NOT_AUTHORIZED);
+        };
+    }
+
+    private void writeApiErrorResponse(HttpServletResponse response, ApiExceptionDetails details) throws IOException {
+        response.setStatus(details.getHttpStatusCode());
+        response.setContentType("application/json; charset=UTF-8");
+
+        ApiResponse<Void> apiResponse = ApiResponse.failure(new ApiException(details));
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
     }
 
     @Bean
