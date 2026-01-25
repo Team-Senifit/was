@@ -43,7 +43,7 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "gender_id", nullable = false)
     private LookupGender gender;
 
-    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRecord> memberRecords = new ArrayList<>();
 
     public Integer getAge() {

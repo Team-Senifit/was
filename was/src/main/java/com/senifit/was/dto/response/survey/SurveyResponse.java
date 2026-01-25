@@ -32,4 +32,6 @@ public class SurveyResponse {
     private String memo;
 
     private boolean hadTrouble;
+
+    private boolean isDeleted;
 }
