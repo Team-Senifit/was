@@ -62,6 +62,16 @@ public class SurveyService {
                 .findRecordById(recordId, centerId)
                 .orElseThrow(RecordNotFoundException::new);
 
+        // participant_count와 실제 survey 개수 비교하여 삭제된 member 처리
+        int deletedMemberCount = recordResponse.getParticipantCount() - surveys.size();
+
+        // 삭제된 member 수만큼 isDeleted=true인 더미 SurveyResponse 추가
+        for (int i = 0; i < deletedMemberCount; i++) {
+            surveys.add(SurveyResponse.builder()
+                    .isDeleted(true)
+                    .build());
+        }
+
         // programId가 있으면 해당 프로그램의 모든 video를 sequence 순서대로 조회
         List<SimpleVideoResponse> routines = new ArrayList<>();
         if (recordResponse.getProgramId() != null) {
