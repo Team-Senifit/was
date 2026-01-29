@@ -170,7 +170,7 @@ public class SecurityConfig {
         cookieSerializer.setUseSecureCookie(sslEnabled);  // HTTPS에서만 전송
         cookieSerializer.setUseHttpOnlyCookie(true);      // JavaScript 접근 차단
         cookieSerializer.setSameSite("None");           // CSRF 방지
-        cookieSerializer.setCookieMaxAge(1800);          // 30분
+        cookieSerializer.setCookieMaxAge(5400);          // 90분 (spring.session.timeout 과 정합)
         
         resolver.setCookieSerializer(cookieSerializer);
         log.info("Secure cookie configured - SSL enabled: {}", sslEnabled);
