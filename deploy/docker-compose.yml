@@ -59,7 +59,7 @@ services:
     volumes:
       - ./cert:/app/cert:ro
       - ${SSL_KEYSTORE_PATH}:${SSL_KEYSTORE_PATH}:ro
-      - /senifit/logs/was:/app/logs
+      - /apps/senifit/logs/was:/app/logs
     ports:
       - "8443:8443"
     networks:
@@ -78,7 +78,7 @@ services:
     environment:
       SERVER_PORT: 8082
     volumes:
-      - /senifit/logs/admin:/app/logs
+      - /apps/senifit/logs/admin:/app/logs
     ports:
       - "8082:8082"
     networks:
