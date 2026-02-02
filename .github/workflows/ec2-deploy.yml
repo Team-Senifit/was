@@ -72,13 +72,12 @@ jobs:
           ORG_LOWER="team-senifit"
           REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           SPRING_BOOT_IMAGE="ghcr.io/${REPO_LOWER}:${{ github.sha }}"
-          ADMIN_BOOT_IMAGE="ghcr.io/${ORG_LOWER}/senifit-admin:${{ github.sha }}"
           ENV_B64=$(printf '%s' "${{ secrets.ENV_FILE }}" | base64 -w 0)
           COMMAND_ID=$(aws ssm send-command \
             --instance-ids "${{ secrets.SSM_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters "{\"commands\":[\"cd /apps/senifit\",\"echo ${ENV_B64} | base64 -d > /apps/senifit/.env\",\"export SPRING_BOOT_IMAGE=${SPRING_BOOT_IMAGE}\",\"export ADMIN_BOOT_IMAGE=${ADMIN_BOOT_IMAGE}\",\"docker compose pull\",\"docker compose up -d\"]}" \
-            --comment "Deploy spring-boot image ${SPRING_BOOT_IMAGE}" \
+            --parameters "{\"commands\":[\"cd /apps/senifit && echo ${ENV_B64} | base64 -d > /apps/senifit/.env && export SPRING_BOOT_IMAGE=${SPRING_BOOT_IMAGE} && sudo /apps/senifit/restart_if_infra_down.sh\"]}" \
+            --comment "Deploy was image ${SPRING_BOOT_IMAGE}" \
             --output text \
             --query "Command.CommandId")
           echo "command_id=$COMMAND_ID" >> $GITHUB_OUTPUT
