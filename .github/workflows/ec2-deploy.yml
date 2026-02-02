@@ -76,7 +76,7 @@ jobs:
           COMMAND_ID=$(aws ssm send-command \
             --instance-ids "${{ secrets.SSM_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters "{\"commands\":[\"cd /apps/senifit && echo ${ENV_B64} | base64 -d > /apps/senifit/.env && export SPRING_BOOT_IMAGE=${SPRING_BOOT_IMAGE} && sudo docker compose pull && sudo docker compose up -d\"]}" \
+            --parameters "{\"commands\":[\"cd /apps/senifit && echo ${ENV_B64} | base64 -d > /apps/senifit/.env && export SPRING_BOOT_IMAGE=${SPRING_BOOT_IMAGE} && sudo docker compose pull spring-boot && sudo docker compose up -d spring-boot\"]}" \
             --comment "Deploy spring-boot image ${SPRING_BOOT_IMAGE}" \
             --output text \
             --query "Command.CommandId")
