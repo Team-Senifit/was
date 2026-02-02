@@ -1,0 +1,34 @@
+# Build output (이미지는 multi-stage에서 JAR 생성)
+build/
+
+# Gradle
+.gradle/
+**/gradle-user-home/
+
+# Git / IDE
+.git
+.gitignore
+.gitattributes
+.idea
+*.iml
+.vscode
+*.swp
+*.swo
+.DS_Store
+
+# Test / local
+test_api/
+*.http
+postman_tests.json
+**/application-dev-local-only.yml
+
+# Docs / scripts (선택: 이미지에 불필요)
+*.md
+commit_by_feature.sh
+commit_migration.sh
+migration.sql
+
+# Misc
+*.log
+.env
+.env.*

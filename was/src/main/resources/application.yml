@@ -72,7 +72,7 @@ server:
     key-store: ${SSL_KEYSTORE_PATH}
     key-store-password: ${SSL_KEYSTORE_PASSWORD}
     key-store-type: PKCS12
-    #key-alias: ${SSL_CERT_ALIAS}
+    key-alias: ${SSL_CERT_ALIAS}
   # 프록시 헤더 처리
   forward-headers-strategy: framework
 

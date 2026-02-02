@@ -1,58 +1,100 @@
-name: Spring Boot EC2 Deploy
+name: Build, Push to GHCR, Deploy via SSM
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
-  build-and-deploy:
-    name: Build and Deploy to EC2
+  build-and-push:
+    name: Build Docker & Push to GHCR
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+      image-tag: ${{ steps.meta.outputs.version }}
 
     steps:
-      # 1. GitHub에서 코드 체크아웃
-      - name: Checkout source code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # 2. JDK 17 설치
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta (tags)
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=raw,value=${{ github.sha }},enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
-      # 3. Gradle Wrapper 권한 부여 및 빌드
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-        working-directory: was
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build with Gradle
-        run: ./gradlew clean bootJar --exclude-task test
-        working-directory: was
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./was
+          file: ./was/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # 4. EC2에 SSH 접속하기 위한 키 파일 생성
-      - name: Generate SSH key
+  deploy:
+    name: Deploy via AWS SSM
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-northeast-2' }}
+
+      - name: Deploy via SSM (docker-compose in /apps/senifit)
+        id: send
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          ORG_LOWER="team-senifit"
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          SPRING_BOOT_IMAGE="ghcr.io/${REPO_LOWER}:${{ github.sha }}"
+          ADMIN_BOOT_IMAGE="ghcr.io/${ORG_LOWER}/senifit-admin:${{ github.sha }}"
+          COMMAND_ID=$(aws ssm send-command \
+            --instance-ids "${{ secrets.SSM_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters "{\"commands\":[\"cd /apps/senifit\",\"cat <<'EOF' > /apps/senifit/.env\\n${{ secrets.ENV_FILE }}\\nEOF\",\"export SPRING_BOOT_IMAGE=${SPRING_BOOT_IMAGE}\",\"export ADMIN_BOOT_IMAGE=${ADMIN_BOOT_IMAGE}\",\"docker compose pull\",\"docker compose up -d\"]}" \
+            --comment "Deploy spring-boot image ${SPRING_BOOT_IMAGE}" \
+            --output text \
+            --query "Command.CommandId")
+          echo "command_id=$COMMAND_ID" >> $GITHUB_OUTPUT
+          echo "Sent SSM command: $COMMAND_ID"
 
-      # 5. EC2 known_hosts 등록
-      - name: Add EC2 to known hosts
+      - name: Wait for SSM command
         run: |
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      # 6. JAR + .env 파일 생성 및 EC2로 전송
-      - name: Upload JAR and .env to EC2
-        run: |
-          echo "${{ secrets.ENV_FILE }}" > was/.env
-          scp -i ~/.ssh/id_rsa was/build/libs/app.jar was/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/senifit/
-
-      # 7. EC2에서 Spring Boot 앱 실행
-      - name: Run Spring Boot App on EC2
-        run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            pkill -f 'java -jar' || true
-            cd /home/${{ secrets.EC2_USER }}/senifit
-            nohup java -jar app.jar > logs/console.log 2>&1 &
-          EOF
+          COMMAND_ID="${{ steps.send.outputs.command_id }}"
+          for i in $(seq 1 30); do
+            STATUS=$(aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "${{ secrets.SSM_INSTANCE_ID }}" --query "Status" --output text 2>/dev/null || echo "Pending")
+            echo "SSM command status: $STATUS"
+            if [ "$STATUS" = "Success" ]; then exit 0; fi
+            if [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ]; then
+              aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "${{ secrets.SSM_INSTANCE_ID }}"
+              exit 1
+            fi
+            sleep 10
+          done
+          echo "Timeout waiting for SSM command"
+          exit 1
