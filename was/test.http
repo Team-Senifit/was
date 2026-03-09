@@ -17,8 +17,16 @@ Content-Type: application/x-www-form-urlencoded
 
 id=ssh9930&password=12345
 
+### signin (특수문자 비밀번호 예시 - 반드시 URL 인코딩)
+POST http://localhost:8080/auth/signin
+Content-Type: application/x-www-form-urlencoded
+
+id=ssh9930&password=P%40ss%2Bword%26%3D100%25
+
 ### /centers/
 GET localhost:8080/centers
 
 ### /centers/members/
 GET localhost:8080/centers/members
+
+#
